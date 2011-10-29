@@ -40,8 +40,6 @@ void analysis::setupAnalysis(int camW, int camH, int timeLimiter, string whichAn
     
 }
 
-
-
 ////////////////////////---------/////////////////////////////////////
 // this runs an analysis on the recorded video to extract Infomation.
 void analysis::runAnalysis( unsigned char * pixels){
@@ -151,7 +149,7 @@ void analysis::synthDraw(){
       
             //draw the scanning bar
             ofSetColor(255, 255, 255);
-            ofRect(counter, 0, ofGetWidth(), scanLineWidth);
+            ofRect(0, counter, ofGetWidth(), scanLineWidth);
             counter+=1;
             
             if(counter>=ofGetHeight()) {
