@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include
+END
+_cvvectrack.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvvectrack.h
+END
+cvvidsurv.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvvidsurv.hpp
+END
+_cvmatrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvmatrix.h
+END
+cvtypes.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvtypes.h
+END
+cxtypes.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cxtypes.h
+END
+_cvlist.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvlist.h
+END
+cvstreams.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvstreams.h
+END
+_cv.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cv.h
+END
+cv.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cv.hpp
+END
+cv.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cv.h
+END
+_cvvm.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvvm.h
+END
+cvmat.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvmat.hpp
+END
+cvcompat.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvcompat.h
+END
+_cvgeom.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvgeom.h
+END
+_cvipp.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvipp.h
+END
+_cxipp.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cxipp.h
+END
+_cxcore.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cxcore.h
+END
+cxcore.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cxcore.h
+END
+cxcore.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cxcore.hpp
+END
+cxerror.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cxerror.h
+END
+cvver.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvver.h
+END
+_cvaux.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvaux.h
+END
+_cvfacedetection.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvfacedetection.h
+END
+cvaux.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvaux.hpp
+END
+cxmisc.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cxmisc.h
+END
+cvaux.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/cvaux.h
+END
+_cvimgproc.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/236/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/include/_cvimgproc.h
+END

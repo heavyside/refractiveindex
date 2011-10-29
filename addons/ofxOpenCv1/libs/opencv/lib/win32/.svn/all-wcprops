@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/lib/win32
+END
+cxcore.lib
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/lib/win32/cxcore.lib
+END
+cvaux.lib
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/lib/win32/cvaux.lib
+END
+cv.lib
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/184/trunk/touch_tracker/tbeta/addons/ofxOpenCv/libs/opencv/lib/win32/cv.lib
+END

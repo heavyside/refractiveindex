@@ -1,0 +1,27 @@
+<CAM_IS_GO>
+    <val_0>0.000000</val_0>
+</CAM_IS_GO>
+<CAM_WIDTH>
+    <val_0>640.000000</val_0>
+</CAM_WIDTH>
+<CAM_HEIGHT>
+    <val_0>480.000000</val_0>
+</CAM_HEIGHT>
+<FRAME_RATE>
+    <val_0>1.000000</val_0>
+</FRAME_RATE>
+<SETTINGS>
+    <val_0>0.000000</val_0>
+</SETTINGS>
+<ANALYSIS_TYPE>
+    <val_0>0.000000</val_0>
+</ANALYSIS_TYPE>
+<SCAN_LINE_WIDTH>
+    <val_0>10.000000</val_0>
+</SCAN_LINE_WIDTH>
+<INPUTS>
+    <val_0>130.000000</val_0>
+</INPUTS>
+<CODECS>
+    <val_0>130.000000</val_0>
+</CODECS>

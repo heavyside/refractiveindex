@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src
+END
+ofCvTrackedBlob.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvTrackedBlob.h
+END
+ofxCvMain.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvMain.h
+END
+ofCvBlobTracker.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvBlobTracker.cpp
+END
+ofxCvHaarFinder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvHaarFinder.cpp
+END
+ofCvBlobTracker.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvBlobTracker.h
+END
+ofxCvFloatImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvFloatImage.cpp
+END
+ofxCvHaarFinder.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvHaarFinder.h
+END
+ofCvOpticalFlowBM.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvOpticalFlowBM.cpp
+END
+ofxCvGrayscaleImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvGrayscaleImage.cpp
+END
+ofxCvFloatImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvFloatImage.h
+END
+ofCvOpticalFlowBM.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvOpticalFlowBM.h
+END
+ofxCvConstants_old.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/247/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvConstants_old.h
+END
+ofxCvContourFinder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/259/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvContourFinder.cpp
+END
+ofxCvColorImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvColorImage.cpp
+END
+ofxCvConstants.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/247/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvConstants.h
+END
+ofCvOpticalFlowLK.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvOpticalFlowLK.cpp
+END
+ofxCvImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/259/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvImage.cpp
+END
+ofxCvGrayscaleImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvGrayscaleImage.h
+END
+ofxCvBlob.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/252/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvBlob.h
+END
+ofxCvColorImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvColorImage.h
+END
+ofxCvContourFinder.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/198/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvContourFinder.h
+END
+ofxCvImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/235/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofxCvImage.h
+END
+ofCvOpticalFlowLK.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/320/trunk/touch_tracker/tbeta/addons/ofxOpenCv/src/ofCvOpticalFlowLK.h
+END
