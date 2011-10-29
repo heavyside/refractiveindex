@@ -14,7 +14,6 @@ void testApp::setup(){
     camHeight=480;
     ofSetFrameRate(30);
     ofSetVerticalSync(TRUE);
-    record =false;
 
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);
@@ -26,7 +25,7 @@ void testApp::setup(){
     camStatus="camera not setup";
         
     //get list of codecs from movie object in analysis class
-    vector<string> returnedCodecNames=masterAnalysis.saver.returnCodecNames();
+    vector<string> returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
     
     //talk to me about your troubles openframeworks
     ofSetLogLevel(OF_LOG_VERBOSE);  
@@ -47,7 +46,7 @@ void testApp::setup(){
 	gui.addButtonSlider("camera height", "CAM_HEIGHT", camHeight, 1.0, 1080, true);
     gui.addButtonSlider("desired frame rate", "FRAME_RATE", 1., 1.0, 30, true);
 	gui.setWhichColumn(1);
-    gui.addTextInput("display message", "worship the screen mortals!", 250 );
+    gui.addTextInput("display message", "input here for the text input field!", 250 );
     
     //GET THE INPUT NAMES FROM THE QT VIDEO GRABBER
     vidGrabber.listDevices();
@@ -83,6 +82,7 @@ void testApp::setup(){
         
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
+    
     //CURRENTLY UNUSED
     cout<<names[names.size()-1]<<" names at 2\n";
     gui.addTextDropDown("inputs", "INPUTS", 130, names);
@@ -102,52 +102,46 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){  
     ofBackground(0, 0, 0);
+    
     vidGrabber.grabFrame();
    
     //neutral, do nothing
     if(menuState==0){
-        
+
     }
-    
     
     //setup analysis
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
         masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);
-        
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
         
         //now we are setup lets analyse
         menuState=2;
-        
     }
     
     //play the synthesized stuff to screen 
     if(menuState==2){
   
-    
     }
     
 
-     //run analysis on the movie we've recorded during 'synthDraw'
+    //run analysis on the movie we've recorded during 'synthDraw'
     if(menuState==3){
         // after 
         
         if(!masterAnalysis.analysed){
-            masterAnalysis.runAnalysis(vidGrabber.getPixels());
+            masterAnalysis.analyseInput(vidGrabber.getPixels());
         } else {
             menuState=4;
         }
     }
     
-    
-     //display analysis
+    //display analysis
     if(menuState==4){
-    
         masterAnalysis.saveOut();
         masterAnalysis.setupMovie();
-
         masterAnalysis.updatePlayer();  //playing the recorded movie file
     }
     
@@ -161,7 +155,7 @@ void testApp::draw(){
     
     //if no analysis, draw grabber
     if(menuState==0){
-        //vidGrabber.draw(0, 0);
+        vidGrabber.draw(0, 0);
     }
     
     //continue to draw grabber in setup phase
@@ -173,10 +167,10 @@ void testApp::draw(){
     //drawing synthesized impulses, etc., to the screen
     if(menuState==2){
         
-        //  vidGrabber.draw(0, 0);
+        //vidGrabber.draw(0, 0);
         if(!masterAnalysis.synthesisComplete){
             // cout<<"dis playing process \n";
-            masterAnalysis.synthDraw();
+            masterAnalysis.synthDrawCamRecord(vidGrabber.getPixels());
         } else {
             menuState==3;  
         } 

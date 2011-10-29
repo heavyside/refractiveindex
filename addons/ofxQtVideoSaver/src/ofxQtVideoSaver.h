@@ -30,7 +30,8 @@ class ofxQtVideoSaver{
     void addAudioTrack(string audioPath);
     vector<string> codecNames;
     vector<string>returnCodecNames();
-private:
+
+    private:
     
     //-------------------------------- movie
     

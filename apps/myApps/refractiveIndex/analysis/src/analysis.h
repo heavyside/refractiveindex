@@ -21,16 +21,25 @@ class analysis{
     int myVariable;
         
     void setupAnalysis(int camH, int camW, int timeLimiter, string whichAnalysis);//, ofVideoGrabber &grabber);
-    void runAnalysis(unsigned char * pixels);
-    void synthDraw();
+       
+    ////Synth Methods//
+    void synthDrawCamRecord(unsigned char * pixels);
+    void synthUpdate();
+    
+    ////Analyse Input Methods//
+    void analyseInput(unsigned char * pixels);
+    
+    ///Display Final Result Methods///
     void displayResult();
     void setupMovie();
     void updatePlayer();
-    void captureFromInput();
+
     void setupSaver(int camH, int camW, int codec);
     void saveOut();
     vector<ofImage> returnFrames();
+ 
     
+    ///Other
     int counter;
     int timeLimit;
     int analysisTimer;
@@ -38,22 +47,28 @@ class analysis{
         
     string whichAnalysis;
 
+    
+    //FOR SYNTH
+    bool newFrame;
+    
     //FOR ALL ANALYSIS
     bool synthesisComplete;
     bool analysed;
     
-    ofxQtVideoSaver saver;
+    ofxQtVideoSaver movieFromCamera;
+    ofImage screenCapture;
+    
     ofVideoPlayer player;
+    
     int camHeight;
     int camWidth;
-    string movieName;
+    string cameraMovieName;
     
     int check;
     
     //FOR H_SHADOWSCAPES
     int scanLineWidth;
-    
-    
+    int scanLineSpeed; 
 };
 
 #endif
