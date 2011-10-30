@@ -68,7 +68,6 @@ public:
      
      */
     bool record;
-    
     ofTrueTypeFont font;
     
     ofVideoPlayer player;
@@ -80,9 +79,7 @@ public:
     ofxControlPanel gui;
     simpleFileLister lister;
     simpleLogger logger;
-    
-    ofxQtVideoSaver mySaver;
-    
+        
 };
 
 #endif

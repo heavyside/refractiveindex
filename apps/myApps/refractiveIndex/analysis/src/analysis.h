@@ -34,13 +34,12 @@ class analysis{
     void setupMovie();
     void updatePlayer();
 
-    void setupSaver(int camH, int camW, int codec);
-    void saveOut();
+    void setupQuicktimeMovieRecord(int camH, int camW, int codec);
     vector<ofImage> returnFrames();
- 
+
     
     ///Other
-    int counter;
+   
     int timeLimit;
     int analysisTimer;
     unsigned char * analysedFrame;
@@ -56,8 +55,9 @@ class analysis{
     bool analysed;
     
     ofxQtVideoSaver movieFromCamera;
-    ofImage screenCapture;
     
+    ofImage screenCapture;
+
     ofVideoPlayer player;
     
     int camHeight;
@@ -65,10 +65,18 @@ class analysis{
     string cameraMovieName;
     
     int check;
+    int i;
     
-    //FOR H_SHADOWSCAPES
+    //FOR SHADOWSCAPES
+
+    int counter;
+    int scanLinePosition;
     int scanLineWidth;
-    int scanLineSpeed; 
+    int scanLineSpeed;
+    
+    vector <ofImage> imgs;
+    
+    
 };
 
 #endif

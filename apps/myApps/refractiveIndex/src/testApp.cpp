@@ -14,7 +14,7 @@ void testApp::setup(){
     camHeight=480;
     ofSetFrameRate(30);
     ofSetVerticalSync(TRUE);
-
+    
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);
     
@@ -114,7 +114,8 @@ void testApp::update(){
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
-        masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);
+        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);  //Tom - I've removed this as it's currently redundant with the setupAnalysis below  -JA
+ 
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
         
         //now we are setup lets analyse
@@ -140,7 +141,6 @@ void testApp::update(){
     
     //display analysis
     if(menuState==4){
-        masterAnalysis.saveOut();
         masterAnalysis.setupMovie();
         masterAnalysis.updatePlayer();  //playing the recorded movie file
     }
@@ -215,8 +215,8 @@ void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bo
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
    
-    //use x as gui toggle
-    if(key=='x'){
+    //use g as gui toggle
+    if(key=='g'){
         showGui=!showGui;
     }
     else{
@@ -408,6 +408,11 @@ void testApp::eventsIn(guiCallbackData & data){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
+
+    if( key =='f')
+    {
+       ofToggleFullscreen(); 
+    }
     
 }
 
@@ -424,7 +429,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    gui.mousePressed(x, y, button);
+    gui.mousePressed(x, y, button); 
 }
 
 //--------------------------------------------------------------
