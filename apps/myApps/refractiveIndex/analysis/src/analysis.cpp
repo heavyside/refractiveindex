@@ -125,12 +125,12 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         if(synthesisComplete==false){    
       
             //grab a frame from the camera - passed in to this class as 'pixels'
-            screenCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
+            cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
  
             //should play here with the quality / size of the image
             //greyscale, jpg probably will be fastest and all we need?  
             //but there might be a better, more raw format that will keep us from having to decompress during analysis
-            screenCapture.saveImage(whichAnalysis+"_"+ofToString(counter)+".jpg");
+            cameraCapture.saveImage(whichAnalysis+"_"+ofToString(counter)+".jpg");
            
             //draw the scanning bar
             ofSetColor(255, 255, 255);            
@@ -162,12 +162,12 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         if(synthesisComplete==false){    
             
             //grab a frame from the camera - passed in to this class as 'pixels'
-            screenCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
+            cameraCapture.setFromPixels(pixels, camWidth, camHeight);
             
             //this will take each new incoming ofImage and add it to the vector of images "imgs"
             //using imgs.push_back(img)
             
-            imgs.push_back(screenCapture);
+            imgs.push_back(cameraCapture);
             counter++;
             //cout<<counter<<" <-- D_SHADOWSCAPES COUNTER: \n";
             
@@ -192,7 +192,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //image vectors "imgs" backinto files / movies...
             
             if(scanLinePosition > 2*ofGetHeight()+(scanLineSpeed+scanLineWidth)) {
-                cout<<scanLinePosition<<" <-- scanLinePosition \n";
+                //cout<<scanLinePosition<<" <-- scanLinePosition \n";
                 
                 //cout<<ofGetHeight()<<" <-- ofGetHeight() \n";
                 //cout<<" ** scanLinePosition > ofGetHeight() \n";
@@ -224,34 +224,38 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         if(synthesisComplete==false){    
             
             //grab a frame from the camera - passed in to this class as 'pixels'
-            screenCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
+            //cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
             
             //this will take each new incoming ofImage and add it to the vector of images "imgs"
             //using imgs.push_back(img)
             
-            imgs.push_back(screenCapture);
-            counter++;
-            //cout<<counter<<" <-- D_SHADOWSCAPES COUNTER: \n";
+            cout<<counter<<" <-- RELAXRATE COUNTER: \n";
             
-            //draw the scanning bar
-            ofSetColor(255, 255, 255);            
+            unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
+            memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+            imgPixels.push_back(someLocalPixels);  
+            counter++;
+            
+            // white impulse 
+            ofSetColor(255-counter, 255-counter, 255-counter);               
             ofRect(0, 0, ofGetWidth(), ofGetHeight());
-            scanLinePosition += scanLineSpeed;
-            //cout<<scanLinePosition<<" <-- D_SHADOWSCAPES scanLinePosition: \n";
             
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
-            //image vectors "imgs" backinto files / movies...
+            //image vectors "imgs" backinto a quicktime movie...
             
-            if(scanLinePosition > ofGetHeight()+(scanLineSpeed+scanLineWidth)) {  // makes sure that the scan line leaves the screen
+            if(counter >= 255) { 
                 
-                //cout<<ofGetHeight()<<" <-- ofGetHeight() \n";
-                //cout<<" ** scanLinePosition > ofGetHeight() \n";
-                
+                //cout<<" ** counter > 255 \n";
                 for (i = 0; i <= counter; i++)
                 {
-                    imgs[i].saveImage(whichAnalysis+"_"+ofToString(i)+".jpg");
+                    //cout<<i<<"< i in RELAXRATE ** frame add counter \n";
+                    movieFromCamera.addFrame(imgPixels[i]);
                 }
+                ofSetDataPathRoot("/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/RELAXRATE/");
                 
+                movieFromCamera.finishMovie();  //wrap up the movie
+            
+                imgPixels.clear(); //empty out the vector
                 scanLinePosition=0;
                 counter=0;
                 synthesisComplete=true; 

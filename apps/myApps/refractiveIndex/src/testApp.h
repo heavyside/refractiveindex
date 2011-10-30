@@ -36,7 +36,7 @@ public:
     
     analysis masterAnalysis;
     vector<ofImage> resultsOfAnalysis;
-    unsigned char * videoMirror;
+   
     string analysisChooser;
     //vars which hold camera and saver setup information
     int camWidth;
@@ -55,10 +55,8 @@ public:
     int menuState;
     int mouseX, mouseY;
     
-    
     //global gui variables 
     int scanLineWidth;
-
     
     //menu state is the main control sequence variable should have the following modes
     /*

@@ -37,7 +37,6 @@ class analysis{
     void setupQuicktimeMovieRecord(int camH, int camW, int codec);
     vector<ofImage> returnFrames();
 
-    
     ///Other
    
     int timeLimit;
@@ -56,7 +55,7 @@ class analysis{
     
     ofxQtVideoSaver movieFromCamera;
     
-    ofImage screenCapture;
+    ofImage cameraCapture;
 
     ofVideoPlayer player;
     
@@ -75,8 +74,8 @@ class analysis{
     int scanLineSpeed;
     
     vector <ofImage> imgs;
-    
-    
+    vector <unsigned char *> imgPixels;
+        
 };
 
 #endif
