@@ -23,12 +23,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     check=0;
     
     counter=0;
-    scanLinePosition=0; 
-    scanLineWidth = 5;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-    scanLineSpeed = 10;
-    
-    
-    
+  
     synthesisComplete=false;
 
     //you must call listCodecs();
@@ -41,6 +36,11 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
+        
+        scanLinePosition= 0; 
+        scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        scanLineSpeed = 10;
+        
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
         cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mp4";          
@@ -51,11 +51,17 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     
     if (whichAnalysis=="V_SHADOWSCAPES") {
+        scanLinePosition=0; 
+        scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        scanLineSpeed = 10;
        
     } 
     
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
+        scanLinePosition=0; 
+        scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        scanLineSpeed = 10;
         
     } 
     
@@ -472,7 +478,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 counter++;
                 cout<<counter<<"<<-- counter in COLOR_MULTI \n";
                 
-                ofSetColor(255.0-(255.0*(counter/3000.0)), abs((255.0*counter/3000.0)-255.0), 255.0*(counter/3000.0), 50); 
+                ofSetColor(255.0-(255.0*(counter/300.0)), abs((255.0*counter/300.0)-255.0), 255.0*(counter/300.0)); 
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
               
                 /*
@@ -481,7 +487,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 imgPixels.push_back(someLocalPixels);
                  */
                 
-                if (counter == 3000) {  
+                if (counter == 300) {  
                 /*
                     for (i = 0; i < counter; i++)  
                     {   
