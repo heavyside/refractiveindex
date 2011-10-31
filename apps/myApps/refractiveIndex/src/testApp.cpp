@@ -65,6 +65,7 @@ void testApp::setup(){
     analysisNames.push_back("D_SHADOWSCAPES");
     analysisNames.push_back("RELAXRATE");
     analysisNames.push_back("I_RESPONSE");
+    analysisNames.push_back("SHAPE_SHADING");
     analysisNames.push_back("M_CODE");
     analysisNames.push_back("CAM_FRAMERATE");
     analysisNames.push_back("CAM_NOISE");
@@ -102,6 +103,11 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){  
     ofBackground(0, 0, 0);
+    
+    string str = "framerate is "; 						
+    str += ofToString(ofGetFrameRate(), 2)+"fps"; 
+    ofSetWindowTitle(str);
+    //set the window title to "framerate"
     
     vidGrabber.grabFrame();
    

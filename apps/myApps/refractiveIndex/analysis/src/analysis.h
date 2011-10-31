@@ -20,7 +20,7 @@ class analysis{
     
     int myVariable;
         
-    void setupAnalysis(int camH, int camW, int timeLimiter, string whichAnalysis);//, ofVideoGrabber &grabber);
+    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
     void synthDrawCamRecord(unsigned char * pixels);
@@ -38,25 +38,31 @@ class analysis{
     vector<ofImage> returnFrames();
 
     ///Other
-   
-    int timeLimit;
-    int analysisTimer;
+    int analysisTime;
+
+    float animationTimeLimit;
+    float animationTime;
+    float lastTime;
+    float thisTime;
+    float timeDiff;
+    float fadeTime;
+    
+    int numberOfCameraImages;
+    
     unsigned char * analysedFrame;
-        
+    string dataPathName;
     string whichAnalysis;
 
     
     //FOR SYNTH
     bool newFrame;
     
-    //FOR ALL ANALYSIS
+    //FOR ANALYSIS
     bool synthesisComplete;
     bool analysed;
     
     ofxQtVideoSaver movieFromCamera;
-    
     ofImage cameraCapture;
-
     ofVideoPlayer player;
     
     int camHeight;
@@ -65,14 +71,18 @@ class analysis{
     
     int check;
     int i;
+    float counter2;
+    float counter2max;
+    float testFloat;
     
-    //FOR SHADOWSCAPES
-
     int counter;
+    int frameCounter;
     int scanLinePosition;
     int scanLineWidth;
     int scanLineSpeed;
-    
+
+    ofColor aColour; 
+
     vector <ofImage> imgs;
     vector <unsigned char *> imgPixels;
         
