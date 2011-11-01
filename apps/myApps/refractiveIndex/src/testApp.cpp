@@ -120,8 +120,11 @@ void testApp::update(){
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
-        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);  //Tom - I've removed this as it's currently redundant with the setupAnalysis below  -JA
- 
+        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);   //Tom - I've removed this 
+                                                                        //as it's currently redundant with the setupAnalysis in the analysis class below 
+                                                                        // but we should put it back later -JA
+                                                                        // k16GrayCodecType...
+
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
         
         //now we are setup lets analyse
@@ -139,7 +142,7 @@ void testApp::update(){
         // after 
         
         if(!masterAnalysis.analysed){
-            masterAnalysis.analyseInput(vidGrabber.getPixels());
+            //masterAnalysis.analyseInput(vidGrabber.getPixels());
         } else {
             menuState=4;
         }
@@ -147,8 +150,8 @@ void testApp::update(){
     
     //display analysis
     if(menuState==4){
-        masterAnalysis.setupMovie();
-        masterAnalysis.updatePlayer();  //playing the recorded movie file
+        //masterAnalysis.setupMovie();
+        //masterAnalysis.updatePlayer();  //playing the recorded movie file
     }
     
     gui.update();
@@ -161,7 +164,7 @@ void testApp::draw(){
     
     //if no analysis, draw grabber
     if(menuState==0){
-        vidGrabber.draw(0, 0);
+       // vidGrabber.draw(0, 0);
     }
     
     //continue to draw grabber in setup phase
@@ -191,7 +194,7 @@ void testApp::draw(){
 
     if(menuState==4){
         
-        masterAnalysis.displayResult();
+        //masterAnalysis.displayResult();
         
     }
 
@@ -225,14 +228,13 @@ void testApp::keyPressed(int key){
     if(key=='g'){
         showGui=!showGui;
     }
-    else{
+    
+    else {
     
         if(showGui){
             bool control_panel_ate_key = gui.keyPressed( key );
         }
-        
-        else{
-            
+        else {
         }
     }
 }
@@ -312,7 +314,6 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
     
     //more cam settings", "SETTINGS"
@@ -419,7 +420,7 @@ void testApp::keyReleased(int key){
     {
        ofToggleFullscreen(); 
     }
-    
+
 }
 
 //--------------------------------------------------------------
