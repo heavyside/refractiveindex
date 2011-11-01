@@ -20,7 +20,7 @@ class analysis{
     
     int myVariable;
         
-    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis);//, ofVideoGrabber &grabber);
+    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, int whichCodec);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
     void synthDrawCamRecord(unsigned char * pixels);
@@ -36,6 +36,15 @@ class analysis{
 
     void setupQuicktimeMovieRecord(int camH, int camW, int codec);
     vector<ofImage> returnFrames();
+    
+    //analysis specific functions (this makes me think that we should have seperate classes for at least some of these analyses
+    float returnGaussian(float x, float spread, float height, float centre, float range);
+    void linear(float maxResult, float maxTime, float divisions, bool showGraph);
+    float skewNormalDistribution(float x, float spread, float height, float max, float centre, float shiftCentre);
+    void squareWave(float maxResult, float maxTime, float divisions, bool showGraph);
+    void exponential(float maxResult, float maxTime, bool showGraph);
+    void quadratic(float maxResult, float maxTime, float divisions, bool showGraph);
+    void setupGraphs(); // not a great/clear name feel free to find a better one ;) 
 
     ///Other
     int analysisTime;
@@ -60,6 +69,15 @@ class analysis{
     //FOR ANALYSIS
     bool synthesisComplete;
     bool analysed;
+    
+    //FOR RELAXRATE
+    string whichGraph;
+    float 	graphCounter;
+    float level;
+    float limiter;
+    bool on;
+    int flip;
+    bool finishedGraph;
     
     ofxQtVideoSaver movieFromCamera;
     ofImage cameraCapture;
@@ -92,6 +110,8 @@ class analysis{
     
     vector <ofImage> imgs;
     vector <unsigned char *> imgPixels;
+    
+    
         
 };
 

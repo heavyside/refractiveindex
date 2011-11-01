@@ -38,10 +38,13 @@ public:
     vector<ofImage> resultsOfAnalysis;
    
     string analysisChooser;
+    int codecChooser;
+    int whichCodec;
+    vector<string> returnedCodecNames;
     //vars which hold camera and saver setup information
     int camWidth;
     int camHeight;
-    int whichCodec;
+   
     string codecName;
     int whichImage;
     int numOfInputs;
@@ -57,6 +60,7 @@ public:
     
     //global gui variables 
     int scanLineWidth;
+    string whichGraph;
     
     //menu state is the main control sequence variable should have the following modes
     /*

@@ -10,14 +10,14 @@ int movieNameCounter = 0;
 //from the camera, analysing the recorded data and outputting resulting info to the screen.
 
 ////////////////////////---------/////////////////////////////////////
-void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass){//, ofVideoGrabber &grabber){
+void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, int whichCodec){//, ofVideoGrabber &grabber){
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
 
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
     
     cout<<whichAnalysis<<" WHICH ANALYSIS AT SETUP\n";
-  
+    cout<<"chosen codec number "<<whichCodec<<"\r";
     camHeight=camH;
     camWidth=camW;
     check=0;
@@ -44,7 +44,10 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
         cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
-        movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
+        
+        movieFromCamera.setCodecType(whichCodec);
+        
+        //movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
         movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
                                                                                 // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
@@ -70,6 +73,9 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     if (whichAnalysis=="RELAXRATE") {
         //SETUP VIDEOSAVER
+        //this function initalises on the variables for the graphs
+        setupGraphs();
+        
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
         cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
         movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
@@ -274,16 +280,29 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         
         if(synthesisComplete==false){    
             
-         
+            //REPLACED THIS WITH CURVE RELAXES
             // white impulse 
-            ofSetColor(255-counter, 255-counter, 255-counter);               
-            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            //  ofSetColor(255-counter, 255-counter, 255-counter);               
+            // ofRect(0, 0, ofGetWidth(), ofGetHeight());
             
             //the below takes in the pixel as raw unsigned chars from the camera, 
             //stores these in a vector, until the on-screen synthesis is finished 
             //then the whole set of buffered images is written to a movie file
             
             //cout<<counter<<" <-- RELAXRATE COUNTER: \n";
+    
+            if(whichGraph=="LINEAR"){
+                linear(255, 100, 5, true);
+            }
+            if(whichGraph=="EXPONENTIAL"){
+                exponential(255, 100, true);
+            }
+            if(whichGraph=="SQUARE_WAVE"){
+                squareWave(255, 300, 15, true);
+            }
+            if(whichGraph=="QUADRATIC"){
+                quadratic(255, 100, 5, true);
+            }
             
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
             memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
@@ -295,8 +314,8 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
             
-            if(counter >= 255) { 
-                
+           // if(counter >= 255) { 
+            if(finishedGraph){
                 //cout<<" ** counter > 255 \n";
                 for (i = 0; i < counter; i++)
                 {
@@ -663,6 +682,229 @@ vector<ofImage> analysis::returnFrames(){
     //return buffer;
     
 }
+
+void analysis::setupGraphs(){
+    
+    graphCounter = 0;
+    limiter = 0;
+    on=false;
+    flip=1;    
+    level=0;
+    finishedGraph=false;
+}
+
+//actually just to the power of a square
+void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
+    if (limiter<maxTime) {
+        ofFill();
+        float yPos;
+        
+        float lightLevel=pow(level,2);
+        float mappedLightLevel = ofMap(lightLevel,0,pow(maxTime/2,2), 0,maxResult);
+        graphCounter++;
+        limiter++;
+        if (graphCounter< maxTime/2) {
+            level++;
+        }
+        else{
+            level--;
+        }
+        
+        ofSetColor(mappedLightLevel);
+        ofRect(0,0,ofGetWidth(),ofGetHeight());
+        
+        if(showGraph){
+            float localCount=0;
+            ofNoFill();
+            ofSetColor(255,0,0);
+            float xPos=ofMap(graphCounter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-1, xPos, ofGetHeight()-150);
+            ofBeginShape();
+            for(float i=0;i<maxTime;i++){
+                yPos=pow(localCount,2); 
+                float mappedY = ofMap(yPos,0,pow(maxTime/2,2), 0,maxResult);
+                ofVertex( ofMap(i, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-mappedY);
+                if (i<maxTime/2) {
+                    localCount++;
+                }
+                else{
+                    localCount--;
+                }
+            }
+            ofEndShape();
+        }
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+void analysis::quadratic(float maxResult, float maxTime, float divisions, bool showGraph){
+    if (limiter<maxTime) {
+    ofNoFill();
+    ofSetColor(255, 0, 0);
+    ofBeginShape();
+    for(float i=-maxTime/2;i<maxTime/2;i++){
+        
+        float yPos;
+        //makes it narrower
+        float a=.2;
+        
+        
+        float b=.2;
+        
+        //shifts up or down
+        float c=0;
+        
+        float x=i;
+        yPos= (a * pow(x,2)) + (b*x)+ c; 
+        
+        // ofVertex(ofMap(i+maxTime/2, 0,maxTime, 0, ofGetWidth()) , yPos);
+        ofVertex(i+maxTime/2 , yPos);
+        cout<<i+maxTime/2<<" "<<yPos<<" yPos \r";
+    }
+    ofEndShape();
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+void analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
+    float threshold=maxTime/divisions;
+    ofFill();
+    if (limiter<maxTime) {
+        
+        if(on){
+            ofSetColor(maxResult);
+        }
+        else{
+            ofSetColor(0);
+        }
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        
+        
+        graphCounter++;
+        limiter++;
+        //reset graphCounter and flip boolean
+        //maybe change this to a modulo
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            on=!on;
+        }
+   
+    
+    
+        if(showGraph){
+            int adjust=0;
+            //this is just to prove it's making a square wave ;) //it has a gradient of one pixel/height hence the "adjust" variable
+            int localCounter=0;
+            bool localOn=false;
+            ofBeginShape();
+            ofNoFill();
+            ofSetColor(255, 0, 0);
+            float xPos=ofMap(limiter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-1, xPos, ofGetHeight()-150);
+            for(int i=0;i<maxTime;i++){
+            
+                if(localOn){
+                    ofVertex(ofMap(i+adjust, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-maxResult);
+                }
+                else{
+                    ofVertex(ofMap(i+adjust, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-1);
+                }
+                localCounter++;
+                adjust=0;
+                if(localCounter>=threshold){
+                    localCounter=0;
+                    localOn=!localOn;
+                    adjust=-1;
+                }
+            }  
+            ofEndShape();
+        }
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+
+void analysis::linear( float maxResult, float maxTime, float divisions, bool showGraph){
+    
+    //it should change direction at every peak or trough
+    float threshold=maxTime/divisions;
+    
+    
+    float adder=maxResult/threshold;
+    level+=adder*flip;
+    ofFill();
+    
+    if (limiter<maxTime) {
+        ofSetColor(level);
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        graphCounter++;
+        limiter++;
+        
+        
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            flip*=-1;
+        }
+        
+        
+        
+        
+        if(showGraph){
+            ofSetColor(255, 0, 0);
+            ofNoFill();
+            float xPos=ofMap(limiter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-level+50, xPos, ofGetHeight()-level-50);
+            int localFlip=1;
+            int localCounter=0;
+            float localLevel=0;
+            
+            ofBeginShape();
+            
+            for (int i=0; i<maxTime; i++) {
+                cout<<adder<<" adder \r";
+                localLevel+=adder*localFlip;
+                
+                ofVertex( ofMap(i, 0, maxTime, 0, ofGetWidth()) ,  ofGetHeight()- localLevel);
+                
+                localCounter++;
+                if(localCounter>=threshold){
+                    localCounter=0;
+                    localFlip*=-1;
+                    
+                }
+                
+            }
+            ofEndShape();
+        }
+        
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+    
+}
+
+
+float analysis::returnGaussian(float x, float spread, float height,   float centre, float range){
+    float returnY;
+    
+    float e=2.718281828;
+    
+    float myPower=  - ( pow( (x-centre), 2) ) / (2* (spread*spread));
+    
+    returnY= - x* height * pow(e,myPower);
+    return returnY/range;
+}
+
 
 
 

@@ -14,6 +14,8 @@ void testApp::setup(){
     camHeight=480;
     ofSetFrameRate(30);
     ofSetVerticalSync(TRUE);
+    //set default codec
+    codecChooser=0;
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);
@@ -24,8 +26,6 @@ void testApp::setup(){
     //set initial report
     camStatus="camera not setup";
         
-    //get list of codecs from movie object in analysis class
-    vector<string> returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
     
     //talk to me about your troubles openframeworks
     ofSetLogLevel(OF_LOG_VERBOSE);  
@@ -78,11 +78,23 @@ void testApp::setup(){
     gui.setWhichColumn(2);
     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
     
+    //only 4 options for relax rate so far.
+    vector<string>graphNames;
+    graphNames.push_back("LINEAR");
+    graphNames.push_back("EXPONENTIAL");
+    graphNames.push_back("SQUARE_WAVE");
+    graphNames.push_back("QUADRATIC");
+    
+    gui.addTextDropDown("graph type", "GRAPH_TYPE", 130, graphNames);
+    
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
         
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
+    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
+    //get list of codecs from movie object in analysis class
+    returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
     
     //CURRENTLY UNUSED
     cout<<names[names.size()-1]<<" names at 2\n";
@@ -125,7 +137,7 @@ void testApp::update(){
                                                                         // but we should put it back later -JA
                                                                         // k16GrayCodecType...
 
-        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
+        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
         
         //now we are setup lets analyse
         menuState=2;
@@ -286,6 +298,9 @@ void testApp::eventsIn(guiCallbackData & data){
        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
+                //and make an argument for each one in the setupAnalysis
                 masterAnalysis.scanLineWidth=data.getFloat(k);
                 cout<<masterAnalysis.scanLineWidth<<"masterAnalysis.scanLineWidth \n";
             }
@@ -335,6 +350,20 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         showGui=false;
         menuState=1;
+    }
+    
+    //WHAT KIND OF GRAPH
+    if( data.getDisplayName()== "graph type" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_STRING ){
+                
+                //copy string straight into class
+                masterAnalysis.whichGraph=data.getString(k);
+                cout<<data.getString(k)<<" lets run tHIS analysis\n";    
+            }
+        }
+       
     }
     
     //CAM HEIGHT
@@ -393,19 +422,20 @@ void testApp::eventsIn(guiCallbackData & data){
     if( data.getDisplayName() == "codecs" ){
         cout<<"input selected\n";
         for(int k = 0; k < data.getNumValues(); k++){
-            if( data.getType(k) == CB_VALUE_FLOAT ){
-                printf("%i float  value = %f \n", k, data.getFloat(k));
-                
-            }
-            else if( data.getType(k) == CB_VALUE_INT ){
-                printf("%i int    value = %i \n", k, data.getInt(k));
-                //  camInput=data.getInt(k);
-                cout<<camInput<<" camInput \n";
-            }
-            else if( data.getType(k) == CB_VALUE_STRING ){
+      
+            if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
                 codecName=data.getString(k).c_str();
-                whichCodec=k;
+                cout<<codecName;
+                //compare the string returned from the gui to get the number so we can pass this into the analysis setup
+                for(int i=0;i<returnedCodecNames.size();i++){
+                    
+                    if(returnedCodecNames[i]==codecName){
+                        codecChooser=i;
+                    }
+                }
+                
+                
             }
         }
     }
