@@ -583,7 +583,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             cout<<counter<<"<<- counter COLOR_SINGLE \n";
   //        cout<<counterMax/3<<"<<- counterMax/3 COLOR_SINGLE \n";
             
-            if (0 <= counter < 100)  {
+            if (0 <= counter && counter < 100)  {
                 //cout<<"counter < counterMax/3 \n";
                 //red 
                 ofSetColor(255, 0, 0);
@@ -612,7 +612,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 
             } 
             
-            if (100 <= counter < 200) {
+            if (100 <= counter && counter < 200) {
                  //cout<<"counterMax/3 <= counter <= 2*counterMax/3 \n";
                 // green
                 ofSetColor(0, 255, 0);
@@ -640,7 +640,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 */
             } 
             
-            if (200 <= counter < 300) {
+            if (200 <= counter && counter < 300) {
                 
                 // blue
                 ofSetColor(0, 0, 255);
