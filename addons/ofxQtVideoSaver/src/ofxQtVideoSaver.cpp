@@ -234,14 +234,9 @@ void ofxQtVideoSaver::setup( int width , int height, string movieName){
         goto bail; 
     }
     
-    
-    
 	bSetupForRecordingMovie = true;
-    return;
-    
-    
-    
-    
+    return;    
+
 bail:    
 	printf("got to bail somehows \n");
     if (sResRefNum != 0) CloseMovieFile (sResRefNum);
@@ -489,8 +484,6 @@ void ofxQtVideoSaver::addFrame(unsigned char* data, float frameLengthInSecs){
         printf ("AddMediaSample failed %d\n", osErr); 
         //goto bail; 
     }
-    
-    
     return;
     
 bail:

@@ -280,10 +280,8 @@ void testApp::eventsIn(guiCallbackData & data){
     cout<<thisName<<" this Name\n";
     
     //SCAN LINE WIDTH 
-    //
-    //  testing github
+    //testing github
     if( thisName == "scan line width" ){
-       
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 masterAnalysis.scanLineWidth=data.getFloat(k);
@@ -293,7 +291,6 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
     
     
@@ -448,4 +445,3 @@ void testApp::mouseReleased(int x, int y, int button){
 void testApp::windowResized(int w, int h){
     
 }
-

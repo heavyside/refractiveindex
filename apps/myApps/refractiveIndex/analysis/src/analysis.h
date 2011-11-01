@@ -76,6 +76,7 @@ class analysis{
     float testFloat;
     
     int counter;
+    int counterMax;
     int frameCounter;
     int localFrameCounter;
     int scanLinePosition;
@@ -83,8 +84,10 @@ class analysis{
     int scanLineSpeed;
 
     int framesPerGreyValue;
-
-    ofColor aColour; 
+    int framesPerColourValue;
+    
+    ofColor aColour;
+    ofColor bColour;
     float rValue;
     float gValue;
     float bValue;
