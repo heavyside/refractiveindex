@@ -120,8 +120,11 @@ void testApp::update(){
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
-        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);  //Tom - I've removed this as it's currently redundant with the setupAnalysis below  -JA
- 
+        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);   //Tom - I've removed this 
+                                                                        //as it's currently redundant with the setupAnalysis in the analysis class below 
+                                                                        // but we should put it back later -JA
+                                                                        // k16GrayCodecType...
+
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
         
         //now we are setup lets analyse
@@ -225,14 +228,13 @@ void testApp::keyPressed(int key){
     if(key=='g'){
         showGui=!showGui;
     }
-    else{
+    
+    else {
     
         if(showGui){
             bool control_panel_ate_key = gui.keyPressed( key );
         }
-        
-        else{
-            
+        else {
         }
     }
 }
@@ -419,6 +421,8 @@ void testApp::keyReleased(int key){
     {
        ofToggleFullscreen(); 
     }
+    
+    
     
 }
 

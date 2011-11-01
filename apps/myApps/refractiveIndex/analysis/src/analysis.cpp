@@ -27,7 +27,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     synthesisComplete=false;
 
     //you must call listCodecs();
-    //movieFromCamera.listCodecs();    
+    movieFromCamera.listCodecs();    
 
     //probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
     dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
@@ -43,8 +43,10 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mp4";          
-        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_NORMAL);
+        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
+        movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
+        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
+                                                                                // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
         movieNameCounter++;
     }
@@ -69,13 +71,14 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="RELAXRATE") {
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mp4";          
-        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_NORMAL);
+        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
+        movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
+        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
+        // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
         movieNameCounter++;
-    } 
-    
 
+    } 
     
     if (whichAnalysis=="I_RESPONSE") {
         lastTime = ofGetElapsedTimeMillis();
@@ -87,12 +90,28 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         numberOfCameraImages = 10;  //the lower this number the more camera images we get per white level shown
         counter2max = 5;   //the number of grey levels we want to look at
         counter2 = counter2max; 
-        
-      
-    } //etc...
+    }
     
+    if (whichAnalysis=="SHAPE_SHADING") {
 
     
+    } 
+
+    if (whichAnalysis=="M_CODE") {
+        
+        
+    } 
+
+    if (whichAnalysis=="CAM_FRAMERATE") {
+        
+        
+    } 
+    
+    if (whichAnalysis=="CAM_NOISE") {
+        frameCounter = 0;
+        framesPerGreyValue = 3;
+    } 
+
 }
 
 
@@ -249,9 +268,16 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //The analysis as a whole going to require some kind of "wait state" for us to be able to keep something on the screen 
     //for long enough to get an average overall light reading?  i.e: cosmic latte?
     
+    
+    //*************  I THINK THIS IS THE MOST PROMISING WAY TO DO THE FILE SAVING - although it could be heavily RAM dependent?! **********//
     if(whichAnalysis=="RELAXRATE"){
         
         if(synthesisComplete==false){    
+            
+         
+            // white impulse 
+            ofSetColor(255-counter, 255-counter, 255-counter);               
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
             
             //the below takes in the pixel as raw unsigned chars from the camera, 
             //stores these in a vector, until the on-screen synthesis is finished 
@@ -265,9 +291,6 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             
             counter++;
             
-            // white impulse 
-            ofSetColor(255-counter, 255-counter, 255-counter);               
-            ofRect(0, 0, ofGetWidth(), ofGetHeight());
             
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
@@ -288,8 +311,10 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 scanLinePosition=0;
                 counter=0;
                 synthesisComplete=true; 
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
+
+                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
             }
+            
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
@@ -324,8 +349,8 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 
                 thisTime = ofGetElapsedTimeMillis(); 
                 timeDiff = thisTime-lastTime; 
-                cout<<timeDiff<<"<-- timeDiff \n";
-                cout<<counter2<<"<-- counter2 \n";
+                //cout<<timeDiff<<"<-- timeDiff \n";
+                //cout<<counter2<<"<-- counter2 \n";
            
                 if (timeDiff < animationTimeLimit) {
                       
@@ -346,21 +371,21 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                         memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
                         imgPixels.push_back(someLocalPixels);
                         frameCounter++;  
-                        cout<<frameCounter<<"<-- frameCounter \n";     
+                        //cout<<frameCounter<<"<-- frameCounter \n";     
                     }
                     
                 } else if ((timeDiff >= animationTimeLimit) && (timeDiff <= animationTimeLimit+fadeTime) ){
-                    cout<<"<-- inside first else if \n";
+                    //cout<<"<-- inside first else if \n";
                     
                     //ofSetColor((255.0*(counter2/counter2max))-(timeDiff/3000.0),(255.0*(counter2/counter2max))-(timeDiff/3000.0),(255.0*(counter2/counter2max))-(timeDiff/3000.0)); 
                     testFloat = (255.0*(counter2/counter2max))-(255.0*(counter2/counter2max)*(timeDiff-animationTimeLimit)/(fadeTime));
-                    cout<<testFloat<<"<-- (255.0*(counter2/counter2max))-255*(timeDiff/3000.0); \n";
+                    //cout<<testFloat<<"<-- (255.0*(counter2/counter2max))-255*(timeDiff/3000.0); \n";
                 
                     ofSetColor(testFloat,testFloat, testFloat);                     
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
                     
                 } else if (timeDiff > (animationTimeLimit+fadeTime)) {
-                    cout<<"<-- inside first else if \n";
+                   // cout<<"<-- inside second else if \n";
                     ofSetColor(0, 0, 0);               
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
 
@@ -369,7 +394,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     
                     for (i = 0; i < frameCounter; i++)
                     {
-                        cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
+                        //cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
                         cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
                         cameraCapture.saveImage(whichAnalysis+"_"+ofToString(counter2)+"_"+ofToString(i)+".jpg");
                     }
@@ -377,20 +402,20 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     imgPixels.clear(); //empty out the vector            
                     frameCounter=0;
                     counter=0;
-                    cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
                     lastTime = ofGetElapsedTimeMillis();
                     counter2--;
                 }      
             } else {
                     synthesisComplete = true;
-                     
+                    cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
+ 
             }
     } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
     }
     }       
     
-    //skkpping this one for the moment...
+    //skkpping this one for the moment...  This is going to be complicated - hoping for help from DAVID G
     if(whichAnalysis=="SHAPE_SHADING"){
         
         if(synthesisComplete == FALSE ){    
@@ -402,7 +427,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 
     }    
     
-    //skkpping this one for the moment...
+    //skkpping this one for the moment...  Leave for TOM
     if(whichAnalysis=="M_CODE"){
         
         if(synthesisComplete == FALSE ){    
@@ -414,7 +439,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 
     }
     
-    //skkpping this one for the moment...
+    //skkpping this one for the moment...  Waiting for Tom's strobe function
     if(whichAnalysis=="CAM_FRAMERATE"){
         
         if(synthesisComplete == FALSE ){    
@@ -426,16 +451,70 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 
     }
     
-    //skkpping this one for the moment...
+    //skkpping this one for the moment...  
     if(whichAnalysis=="CAM_NOISE"){
         
-        if(synthesisComplete == FALSE ){    
+        if(synthesisComplete==false){    
+            
+            //the below takes in the pixel as raw unsigned chars from the camera, 
+            //stores these in a vector, until the on-screen synthesis is finished 
+            //then the whole set of buffered images is written to a movie file
+        
+            counter2 = 5.0;  //this number sets the number of grey levels that are shown             
+            greyValue = 255.0-((255.0/counter2)*(int)((counter2+1)*(double)counter/255.0));
+    
+            // white impulse 
+            ofSetColor(greyValue, greyValue, greyValue);
+        
+            //cout<<counter<<" <-- CAM_NOISE COUNTER: \n";
+            //cout<<((255.0/counter2)*(int)((counter2+1)*(double)counter/255.0))<<" <-- CAM_NOISE math thing \n";
+            
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            
+            cout << greyValue-oldGreyValue<<" <-- CAM_NOISE greyValue-oldGreyValue \n";
+
+            if (greyValue != oldGreyValue){  //if we have a new grey value on screen - grab three frames
+
+                for (i=0; i < framesPerGreyValue; i++)  //number of camera frames per output grey value 
+                {
+                    unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
+                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+                    imgPixels.push_back(someLocalPixels);  
+                    frameCounter++;
+                }
+                oldGreyValue = greyValue;
+            }
+            
+            counter++;
+
+            //once we've finished synthesis and capturing all the frames into RAM, we can then write the
+            //image vectors "imgs" backinto a quicktime movie...
+            
+            if(counter >= 255) {
+                
+                for (i = 0; i < frameCounter; i++)
+                {
+                    for (j = 0; j < framesPerGreyValue; j++)
+                    {
+                    //cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
+                    cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
+                    cameraCapture.saveImage(whichAnalysis+"_"+ofToString(j)+"_"+ofToString(i)+".jpg");
+                    }
+                }
+                
+                imgPixels.clear(); //empty out the vector            
+                frameCounter=0;
+                counter=0;
+                synthesisComplete=true; 
+                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
+            }
+            
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
-
+        
+        
     }
     
     //skkpping this one for the moment...
@@ -476,7 +555,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 //need a way to slow this down - i.e.: either by changing the color more slowly or by leaving the rectangle on screen longer after color is set
                               
                 counter++;
-                cout<<counter<<"<<-- counter in COLOR_MULTI \n";
+                //cout<<counter<<"<<-- counter in COLOR_MULTI \n";
                 
                 ofSetColor(255.0-(255.0*(counter/300.0)), abs((255.0*counter/300.0)-255.0), 255.0*(counter/300.0)); 
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
@@ -584,3 +663,60 @@ vector<ofImage> analysis::returnFrames(){
     //return buffer;
     
 }
+
+
+
+//CODEC LISTING 
+/*
+ k32AlphaGrayCodecType
+k422YpCbCr10CodecType
+k422YpCbCr16CodecType
+k422YpCbCr8CodecType
+k4444YpCbCrA8CodecType
+k4444YpCbCrA8RCodecType
+k444YpCbCr10CodecType
+k444YpCbCr8CodecType
+k48RGBCodecType
+k64ARGBCodecType
+kAnimationCodecType
+kBaseCodecType
+kCinepakCodecType
+kCloudCodecType
+kCMYKCodecType
+kComponentVideoCodecType
+kComponentVideoSigned
+kComponentVideoUnsigned
+kDVCNTSCCodecType
+kDVCPALCodecType
+kDVCProNTSCCodecType
+kDVCProPALCodecType
+kFireCodecType
+kFLCCodecType
+kGIFCodecType
+kGraphicsCodecType
+kH261CodecType
+kH263CodecType
+kIndeo4CodecType
+kJPEGCodecType
+kMacPaintCodecType
+kMicrosoftVideo1CodecType
+kMotionJPEGACodecType
+kMotionJPEGBCodecType
+kMpegYUV420CodecType
+kPhotoCDCodecType
+kPlanarRGBCodecType
+kPNGCodecType
+kQuickDrawGXCodecType
+kRawCodecType
+kSGICodecType
+kSorenson3CodecType
+kSorensonCodecType
+kSorensonYUV9CodecType
+kTargaCodecType
+kTIFFCodecType
+kVideoCodecType
+kWaterRippleCodecType
+kYUV420CodecType
+        
+        */
+

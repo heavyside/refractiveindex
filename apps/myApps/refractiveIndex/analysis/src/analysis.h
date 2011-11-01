@@ -70,7 +70,7 @@ class analysis{
     string cameraMovieName;
     
     int check;
-    int i;
+    int i,j,k;
     float counter2;
     float counter2max;
     float testFloat;
@@ -81,8 +81,15 @@ class analysis{
     int scanLineWidth;
     int scanLineSpeed;
 
-    ofColor aColour; 
+    int framesPerGreyValue;
 
+    ofColor aColour; 
+    float rValue;
+    float gValue;
+    float bValue;
+    float greyValue;
+    float oldGreyValue;
+    
     vector <ofImage> imgs;
     vector <unsigned char *> imgPixels;
         
