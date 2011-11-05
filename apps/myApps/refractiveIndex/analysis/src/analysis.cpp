@@ -48,21 +48,17 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
         movieNameCounter++;
     }
-    
-    
+
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         scanLineSpeed = 10;
-       
-    } 
-    
+    }     
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         scanLineSpeed = 10;
-        
     } 
     
     if (whichAnalysis=="RELAXRATE") {
@@ -90,16 +86,13 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     if (whichAnalysis=="SHAPE_SHADING") {
 
-    
     } 
 
-    if (whichAnalysis=="M_CODE") {
-        
+    if (whichAnalysis=="M_CODE") {        
         
     } 
 
     if (whichAnalysis=="CAM_FRAMERATE") {
-        
         
     } 
     
@@ -113,20 +106,36 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         k=1;// need to get my frames
     } 
     
-    
-    
     if (whichAnalysis=="COLOR_SINGLE") {
        
         frameCounter = 0;
         framesPerColourValue = 5;
         localFrameCounter = 0;
+        gotAllLocalFrames1 = false;  //should generalise these based on the # of colors we want to use
+        gotAllLocalFrames2 = false;
+        gotAllLocalFrames3 = false;
         counterMax = 300.0;
         counter = 0;
     } 
 
+    if (whichAnalysis=="PHYS_TEST") {
+     
+    } 
 
+    
+    if (whichAnalysis=="COLOR_MULTI") {
+        frameCounter = 0;
+        localFrameCounter = 0;
+        gotAllLocalFrames1 = false;
+        counterMax = 500.;
+        counter = 0;
+        cHue = 0;
+    } 
+    
+    if (whichAnalysis=="DIFF_NOISE") {
+  
+    } 
 }
-
 
 ////////////////////////---------/////////////////////////////////////
 //SYNTH METHODS
@@ -137,7 +146,21 @@ void analysis::synthUpdate(){
     
 }
 
-
+/*
+1 analysisNames.push_back("H_SHADOWSCAPES");
+2 analysisNames.push_back("V_SHADOWSCAPES");
+3 analysisNames.push_back("D_SHADOWSCAPES");
+4 analysisNames.push_back("RELAXRATE");
+5 analysisNames.push_back("I_RESPONSE");
+6 analysisNames.push_back("SHAPE_SHADING");
+7 analysisNames.push_back("M_CODE");
+8 analysisNames.push_back("CAM_FRAMERATE");
+9 analysisNames.push_back("CAM_NOISE");
+10 analysisNames.push_back("COLOR_SINGLE");
+11 analysisNames.push_back("PHYS_TEST");
+12 analysisNames.push_back("COLOR_MULTI");
+13 analysisNames.push_back("DIFF_NOISE");
+*/
 
 
 void analysis::synthDrawCamRecord(unsigned char * pixels){
@@ -173,11 +196,11 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             }   
             
         } else { 
+            
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
+            
         }
-       
     }
-    
     
     //The V_SHADOWSCAPES synth and record method below loads the individual frames as images 
     
@@ -522,7 +545,6 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     localFrameCounter=0;
                     k=0;
                 }
-                
             }  else {
                 k = 1; 
             }
@@ -542,7 +564,6 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             
             //      oldGreyValue = greyValue;
             //  }
-            
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
             
@@ -551,7 +572,6 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 for (i = 0; i < frameCounter; i++)
                 {
                         //cout<<i<<"< i in CAM_NOISE ** frames being written to images \n";
-                       
                         //cout << i/framesPerGreyValue << " frameCounter/framesPerGreyValue \n";
                         //cout << i%framesPerGreyValue << " frameCounter%framesPerGreyValue \n";
                         cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
@@ -562,14 +582,11 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 frameCounter=0;
                 counter=0;
                 synthesisComplete=true; 
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
+                //cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
             }
-            
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        
-        
     }
    
 
@@ -577,127 +594,112 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     if(whichAnalysis=="COLOR_SINGLE"){
         
         if(synthesisComplete==false){    ///may have to add a little thing in here that ensures the camera buffer (of frames) is empty
-         
             counter++;
-     
-            cout<<counter<<"<<- counter COLOR_SINGLE \n";
-  //        cout<<counterMax/3<<"<<- counterMax/3 COLOR_SINGLE \n";
+            cout<<counter<<"<<-- counter COLOR_SINGLE \n";
+            // cout<<counterMax/3<<"<<- counterMax/3 COLOR_SINGLE \n";
             
             if (0 <= counter && counter < 100)  {
                 //cout<<"counter < counterMax/3 \n";
                 //red 
                 ofSetColor(255, 0, 0);
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
-                /*
-                if ((localFrameCounter < framesPerColourValue))
+                
+                if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames1) )
                 {
-                    if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
-                    {
+                 //  if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
+                 //  {
                         //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
                         //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
                         unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
                         memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
                         imgPixels.push_back(someLocalPixels);
-                        
                         localFrameCounter++;  
-                        //cout<<localFrameCounter<<"<-- frameCounter \n";    
+                        //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
                         frameCounter++;
-                        //cout<<frameCounter<<"<-- frameCounter \n";   
-                        
-                    }
+                        cout<<frameCounter<<"<-- frameCounter \n";
+                  // }
                 } else {
-                    localFrameCounter=0;
+                    gotAllLocalFrames1 = true;
+                    localFrameCounter = 0;
                 }
-                */
-                
-            } 
+            }
             
             if (100 <= counter && counter < 200) {
                  //cout<<"counterMax/3 <= counter <= 2*counterMax/3 \n";
                 // green
+                
                 ofSetColor(0, 255, 0);
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
-                /*
-                if ((localFrameCounter < framesPerColourValue))
+                
+                if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames2) )
                 {
-                    if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
-                    {
-                        //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
-                        //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
-                        unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
-                        imgPixels.push_back(someLocalPixels);
-                        
-                        localFrameCounter++;  
-                        //cout<<localFrameCounter<<"<-- frameCounter \n";    
-                        frameCounter++;
-                        //cout<<frameCounter<<"<-- frameCounter \n";   
-                        
-                    }
+                    //  if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
+                    //  {
+                    //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
+                    //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
+                    unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
+                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+                    imgPixels.push_back(someLocalPixels);
+                    localFrameCounter++;  
+                    //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
+                    frameCounter++;
+                    cout<<frameCounter<<"<-- frameCounter \n";
+                    // }
                 } else {
-                    localFrameCounter=0;
+                    gotAllLocalFrames2 = true;
+                    localFrameCounter = 0;
                 }
-                */
             } 
             
             if (200 <= counter && counter < 300) {
                 
+                
                 // blue
                 ofSetColor(0, 0, 255);
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
-                /*
-                if ((localFrameCounter < framesPerColourValue))
-                {
-                    if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
-                    {
-                        //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
-                        //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
-                        unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
-                        imgPixels.push_back(someLocalPixels);
-                        
-                        localFrameCounter++;  
-                        //cout<<localFrameCounter<<"<-- frameCounter \n";    
-                        frameCounter++;
-                        //cout<<frameCounter<<"<-- frameCounter \n";   
-                        
-                    }
-                } else {
-                    localFrameCounter=0;
-                }
-                */
-            } 
-         /*   
-            else {
-                ofSetColor(255, 255,255);
-                ofRect(0, 0, ofGetWidth(), ofGetHeight());
-            }
-           */ 
-            /*
-            if(counter >= counterMax) {
                 
+                if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames3) )
+                {
+                    //  if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
+                    //  {
+                    //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
+                    //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
+                    unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
+                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+                    imgPixels.push_back(someLocalPixels);
+                    localFrameCounter++;  
+                    //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
+                    frameCounter++;
+                    cout<<frameCounter<<"<-- frameCounter \n";
+                    // }
+                } else {
+                    gotAllLocalFrames3 = true;
+                    localFrameCounter = 0;
+                }
+            } 
+
+            if(counter >= counterMax) {
+                cout<<"counter >= counterMax in COLOR_SINGLE \n";
+
                 for (i = 0; i < frameCounter; i++)
                 {
-                    //cout<<i<<"< i in CAM_NOISE ** frames being written to images \n";
-                    
+                    //cout<<i<<"< i in COLOR_SINGLE ** frames being written to images \n";
                     //cout << i/framesPerGreyValue << " frameCounter/framesPerGreyValue \n";
                     //cout << i%framesPerGreyValue << " frameCounter%framesPerGreyValue \n";
                     cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
-                    cameraCapture.saveImage(whichAnalysis+"_"+ofToString(i/framesPerGreyValue)+"_"+ofToString(i)+".jpg");
+                    cameraCapture.saveImage(whichAnalysis+"_"+ofToString(i)+"_"+ofToString(i)+".jpg");
                 }
                 cameraCapture.clear();
                 imgPixels.clear(); //empty out the vector            
                 frameCounter=0;
                 counter=0;
                 synthesisComplete=true; 
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
+                // cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
             }
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-        */
         }
-             
     }
     
     
@@ -719,43 +721,62 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     if(whichAnalysis=="COLOR_MULTI"){
         
         if(synthesisComplete == FALSE ){    
-          
+               
+            cHue = 255.0*(float)counter/(float)counterMax; 
 
-                //  aColour.setHsb(0,255,255); 
+            //ofColor.setHsb(float hue, float saturation, float brightness)
+            aColour.setHsb(cHue, 255., 255.); 
             
-                //this isn't the right way to move through the hues - just testing for speed at the moment
-                //need a way to slow this down - i.e.: either by changing the color more slowly or by leaving the rectangle on screen longer after color is set
-                              
-                counter++;
-                //cout<<counter<<"<<-- counter in COLOR_MULTI \n";
-                
-                ofSetColor(255.0-(255.0*(counter/300.0)), abs((255.0*counter/300.0)-255.0), 255.0*(counter/300.0)); 
-                ofRect(0, 0, ofGetWidth(), ofGetHeight());
-              
-                /*
+            counter++;
+            cout<<counter<<" <<-- counter in COLOR_MULTI \n";
+            
+            //ofSetColor(255.0-(255.0*(counter/300.0)), abs((255.0*counter/300.0)-255.0), 255.0*(counter/300.0)); 
+
+            ofSetColor(aColour); 
+            //cout<<aColour<<"<<-- aColour in COLOR_MULTI \n";
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            
+            // Want to test here if we have a 'new' hue - i.e.: 0, 1, 2,... 254, 255 
+            // - and capture frames only when you have this new hue
+
+            // How best to test "is this an integer"?
+            
+            // cout << ( (int)cHue/cHue ) << " <<-- (int)cHue in COLOR_MULTI \n";
+            // if( ( (int)cHue%255 < 255 ) && !gotAllLocalFrames1){
+            
                 unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
                 memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
                 imgPixels.push_back(someLocalPixels);
-                 */
-                
-                if (counter == 300) {  
-                /*
-                    for (i = 0; i < counter; i++)  
-                    {   
-                        //cout<<i<<"< i in COLOR_MULTI ** frames being written to images \n";
-                        cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
-                        cameraCapture.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
-                    }
-
-                    imgPixels.clear(); //empty out the vector
-                 */
-                    counter=0;
-                }
+                localFrameCounter++;
+                gotAllLocalFrames1 = true;                
             
-            //synthesisComplete=true; 
-        
+            // } else {
+                
+            //    gotAllLocalFrames1 = false;
+                
+            // }
+                    
+            if (counter >= counterMax) {  
+                
+                cout << counter << " <<-- counter >= counterMax in COLOR_MULTI \n";
+                
+                for (i = 0; i < localFrameCounter; i++)  
+                {   
+                    //cout<<i<<"< i in COLOR_MULTI ** frames being written to images \n";
+                    cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
+                    cameraCapture.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
+                }
+                
+                imgPixels.clear(); //empty out the vector
+                counter = 0;
+                synthesisComplete = TRUE;
+                
+            }
+
         } else {
+            
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
+        
         }
 
     }
@@ -769,17 +790,65 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 // the output of this could be another video file, or a live rendering of the data
 void analysis::analyseInput(unsigned char * pixels){
     
-    if(whichAnalysis=="H_SHADOWSCAPES"){  
-                      
+    //Analysis for the specific analyses as needed...    
+    if (whichAnalysis=="H_SHADOWSCAPES") {
+        
     }
     
-    if(whichAnalysis=="V_SHADOWSCAPES"){  
+    if (whichAnalysis=="V_SHADOWSCAPES") {
+        
+    }     
+    
+    if (whichAnalysis=="D_SHADOWSCAPES") {
+
+    } 
+    
+    if (whichAnalysis=="RELAXRATE") {
+
+    } 
+    
+    if (whichAnalysis=="I_RESPONSE") {
+
+    }
+    
+    if (whichAnalysis=="SHAPE_SHADING") {
+        
+    } 
+    
+    if (whichAnalysis=="M_CODE") {        
+        
+    } 
+    
+    if (whichAnalysis=="CAM_FRAMERATE") {
+        
+    } 
+    
+    if (whichAnalysis=="CAM_NOISE") {
+        // load a first image - take the pixel value from each subsequent frame taken at each grey value
+        
+        // the differenced images - create z-map - overlay on the original images
+        
+    
+    } 
+    
+    if (whichAnalysis=="COLOR_SINGLE") {
+        
+        
+        
+        
+    } 
+    
+    if (whichAnalysis=="PHYS_TEST") {
         
     }
+    
+    if (whichAnalysis=="COLOR_MULTI") {
+      
+    } 
+    
+    if (whichAnalysis=="DIFF_NOISE") {
         
-    if(whichAnalysis=="D_SHADOWSCAPES"){  
-        
-    }
+    } 
 
 }
 
@@ -790,24 +859,17 @@ void analysis::analyseInput(unsigned char * pixels){
 void analysis::displayResult(){
     
     if(whichAnalysis=="H_SHADOWSCAPES"){ 
-        
         player.draw(0, 0, camWidth, camHeight);
-        
     }
     
     if(whichAnalysis=="V_SHADOWSCAPES"){ 
-        
         player.draw(0, 0, camWidth, camHeight);
-        
     }
     
     if(whichAnalysis=="D_SHADOWSCAPES"){ 
-        
         player.draw(0, 0, camWidth, camHeight);
-        
     }
 }
-
 
 
 //Setup the movie for playback
@@ -817,7 +879,6 @@ void analysis::setupMovie(){
             player.play();
         }
 }
-
 
 //below isn't being used - but could pull the 'setup' functions from analysis setup above into this we want...
 void analysis::setupQuicktimeMovieRecord(int camH, int camW, int codec){
@@ -835,8 +896,6 @@ vector<ofImage> analysis::returnFrames(){
     //return buffer;
     
 }
-
-
 
 //CODEC LISTING 
 /*

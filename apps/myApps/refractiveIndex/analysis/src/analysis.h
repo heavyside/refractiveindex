@@ -53,10 +53,9 @@ class analysis{
     string dataPathName;
     string whichAnalysis;
 
-    
-    //FOR SYNTH
     bool newFrame;
-    
+    bool gotAllLocalFrames1,gotAllLocalFrames2,gotAllLocalFrames3 ;
+
     //FOR ANALYSIS
     bool synthesisComplete;
     bool analysed;
@@ -91,6 +90,7 @@ class analysis{
     float rValue;
     float gValue;
     float bValue;
+    float cHue;
     float greyValue;
     float oldGreyValue;
     float numberOfGreyLevels;
