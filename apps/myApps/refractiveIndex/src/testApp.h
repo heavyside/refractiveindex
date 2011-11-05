@@ -59,8 +59,12 @@ public:
     int mouseX, mouseY;
     
     //global gui variables 
+    
+    //pointer to gui
+    guiTypeTextInput *tl;
     int scanLineWidth;
     string whichGraph;
+    bool showGraphLine;
     
     //menu state is the main control sequence variable should have the following modes
     /*

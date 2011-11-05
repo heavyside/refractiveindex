@@ -78,6 +78,22 @@ class analysis{
     bool on;
     int flip;
     bool finishedGraph;
+    float maxResultA; 
+    float maxTimeA; 
+    float divisionsA; 
+    bool showGraphA;
+    
+    //FOR M_CODE
+    string morseMessage;
+    //these vectors hold the dots and dashes of morse (morseCode)  and its equivalent character (textTranslation)
+    vector<string> morseCode;
+    vector<string> textTranslation;
+    int onCounter;
+    int offCounter;
+    int pauseBetween;
+    void loadMorse();
+    void showMorse(string message);
+    string translateToMorse(string messageToTranslate);
     
     ofxQtVideoSaver movieFromCamera;
     ofImage cameraCapture;

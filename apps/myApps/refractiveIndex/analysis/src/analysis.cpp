@@ -30,20 +30,30 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     movieFromCamera.listCodecs();    
 
     //probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
-    dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
-    ofSetDataPathRoot(dataPathName);
+    //TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
+    
+    
+    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
+    
+  //  dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
+  //  dataPathName=ofToDataPath("")+"MEDIA";
+  //  ofSetDataPathRoot(dataPathName);
     
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
         
         scanLinePosition= 0; 
-        scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
+        //scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        //because this is called after the gui sets this - that's why ;) 
+        
+       // scanLineSpeed is now set in gui for all shadowscapes
+      //  scanLineSpeed = 10;
         
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
+        //cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
+         cameraMovieName = ofToString(ofGetDay())+"_"+ofToString(ofGetHours())+"_"+ofToString(ofGetMinutes())+"_"+ofToString(ofGetSeconds())+whichAnalysis+ofToString(movieNameCounter)+".mov";   
         
         movieFromCamera.setCodecType(whichCodec);
         
@@ -58,7 +68,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
+      //  scanLineSpeed = 10;
        
     } 
     
@@ -66,7 +76,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="D_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
+       // scanLineSpeed = 10;
         
     } 
     
@@ -88,7 +98,8 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     if (whichAnalysis=="I_RESPONSE") {
         lastTime = ofGetElapsedTimeMillis();
-        animationTimeLimit = 3000;  //milliseconds
+        //amimationTimeLimit is now set in GUI
+       // animationTimeLimit = 3000;  //milliseconds
         timeDiff = 0;
         counter = 0;
         frameCounter = 0;
@@ -99,12 +110,19 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     }
     
     if (whichAnalysis=="SHAPE_SHADING") {
-
+        
     
     } 
 
     if (whichAnalysis=="M_CODE") {
-        
+        //im going to borrow some of these variables
+        setupGraphs();
+        onCounter=0;
+        offCounter=0;
+        pauseBetween=0;
+        //load morse code from text file 
+        loadMorse();
+        morseMessage=translateToMorse(morseMessage);
         
     } 
 
@@ -290,19 +308,33 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //then the whole set of buffered images is written to a movie file
             
             //cout<<counter<<" <-- RELAXRATE COUNTER: \n";
+            
+            cout<<"max result and maxtime "<<maxResultA<<" "<< maxTimeA<<" "<<divisionsA<<"\r";
+             if(whichGraph=="LINEAR"){
+             linear(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
+             if(whichGraph=="EXPONENTIAL"){
+             exponential(maxResultA, maxTimeA, showGraphA);
+             }
+             if(whichGraph=="SQUARE_WAVE"){
+             squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
+             if(whichGraph=="QUADRATIC"){
+             quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
     
-            if(whichGraph=="LINEAR"){
+          /*  if(whichGraph=="LINEAR"){
                 linear(255, 100, 5, true);
             }
             if(whichGraph=="EXPONENTIAL"){
                 exponential(255, 100, true);
             }
             if(whichGraph=="SQUARE_WAVE"){
-                squareWave(255, 300, 15, true);
+                squareWave(255, 100, 5, true);
             }
             if(whichGraph=="QUADRATIC"){
                 quadratic(255, 100, 5, true);
-            }
+            }*/
             
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
             memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
@@ -315,14 +347,17 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //image vectors "imgs" backinto a quicktime movie...
             
            // if(counter >= 255) { 
+            
+            
             if(finishedGraph){
+                cout<<"TRYING TO START WRITING OUT BUFFER\r";
                 //cout<<" ** counter > 255 \n";
                 for (i = 0; i < counter; i++)
                 {
                     //cout<<i<<"< i in RELAXRATE ** frame add counter \n";
                     movieFromCamera.addFrame(imgPixels[i]);
                 }
-                
+                cout<<"TRYING TO SAVE OUT\r";
                 movieFromCamera.finishMovie();  //wrap up the movie
             
                 imgPixels.clear(); //empty out the vector
@@ -449,12 +484,15 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //skkpping this one for the moment...  Leave for TOM
     if(whichAnalysis=="M_CODE"){
         
-        if(synthesisComplete == FALSE ){    
+        if(synthesisComplete == FALSE ){
+          //  cout<<"showing morse "<<morseMessage<<"\r";
+            showMorse(morseMessage);
+            
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
+      //  synthesisComplete =TRUE;
 
     }
     
@@ -466,7 +504,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
+       // synthesisComplete =TRUE;
 
     }
     
@@ -893,6 +931,140 @@ void analysis::linear( float maxResult, float maxTime, float divisions, bool sho
     
 }
 
+void analysis::loadMorse(){
+    string line;
+    const char* filePath=ofToDataPath("morse.txt").c_str();
+    ifstream myfile (filePath);
+    if (myfile.is_open())
+    {
+        while ( myfile.good() )
+        {
+            getline (myfile,line);
+            
+            vector<string> twoHalves = ofSplitString(line, "\t");
+            textTranslation.push_back(twoHalves[0]);
+            morseCode.push_back(twoHalves[1]);
+            // cout << line << endl;
+        }
+        myfile.close();
+    }
+    else{
+        
+        cout<<"can't open file \n";
+    }
+    for(int i=0;i<morseCode.size();i++){
+        
+        cout<<morseCode[i]<<" morse\n";
+    }
+}
+string analysis::translateToMorse(string messageToTranslate){
+    string messageInMorse;
+    cout<<messageToTranslate.length()<<" message length\r";
+    for(int i=0;i<messageToTranslate.length();i++){
+        //tedious casting from char to string
+        stringstream ss;
+        string s;
+        char c = messageToTranslate.at(i);
+        ss << c;
+        ss >> s;
+        cout<<s<<" \r";
+        //string thisChar=stringmessageToTranslate.at(i);
+        if(s=="_"){
+            cout<<"found space\r";
+            //put a forward slash in to define word break as opposed to break between characters
+            messageInMorse+="/";
+        }
+        else{
+            for(int j=0;j<morseCode.size();j++){
+                if(s==textTranslation[j]){
+                    //add this morse character to the message
+                    messageInMorse+=morseCode[j]+"*";   
+                }
+            }
+        }     
+    }
+    cout<<messageInMorse<<" message in morse \r";
+    
+    
+    
+    return messageInMorse;
+}
+
+void analysis::showMorse(string message){
+  //  for(int i=0;i<message.length();i++){
+    if(counter<message.length()){
+   // graphCounter++;
+        
+   
+    if(pauseBetween<=0){
+        cout<<"pause bettween is "<<pauseBetween  <<" "<<message.at(counter)<< " COUNTER IS "<<counter<<" message at counter \r";
+        
+        cout<<" on counter "<<onCounter<<" offCounter "<<offCounter<<"\r";
+        float speed=5;
+        int thresh;
+        if(message.at(counter)=='.'){
+            thresh=speed;
+            onCounter++;
+            on=true;
+            
+        }
+        if(message.at(counter)=='-'){
+            thresh=3*speed;
+            onCounter++;
+            on=true;
+            
+        }
+        //char break
+        if(message.at(counter)=='*'){
+            thresh=2*speed;
+            cout<<"got star\r";
+            offCounter++;
+            on=false;
+            
+        }
+        //word break
+        if(message.at(counter)=='/'){
+            thresh=6*speed;
+            offCounter++;
+            on=false;
+            
+        }
+        
+        if(onCounter>=thresh){
+       
+            onCounter=0;
+            counter++;
+            pauseBetween=speed;
+        
+        }
+        if(offCounter>=thresh){
+        
+            offCounter=0;
+            counter++;
+           // pauseBetween=thresh;
+        }
+        cout<<on<<" on\r";
+        if(on){   
+            ofSetColor(255);
+        }
+        else{
+            ofSetColor(0);
+        }
+               ofRect(0, 0, ofGetWidth(), ofGetHeight());
+    }
+       
+    //if we just finished one character pause for one beat
+    else{
+        cout<<" pausing "<<pauseBetween<<"\r";
+       pauseBetween--;
+        
+    }
+    }
+    else{
+        cout<<"finished morse\r";
+        synthesisComplete=true;
+    }
+}
 
 float analysis::returnGaussian(float x, float spread, float height,   float centre, float range){
     float returnY;
