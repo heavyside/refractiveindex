@@ -60,7 +60,7 @@ public:
     
     //global gui variables 
     
-    //pointer to gui
+    //pointer to kye input gui object - this is kind of a hack because the text input doesn't seem to be fully implemented
     guiTypeTextInput *tl;
     int scanLineWidth;
     string whichGraph;

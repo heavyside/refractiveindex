@@ -90,11 +90,21 @@ class analysis{
     vector<string> textTranslation;
     int onCounter;
     int offCounter;
+    int speed;
     int pauseBetween;
     void loadMorse();
     void showMorse(string message);
     string translateToMorse(string messageToTranslate);
     
+    //FOR SINGLE COLOUR
+    int red;
+    int green;
+    int blue;
+    
+    //FOR CAM FRAME RATE
+    void strobe();
+    float getRamp();
+    float currentFRate;
     ofxQtVideoSaver movieFromCamera;
     ofImage cameraCapture;
     ofVideoPlayer player;
@@ -110,6 +120,7 @@ class analysis{
     float testFloat;
     
     int counter;
+    float floatCounter;
     int frameCounter;
     int scanLinePosition;
     int scanLineWidth;

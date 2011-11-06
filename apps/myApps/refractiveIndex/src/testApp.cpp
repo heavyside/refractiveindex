@@ -88,9 +88,13 @@ void testApp::setup(){
     gui.addButtonSlider("graph num divisions", "GRAPH_NUM_DIVISIONS", 10, 1, 25, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
+    gui.addButtonSlider("morse speed", "MORSE_SPEED", 10, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
     //nasty hack for getting text back
     tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
+    gui.addButtonSlider("red level", "RED_LEVEL", 10, 1, 255, TRUE);
+    gui.addButtonSlider("green level", "GREEN_LEVEL", 10, 1, 255, TRUE);
+    gui.addButtonSlider("blue level", "BLUE_LEVEL", 10, 1, 255, TRUE);
     //only 4 options for relax rate so far.
     vector<string>graphNames;
     graphNames.push_back("LINEAR");
@@ -314,8 +318,6 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
                 masterAnalysis.animationTimeLimit=data.getFloat(k);
                 cout<<masterAnalysis.animationTimeLimit<<"masterAnalysis.animationTimeLimit \n";
             }
@@ -330,8 +332,6 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
                 masterAnalysis.scanLineWidth=data.getFloat(k);
                 cout<<masterAnalysis.scanLineWidth<<"masterAnalysis.scanLineWidth \n";
             }
@@ -347,8 +347,7 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
+
                 masterAnalysis.scanLineSpeed=data.getFloat(k);
                 cout<<masterAnalysis.scanLineSpeed<<"masterAnalysis.scanLineSpeed \n";
             }
@@ -363,8 +362,7 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
+
                 masterAnalysis.maxResultA=data.getFloat(k);
                 cout<<masterAnalysis.maxResultA<<"masterAnalysis.maxResultA \n";
             }
@@ -378,9 +376,7 @@ void testApp::eventsIn(guiCallbackData & data){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-                
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
+
                 masterAnalysis.maxTimeA=data.getFloat(k);
                 cout<<masterAnalysis.maxTimeA<<"masterAnalysis.maxTimeA \n";
             }
@@ -395,8 +391,6 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                //TO DO MOVE THIS INTO ANALYSIS SETUP - we should really store most recent gui value in a local variable
-                //and make an argument for each one in the setupAnalysis
                 masterAnalysis.divisionsA=(int)data.getFloat(k);
                 cout<<"masterAnalysis.divisionsA = "<<masterAnalysis.divisionsA<<"  \n";
             }
@@ -411,33 +405,13 @@ void testApp::eventsIn(guiCallbackData & data){
         masterAnalysis.showGraphA=showGraphLine;
         
     }
-    /*
-     
-     float maxResultA; 
-     float maxTimeA; 
-     float divisionsA; 
-     bool showGraphA;
-     
-     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
-     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
-     gui.addButtonSlider("graph max result", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-     gui.addButtonSlider("graph max time", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
-     gui.addButtonSlider("graph num division", "GRAPH_NUM_DIVISIONS", 10, 1, 25, TRUE);
-     gui.addToggle("show graph outline", "SHOW_GRAPH_OUTLINE", 0);
-     */
-    
-    //CAM WIDTH
-    if( thisName == "camera width" ){
-        cout<<"triggered \n";
+    if( thisName == "graph max time" ){
+        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-                printf("%i float  value = %f \n", k, data.getFloat(k));
-                camWidth=data.getFloat(k);
-                cout<<camWidth<<" camWidth is now this\n";
-            }
-            else if( data.getType(k) == CB_VALUE_INT ){
-                printf("%i int    value = %i \n", k, data.getInt(k));
-                camWidth=data.getInt(k);
+
+                masterAnalysis.maxTimeA=data.getFloat(k);
+                cout<<masterAnalysis.maxTimeA<<"masterAnalysis.maxTimeA \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
@@ -446,6 +420,62 @@ void testApp::eventsIn(guiCallbackData & data){
         
     }
     
+    if( thisName == "morse speed" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+               
+                masterAnalysis.speed=data.getFloat(k);
+                cout<<masterAnalysis.speed<<"masterAnalysis.speed \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+        
+    }
+    if( thisName == "red level" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.red=data.getFloat(k);
+                cout<<masterAnalysis.red<<" masterAnalysis.red \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+        
+    }
+    if( thisName == "green level" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.green=data.getFloat(k);
+                cout<<masterAnalysis.green<<" masterAnalysis.green \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+        
+    }
+    if( thisName == "red level" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.blue=data.getFloat(k);
+                cout<<masterAnalysis.blue<<" masterAnalysis.blue \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+        
+    }
     //more cam settings", "SETTINGS"
     if( data.getDisplayName() == "more cam settings" ){
         vidGrabber.videoSettings();

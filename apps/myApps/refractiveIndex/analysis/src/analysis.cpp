@@ -125,15 +125,25 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         morseMessage=translateToMorse(morseMessage);
         
     } 
-
     if (whichAnalysis=="CAM_FRAMERATE") {
-        
-        
+         setupGraphs();
+         synthesisComplete=false;
+        floatCounter=0.0000001;
+        currentFRate =0;
     } 
+
+ 
     
     if (whichAnalysis=="CAM_NOISE") {
         frameCounter = 0;
         framesPerGreyValue = 3;
+    } 
+ 
+    if (whichAnalysis=="COLOR_SINGLE") {
+        counter=0;
+        synthesisComplete=false;
+        cout<<  synthesisComplete<<"color single setup\r";
+        
     } 
 
 }
@@ -481,7 +491,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 
     }    
     
-    //skkpping this one for the moment...  Leave for TOM
+  
     if(whichAnalysis=="M_CODE"){
         
         if(synthesisComplete == FALSE ){
@@ -499,12 +509,13 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //skkpping this one for the moment...  Waiting for Tom's strobe function
     if(whichAnalysis=="CAM_FRAMERATE"){
         
-        if(synthesisComplete == FALSE ){    
+        if(synthesisComplete == FALSE ){      
+            strobe();
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-       // synthesisComplete =TRUE;
+      
 
     }
     
@@ -574,17 +585,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         
     }
     
-    //skkpping this one for the moment...
-    if(whichAnalysis=="COLOR_SINGLE"){
-        
-        if(synthesisComplete == FALSE ){    
-            
-        } else {
-            cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-        }
-        synthesisComplete =TRUE;
 
-    }
     
     //skkpping this one for the moment...
     if(whichAnalysis=="PHYS_TEST"){
@@ -644,7 +645,24 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         }
 
     }
+    if(whichAnalysis=="COLOR_SINGLE"){
+        if(synthesisComplete == false){
+            if(counter<animationTimeLimit){
+                ofSetColor(red, green, blue);
+                ofRect(0, 0, ofGetWidth(), ofGetHeight());   
+                counter++;            
+            }
+            else{
+                synthesisComplete=true;
+                cout<<"completed colour single \r";
+            }
+            
+        } else {
+            cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
+        }
     
+        
+    }
 }
 
 
@@ -1000,7 +1018,7 @@ void analysis::showMorse(string message){
         cout<<"pause bettween is "<<pauseBetween  <<" "<<message.at(counter)<< " COUNTER IS "<<counter<<" message at counter \r";
         
         cout<<" on counter "<<onCounter<<" offCounter "<<offCounter<<"\r";
-        float speed=5;
+        //speed=5;
         int thresh;
         if(message.at(counter)=='.'){
             thresh=speed;
@@ -1077,7 +1095,79 @@ float analysis::returnGaussian(float x, float spread, float height,   float cent
     return returnY/range;
 }
 
+void analysis::strobe(){
+    counter++;
+    
+   // int howLongToShowEachFrameRateFor=2*(31-currentFRate);
+     int howLongToShowEachFrameRateFor=60;
+    //the total length of time each fR is shown for needs to be 
+    // exactly divisible by that frame rate or it will do (for example) a frame and a half and be impossible to count
+    if(counter>howLongToShowEachFrameRateFor){
+        //advance to next framerate   
+        currentFRate = getRamp();
+        cout<<"new frame rate is "<<currentFRate<<"\r";
+        graphCounter++;
+        limiter++;
+        counter=0;
+    }
+    
+    if (limiter<100) {
+  //this speed needs calibration
+        floatCounter+=1;//1/30;//1/speed
+        //imagine a frame rate of 30fps
+        if(floatCounter>=30-currentFRate){
+            on=!on;
+            floatCounter=0;      
+        }
+  
+        if(on){   
+            ofSetColor(255);
+        }
+        else{
+            ofSetColor(0);
+        }
+  
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        
+    }
+    else{
+        synthesisComplete=true;
+    }
 
+}
+float analysis::getRamp (){
+    float ramp;
+    float maxTime=100; 
+    
+    
+    float maxFrameRate=30;
+    float maxResult=maxFrameRate; 
+    
+    //it should change direction at every peak or trough
+    float threshold=maxTime/2;
+    
+    //go up in steps which are the total distance divided by number of changes in direction
+    float adder=maxResult/threshold;
+    
+    level+=adder*flip;
+
+   // if (limiter<maxTime) {
+        ofSetColor(level);
+        ramp=level;
+        //graph counter is our position on the x axis
+       // graphCounter++;
+        //limiter is the overall counter 
+       // limiter++;
+        
+        
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            flip*=-1;
+        }
+      
+    return ramp;
+}
 
 
 //CODEC LISTING 
