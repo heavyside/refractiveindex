@@ -827,14 +827,10 @@ void analysis::analyseInput(unsigned char * pixels){
         // load a first image - take the pixel value from each subsequent frame taken at each grey value
         
         // the differenced images - create z-map - overlay on the original images
-        
     
     } 
     
     if (whichAnalysis=="COLOR_SINGLE") {
-        
-        
-        
         
     } 
     
