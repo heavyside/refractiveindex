@@ -38,10 +38,13 @@ public:
     vector<ofImage> resultsOfAnalysis;
    
     string analysisChooser;
+    int codecChooser;
+    int whichCodec;
+    vector<string> returnedCodecNames;
     //vars which hold camera and saver setup information
     int camWidth;
     int camHeight;
-    int whichCodec;
+   
     string codecName;
     int whichImage;
     int numOfInputs;
@@ -56,7 +59,12 @@ public:
     int mouseX, mouseY;
     
     //global gui variables 
+    
+    //pointer to kye input gui object - this is kind of a hack because the text input doesn't seem to be fully implemented
+    guiTypeTextInput *tl;
     int scanLineWidth;
+    string whichGraph;
+    bool showGraphLine;
     
     //menu state is the main control sequence variable should have the following modes
     /*

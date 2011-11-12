@@ -10,14 +10,14 @@ int movieNameCounter = 0;
 //from the camera, analysing the recorded data and outputting resulting info to the screen.
 
 ////////////////////////---------/////////////////////////////////////
-void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass){//, ofVideoGrabber &grabber){
+void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, int whichCodec){//, ofVideoGrabber &grabber){
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
 
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
     
     cout<<whichAnalysis<<" WHICH ANALYSIS AT SETUP\n";
-  
+    cout<<"chosen codec number "<<whichCodec<<"\r";
     camHeight=camH;
     camWidth=camW;
     check=0;
@@ -29,15 +29,24 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     movieFromCamera.listCodecs();    
 
     //probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
-    dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
-    ofSetDataPathRoot(dataPathName);
+    //TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
+    
+    
+    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
+    
+  //  dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
+  //  dataPathName=ofToDataPath("")+"MEDIA";
+  //  ofSetDataPathRoot(dataPathName);
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
         
         scanLinePosition= 0; 
-        scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
+        //scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        //because this is called after the gui sets this - that's why ;) 
+        
+       // scanLineSpeed is now set in gui for all shadowscapes
+      //  scanLineSpeed = 10;
         
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
@@ -63,6 +72,9 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     if (whichAnalysis=="RELAXRATE") {
         //SETUP VIDEOSAVER
+        //this function initalises on the variables for the graphs
+        setupGraphs();
+        
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
         cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
         movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
@@ -74,7 +86,8 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     if (whichAnalysis=="I_RESPONSE") {
         lastTime = ofGetElapsedTimeMillis();
-        animationTimeLimit = 3000;  //milliseconds
+        //amimationTimeLimit is now set in GUI
+       // animationTimeLimit = 3000;  //milliseconds
         timeDiff = 0;
         counter = 0;
         frameCounter = 0;
@@ -122,6 +135,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
      
     } 
 
+ 
     
     if (whichAnalysis=="COLOR_MULTI") {
         frameCounter = 0;
@@ -308,6 +322,8 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //The analysis as a whole going to require some kind of "wait state" for us to be able to keep something on the screen 
     //for long enough to get an average overall light reading?  i.e: cosmic latte?
     
+    
+    //*************  I THINK THIS IS THE MOST PROMISING WAY TO DO THE FILE SAVING - although it could be heavily RAM dependent?! **********//
     if(whichAnalysis=="RELAXRATE"){
         
         if(synthesisComplete==false){    
@@ -323,6 +339,33 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             
             //cout<<counter<<" <-- RELAXRATE COUNTER: \n";
             
+            cout<<"max result and maxtime "<<maxResultA<<" "<< maxTimeA<<" "<<divisionsA<<"\r";
+             if(whichGraph=="LINEAR"){
+             linear(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
+             if(whichGraph=="EXPONENTIAL"){
+             exponential(maxResultA, maxTimeA, showGraphA);
+             }
+             if(whichGraph=="SQUARE_WAVE"){
+             squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
+             if(whichGraph=="QUADRATIC"){
+             quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
+             }
+    
+          /*  if(whichGraph=="LINEAR"){
+                linear(255, 100, 5, true);
+            }
+            if(whichGraph=="EXPONENTIAL"){
+                exponential(255, 100, true);
+            }
+            if(whichGraph=="SQUARE_WAVE"){
+                squareWave(255, 100, 5, true);
+            }
+            if(whichGraph=="QUADRATIC"){
+                quadratic(255, 100, 5, true);
+            }*/
+            
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
             memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
             imgPixels.push_back(someLocalPixels);  
@@ -332,15 +375,18 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
             
-            if(counter >= 255) { 
-                
+           // if(counter >= 255) { 
+            
+            
+            if(finishedGraph){
+                cout<<"TRYING TO START WRITING OUT BUFFER\r";
                 //cout<<" ** counter > 255 \n";
                 for (i = 0; i < counter; i++)
                 {
                     //cout<<i<<"< i in RELAXRATE ** frame add counter \n";
                     movieFromCamera.addFrame(imgPixels[i]);
                 }
-                
+                cout<<"TRYING TO SAVE OUT\r";
                 movieFromCamera.finishMovie();  //wrap up the movie
             
                 imgPixels.clear(); //empty out the vector
@@ -470,7 +516,10 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //skkpping this one for the moment...  Leave for TOM
     if(whichAnalysis=="M_CODE"){
         
-        if(synthesisComplete == FALSE ){    
+        if(synthesisComplete == FALSE ){
+          //  cout<<"showing morse "<<morseMessage<<"\r";
+            showMorse(morseMessage);
+            
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
@@ -482,7 +531,8 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //skkpping this one for the moment...  Waiting for Tom's strobe function
     if(whichAnalysis=="CAM_FRAMERATE"){
         
-        if(synthesisComplete == FALSE ){    
+        if(synthesisComplete == FALSE ){      
+            strobe();
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
@@ -778,7 +828,24 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         }
 
     }
+    if(whichAnalysis=="COLOR_SINGLE"){
+        if(synthesisComplete == false){
+            if(counter<animationTimeLimit){
+                ofSetColor(red, green, blue);
+                ofRect(0, 0, ofGetWidth(), ofGetHeight());   
+                counter++;            
+            }
+            else{
+                synthesisComplete=true;
+                cout<<"completed colour single \r";
+            }
+            
+        } else {
+            cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
+        }
     
+        
+    }
 }
 
 
