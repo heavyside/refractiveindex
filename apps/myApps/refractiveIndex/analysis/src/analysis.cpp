@@ -172,7 +172,8 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
     //(see the note at the top of this file - always writes a black movie if there's already a file saved from a prior launch of the prog - why!?
     
     if(whichAnalysis=="H_SHADOWSCAPES"){ 
-        
+ 
+        // cout<<"if(whichAnalysis=="H_SHADOWSCAPES") \n";
         if(synthesisComplete==false && movieFromCamera.bAmSetupForRecording()){    
         
             //grab a frame from the camera
@@ -474,7 +475,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
+        //synthesisComplete =TRUE;
 
     }
     
@@ -486,7 +487,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
+        //synthesisComplete =TRUE;
 
     }
     
@@ -712,7 +713,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
         
-        synthesisComplete =TRUE;
+        //synthesisComplete =TRUE;
     }
     
     
@@ -770,13 +771,10 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 imgPixels.clear(); //empty out the vector
                 counter = 0;
                 synthesisComplete = TRUE;
-                
             }
 
         } else {
-            
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-        
         }
 
     }

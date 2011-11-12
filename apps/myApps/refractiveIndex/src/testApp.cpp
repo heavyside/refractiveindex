@@ -109,7 +109,7 @@ void testApp::update(){
     ofSetWindowTitle(str);
     //set the window title to "framerate"
     
-    vidGrabber.grabFrame();
+    vidGrabber.grabFrame();  // go get frame from OS
    
     //neutral, do nothing
     if(menuState==0){
@@ -136,16 +136,9 @@ void testApp::update(){
   
     }
     
-
     //run analysis on the movie we've recorded during 'synthDraw'
     if(menuState==3){
         // after 
-        
-        if(!masterAnalysis.analysed){
-            //masterAnalysis.analyseInput(vidGrabber.getPixels());
-        } else {
-            menuState=4;
-        }
     }
     
     //display analysis
@@ -164,13 +157,12 @@ void testApp::draw(){
     
     //if no analysis, draw grabber
     if(menuState==0){
-       // vidGrabber.draw(0, 0);
+        vidGrabber.draw(0, 0);
     }
     
     //continue to draw grabber in setup phase
     if(menuState==1){
         //vidGrabber.draw(0, 0);
-        
     }
     
     //drawing synthesized impulses, etc., to the screen
@@ -178,22 +170,22 @@ void testApp::draw(){
         
         //vidGrabber.draw(0, 0);
         if(!masterAnalysis.synthesisComplete){
-            // cout<<"dis playing process \n";
+            cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
+            cout<<"in draw loop menuState 2 \n";
             masterAnalysis.synthDrawCamRecord(vidGrabber.getPixels());
+            
         } else {
-            menuState==3;  
-        } 
-        
+            menuState = 3;
+        }
     }
     
     //menustate  draw results of analysis
     if(menuState==3){
-    
+         cout<<"in draw loop menuState 3 \n";
     }
     
 
     if(menuState==4){
-        
         //masterAnalysis.displayResult();
         
     }
@@ -370,7 +362,6 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 printf("%i float  value = %f \n", k, data.getFloat(k));
-                
             }
             else if( data.getType(k) == CB_VALUE_INT ){
                 printf("%i int    value = %i \n", k, data.getInt(k));
@@ -412,12 +403,10 @@ void testApp::eventsIn(guiCallbackData & data){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
     if( key =='f')
     {
        ofToggleFullscreen(); 
     }
-
 }
 
 //--------------------------------------------------------------
