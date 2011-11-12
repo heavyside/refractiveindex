@@ -155,8 +155,8 @@ void testApp::update(){
                                                                         //as it's currently redundant with the setupAnalysis in the analysis class below 
                                                                         // but we should put it back later -JA
                                                                         // k16GrayCodecType...
-
-        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser);//, vidGrabber);
+        masterAnalysis.morseMessage= tl->getValueText();
+        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
         
         //now we are setup lets analyse
         menuState=2;
@@ -303,7 +303,22 @@ void testApp::eventsIn(guiCallbackData & data){
     cout<<thisName<<" this Name\n";
     
     //SCAN LINE WIDTH 
-    //testing github
+    //
+    //  
+    if( thisName == "animation time limit" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.animationTimeLimit=data.getFloat(k);
+                cout<<masterAnalysis.animationTimeLimit<<"masterAnalysis.animationTimeLimit \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+        
+    }
     if( thisName == "scan line width" ){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -392,6 +407,7 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
+        
     }
     
     if( thisName == "morse speed" ){
@@ -420,7 +436,6 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
     if( thisName == "green level" ){
         
@@ -570,6 +585,9 @@ void testApp::keyReleased(int key){
     {
        ofToggleFullscreen(); 
     }
+    
+    
+    
 }
 
 //--------------------------------------------------------------

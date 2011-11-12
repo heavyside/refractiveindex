@@ -119,6 +119,7 @@ class analysis{
     float testFloat;
     
     int counter;
+    float floatCounter;
     int counterMax;
     int frameCounter;
     int localFrameCounter;

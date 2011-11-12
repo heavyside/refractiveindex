@@ -38,6 +38,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
   //  dataPathName=ofToDataPath("")+"MEDIA";
   //  ofSetDataPathRoot(dataPathName);
     
+    
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
         
@@ -50,8 +51,12 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         
         //SETUP VIDEOSAVER
         //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
-        movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
+        //cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
+         cameraMovieName = ofToString(ofGetDay())+"_"+ofToString(ofGetHours())+"_"+ofToString(ofGetMinutes())+"_"+ofToString(ofGetSeconds())+whichAnalysis+ofToString(movieNameCounter)+".mov";   
+        
+        movieFromCamera.setCodecType(whichCodec);
+        
+        //movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
         movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
                                                                                 // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
@@ -61,13 +66,16 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
-    }     
+      //  scanLineSpeed = 10;
+       
+    } 
+    
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        scanLineSpeed = 10;
+       // scanLineSpeed = 10;
+        
     } 
     
     if (whichAnalysis=="RELAXRATE") {
@@ -82,6 +90,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
         movieNameCounter++;
+
     } 
     
     if (whichAnalysis=="I_RESPONSE") {
@@ -131,24 +140,56 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         counter = 0;
     } 
 
+    if (whichAnalysis=="M_CODE") {
+        //im going to borrow some of these variables
+        setupGraphs();
+        onCounter=0;
+        offCounter=0;
+        pauseBetween=0;
+        //load morse code from text file 
+        loadMorse();
+        morseMessage=translateToMorse(morseMessage);
+    }
+    
     if (whichAnalysis=="PHYS_TEST") {
      
+    }
+        
+    if (whichAnalysis=="CAM_FRAMERATE") {
+         setupGraphs();
+         synthesisComplete=false;
+        floatCounter=0.0000001;
+        currentFRate =0;
     } 
 
- 
-    
     if (whichAnalysis=="COLOR_MULTI") {
+    
+    }
+    
+        
+    if (whichAnalysis=="CAM_NOISE") {
         frameCounter = 0;
         localFrameCounter = 0;
         gotAllLocalFrames1 = false;
         counterMax = 500.;
         counter = 0;
         cHue = 0;
+        framesPerGreyValue = 3;
     } 
-    
+        
+        
     if (whichAnalysis=="DIFF_NOISE") {
-  
+ 
+    
+    }
+ 
+    if (whichAnalysis=="COLOR_SINGLE") {
+        counter=0;
+        synthesisComplete=false;
+        cout<<  synthesisComplete<<"color single setup\r";
+        
     } 
+
 }
 
 ////////////////////////---------/////////////////////////////////////
@@ -328,10 +369,10 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         
         if(synthesisComplete==false){    
             
-         
+            //REPLACED THIS WITH CURVE RELAXES
             // white impulse 
-            ofSetColor(255-counter, 255-counter, 255-counter);               
-            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            //  ofSetColor(255-counter, 255-counter, 255-counter);               
+            // ofRect(0, 0, ofGetWidth(), ofGetHeight());
             
             //the below takes in the pixel as raw unsigned chars from the camera, 
             //stores these in a vector, until the on-screen synthesis is finished 
@@ -371,6 +412,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             imgPixels.push_back(someLocalPixels);  
             
             counter++;
+            
             
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
@@ -513,7 +555,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 
     }    
     
-    //skkpping this one for the moment...  Leave for TOM
+  
     if(whichAnalysis=="M_CODE"){
         
         if(synthesisComplete == FALSE ){
@@ -524,7 +566,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        //synthesisComplete =TRUE;
+      //  synthesisComplete =TRUE;
 
     }
     
@@ -748,11 +790,15 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 // cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
             }
             
+            
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
+        
+        
     }
     
+
     
     //skkpping this one for the moment...
     if(whichAnalysis=="PHYS_TEST"){
@@ -957,6 +1003,439 @@ vector<ofImage> analysis::returnFrames(){
     //return buffer;
     
 }
+
+void analysis::setupGraphs(){
+    
+    graphCounter = 0;
+    limiter = 0;
+    on=false;
+    flip=1;    
+    level=0;
+    finishedGraph=false;
+}
+
+//actually just to the power of a square
+void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
+    if (limiter<maxTime) {
+        ofFill();
+        float yPos;
+        
+        float lightLevel=pow(level,2);
+        float mappedLightLevel = ofMap(lightLevel,0,pow(maxTime/2,2), 0,maxResult);
+        graphCounter++;
+        limiter++;
+        if (graphCounter< maxTime/2) {
+            level++;
+        }
+        else{
+            level--;
+        }
+        
+        ofSetColor(mappedLightLevel);
+        ofRect(0,0,ofGetWidth(),ofGetHeight());
+        
+        if(showGraph){
+            float localCount=0;
+            ofNoFill();
+            ofSetColor(255,0,0);
+            float xPos=ofMap(graphCounter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-1, xPos, ofGetHeight()-150);
+            ofBeginShape();
+            for(float i=0;i<maxTime;i++){
+                yPos=pow(localCount,2); 
+                float mappedY = ofMap(yPos,0,pow(maxTime/2,2), 0,maxResult);
+                ofVertex( ofMap(i, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-mappedY);
+                if (i<maxTime/2) {
+                    localCount++;
+                }
+                else{
+                    localCount--;
+                }
+            }
+            ofEndShape();
+        }
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+void analysis::quadratic(float maxResult, float maxTime, float divisions, bool showGraph){
+    if (limiter<maxTime) {
+    ofNoFill();
+    ofSetColor(255, 0, 0);
+    ofBeginShape();
+    for(float i=-maxTime/2;i<maxTime/2;i++){
+        
+        float yPos;
+        //makes it narrower
+        float a=.2;
+        
+        
+        float b=.2;
+        
+        //shifts up or down
+        float c=0;
+        
+        float x=i;
+        yPos= (a * pow(x,2)) + (b*x)+ c; 
+        
+        // ofVertex(ofMap(i+maxTime/2, 0,maxTime, 0, ofGetWidth()) , yPos);
+        ofVertex(i+maxTime/2 , yPos);
+        cout<<i+maxTime/2<<" "<<yPos<<" yPos \r";
+    }
+    ofEndShape();
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+void analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
+    float threshold=maxTime/divisions;
+    ofFill();
+    if (limiter<maxTime) {
+        
+        if(on){
+            ofSetColor(maxResult);
+        }
+        else{
+            ofSetColor(0);
+        }
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        
+        
+        graphCounter++;
+        limiter++;
+        //reset graphCounter and flip boolean
+        //maybe change this to a modulo
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            on=!on;
+        }
+   
+    
+    
+        if(showGraph){
+            int adjust=0;
+            //this is just to prove it's making a square wave ;) //it has a gradient of one pixel/height hence the "adjust" variable
+            int localCounter=0;
+            bool localOn=false;
+            ofBeginShape();
+            ofNoFill();
+            ofSetColor(255, 0, 0);
+            float xPos=ofMap(limiter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-1, xPos, ofGetHeight()-150);
+            for(int i=0;i<maxTime;i++){
+            
+                if(localOn){
+                    ofVertex(ofMap(i+adjust, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-maxResult);
+                }
+                else{
+                    ofVertex(ofMap(i+adjust, 0, maxTime, 0, ofGetWidth()) , ofGetHeight()-1);
+                }
+                localCounter++;
+                adjust=0;
+                if(localCounter>=threshold){
+                    localCounter=0;
+                    localOn=!localOn;
+                    adjust=-1;
+                }
+            }  
+            ofEndShape();
+        }
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+}
+
+void analysis::linear( float maxResult, float maxTime, float divisions, bool showGraph){
+    
+    //it should change direction at every peak or trough
+    float threshold=maxTime/divisions;
+    
+    
+    float adder=maxResult/threshold;
+    level+=adder*flip;
+    ofFill();
+    
+    if (limiter<maxTime) {
+        ofSetColor(level);
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        graphCounter++;
+        limiter++;
+        
+        
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            flip*=-1;
+        }
+        
+        
+        
+        
+        if(showGraph){
+            ofSetColor(255, 0, 0);
+            ofNoFill();
+            float xPos=ofMap(limiter, 0, maxTime, 0, ofGetWidth());
+            ofLine(xPos, ofGetHeight()-level+50, xPos, ofGetHeight()-level-50);
+            int localFlip=1;
+            int localCounter=0;
+            float localLevel=0;
+            
+            ofBeginShape();
+            
+            for (int i=0; i<maxTime; i++) {
+                cout<<adder<<" adder \r";
+                localLevel+=adder*localFlip;
+                
+                ofVertex( ofMap(i, 0, maxTime, 0, ofGetWidth()) ,  ofGetHeight()- localLevel);
+                
+                localCounter++;
+                if(localCounter>=threshold){
+                    localCounter=0;
+                    localFlip*=-1;
+                    
+                }
+                
+            }
+            ofEndShape();
+        }
+        
+    }
+    else{
+        
+        finishedGraph=true;
+    }
+    
+}
+
+void analysis::loadMorse(){
+    string line;
+    const char* filePath=ofToDataPath("morse.txt").c_str();
+    ifstream myfile (filePath);
+    if (myfile.is_open())
+    {
+        while ( myfile.good() )
+        {
+            getline (myfile,line);
+            
+            vector<string> twoHalves = ofSplitString(line, "\t");
+            textTranslation.push_back(twoHalves[0]);
+            morseCode.push_back(twoHalves[1]);
+            // cout << line << endl;
+        }
+        myfile.close();
+    }
+    else{
+        
+        cout<<"can't open file \n";
+    }
+    for(int i=0;i<morseCode.size();i++){
+        
+        cout<<morseCode[i]<<" morse\n";
+    }
+}
+string analysis::translateToMorse(string messageToTranslate){
+    string messageInMorse;
+    cout<<messageToTranslate.length()<<" message length\r";
+    for(int i=0;i<messageToTranslate.length();i++){
+        //tedious casting from char to string
+        stringstream ss;
+        string s;
+        char c = messageToTranslate.at(i);
+        ss << c;
+        ss >> s;
+        cout<<s<<" \r";
+        //string thisChar=stringmessageToTranslate.at(i);
+        if(s=="_"){
+            cout<<"found space\r";
+            //put a forward slash in to define word break as opposed to break between characters
+            messageInMorse+="/";
+        }
+        else{
+            for(int j=0;j<morseCode.size();j++){
+                if(s==textTranslation[j]){
+                    //add this morse character to the message
+                    messageInMorse+=morseCode[j]+"*";   
+                }
+            }
+        }     
+    }
+    cout<<messageInMorse<<" message in morse \r";
+    
+    
+    
+    return messageInMorse;
+}
+
+void analysis::showMorse(string message){
+  //  for(int i=0;i<message.length();i++){
+    if(counter<message.length()){
+   // graphCounter++;
+        
+   
+    if(pauseBetween<=0){
+        cout<<"pause bettween is "<<pauseBetween  <<" "<<message.at(counter)<< " COUNTER IS "<<counter<<" message at counter \r";
+        
+        cout<<" on counter "<<onCounter<<" offCounter "<<offCounter<<"\r";
+        //speed=5;
+        int thresh;
+        if(message.at(counter)=='.'){
+            thresh=speed;
+            onCounter++;
+            on=true;
+            
+        }
+        if(message.at(counter)=='-'){
+            thresh=3*speed;
+            onCounter++;
+            on=true;
+            
+        }
+        //char break
+        if(message.at(counter)=='*'){
+            thresh=2*speed;
+            cout<<"got star\r";
+            offCounter++;
+            on=false;
+            
+        }
+        //word break
+        if(message.at(counter)=='/'){
+            thresh=6*speed;
+            offCounter++;
+            on=false;
+            
+        }
+        
+        if(onCounter>=thresh){
+       
+            onCounter=0;
+            counter++;
+            pauseBetween=speed;
+        
+        }
+        if(offCounter>=thresh){
+        
+            offCounter=0;
+            counter++;
+           // pauseBetween=thresh;
+        }
+        cout<<on<<" on\r";
+        if(on){   
+            ofSetColor(255);
+        }
+        else{
+            ofSetColor(0);
+        }
+               ofRect(0, 0, ofGetWidth(), ofGetHeight());
+    }
+       
+    //if we just finished one character pause for one beat
+    else{
+        cout<<" pausing "<<pauseBetween<<"\r";
+       pauseBetween--;
+        
+    }
+    }
+    else{
+        cout<<"finished morse\r";
+        synthesisComplete=true;
+    }
+}
+
+float analysis::returnGaussian(float x, float spread, float height,   float centre, float range){
+    float returnY;
+    
+    float e=2.718281828;
+    
+    float myPower=  - ( pow( (x-centre), 2) ) / (2* (spread*spread));
+    
+    returnY= - x* height * pow(e,myPower);
+    return returnY/range;
+}
+
+void analysis::strobe(){
+    counter++;
+    
+   // int howLongToShowEachFrameRateFor=2*(31-currentFRate);
+     int howLongToShowEachFrameRateFor=60;
+    //the total length of time each fR is shown for needs to be 
+    // exactly divisible by that frame rate or it will do (for example) a frame and a half and be impossible to count
+    if(counter>howLongToShowEachFrameRateFor){
+        //advance to next framerate   
+        currentFRate = getRamp();
+        cout<<"new frame rate is "<<currentFRate<<"\r";
+        graphCounter++;
+        limiter++;
+        counter=0;
+    }
+    
+    if (limiter<100) {
+  //this speed needs calibration
+        floatCounter+=1;//1/30;//1/speed
+        //imagine a frame rate of 30fps
+        if(floatCounter>=30-currentFRate){
+            on=!on;
+            floatCounter=0;      
+        }
+  
+        if(on){   
+            ofSetColor(255);
+        }
+        else{
+            ofSetColor(0);
+        }
+  
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+        
+        
+    }
+    else {
+        synthesisComplete=true;
+    }
+
+}
+    
+    
+float analysis::getRamp (){
+    float ramp;
+    float maxTime=100; 
+    
+    
+    float maxFrameRate=30;
+    float maxResult=maxFrameRate; 
+    
+    //it should change direction at every peak or trough
+    float threshold=maxTime/2;
+    
+    //go up in steps which are the total distance divided by number of changes in direction
+    float adder=maxResult/threshold;
+    
+    level+=adder*flip;
+
+   // if (limiter<maxTime) {
+        ofSetColor(level);
+        ramp=level;
+        //graph counter is our position on the x axis
+       // graphCounter++;
+        //limiter is the overall counter 
+       // limiter++;
+        
+        
+        if(graphCounter>=threshold){
+            graphCounter=0;
+            flip*=-1;
+        }
+      
+    return ramp;
+}
+
 
 //CODEC LISTING 
 /*
