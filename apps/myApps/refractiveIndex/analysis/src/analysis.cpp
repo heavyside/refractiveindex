@@ -209,53 +209,17 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             ofSetColor(255, 255, 255);            
             ofRect(scanLinePosition, 0, scanLineWidth, ofGetWidth());
             scanLinePosition += scanLineSpeed;
-            
-            // another memory allocation attempt
-            /*
-            unsigned char ** someLocalPixels;
-            someLocalPixels = new unsigned char* [1000];
-            someLocalPixels[frameCounter] = new unsigned char[camWidth*camHeight*3];
-            memcpy(someLocalPixels[frameCounter], pixels, (camWidth*camHeight*3)); 
-            imgPixels.push_back(someLocalPixels[frameCounter]);
-            */
-            /*
-            // How to get rid of the memory?
-            // free(someLocalPixels);
-            // delete [] someLocalPixels;            
-            */
-            /*  Could we use ofPixels? 
-            // ofPixels someLocalOfPixels;
-            // someLocalOfPixels.setFromPixels();  //????
-            */ 
         
             vectorOfPixels.push_back(pixels);
             frameCounter++;
-            
+                        
             if(scanLinePosition >= ofGetWidth()+(scanLineSpeed+scanLineWidth)) {
                 for (i = 0; i < frameCounter; i++)  
                 {   
                     //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
-                    //cameraCapture.setFromPixels(vectorOfPixels[i],camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
-                    
-                   // cameraCapture = vectorOfPixels[i].getPixels();
-                                       
-                    //vectorOfPixels[i].saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
-                    
-                    //imgPixel = vectorOfPixels[i].getPixels();  // try assigning to an unsigned char first 
-                    
-                    // this seems to write the images, but they're black and white and messed up looking
-                    //oneOfImage.setFromPixels(vectorOfPixels[i]);
-                    
-                    // this doesn't like the assignments of parameters
-                    //oneOfImage.setFromPixels(vectorOfPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
-                  
-                    // which one of these to use?
-                    //oneOfImage.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
-                    
-                    ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+                    ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(100*i*scanLineSpeed/ofGetWidth())+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
 
-                    //delete someLocalPixels[i];
-                    oneOfImage.clear();
+                    //ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
                 }
                 vectorOfPixels.clear(); //empty out the vector
                 counter = 0;
@@ -264,7 +228,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 synthesisComplete=TRUE; 
                 cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
             }   
-
             
         } else { 
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
@@ -283,30 +246,24 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             ofRect(0, scanLinePosition, ofGetWidth(),scanLineWidth);
             scanLinePosition += scanLineSpeed;
             
-            unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
-            imgPixels.push_back(someLocalPixels);
+            vectorOfPixels.push_back(pixels);
             frameCounter++;
-            //delete [] someLocalPixels;  // delete the memory here results in a the same image being written over and over...
             
-            if(scanLinePosition >= ofGetWidth()+(scanLineSpeed+scanLineWidth)) {
+            if(scanLinePosition >= ofGetHeight()+(scanLineSpeed+scanLineWidth)) {
                 for (i = 0; i < frameCounter; i++)  
                 {   
                     //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
-                    cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
-                    cameraCapture.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
+                    ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(100*i*scanLineSpeed/ofGetHeight())+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
                 }
-                imgPixels.clear(); //empty out the vector
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
                 frameCounter = 0;
                 scanLinePosition=0;
-                
                 synthesisComplete=TRUE; 
-                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
-               
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";               
             }
             
         } else {
-            
            cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
     }
@@ -318,55 +275,37 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     
     if(whichAnalysis=="D_SHADOWSCAPES"){
         
-        if(synthesisComplete==false){    
-            
-            //grab a frame from the camera - passed in to this class as 'pixels'
-            //cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
-            
-            //this will take each new incoming ofImage and add it to the vector of images "imgs"
-            //using imgs.push_back(img)
-            
-            //imgs.push_back(cameraCapture);
-            counter++;
-            
-            //cout<<counter<<" <-- D_SHADOWSCAPES COUNTER: \n";
+        if(synthesisComplete==FALSE){    
             
             //draw the scanning bar
             ofSetColor(255, 255, 255); 
-            //ofSetLineWidth(scanLineWidth);
-            
-            ofSetPolyMode(OF_POLY_WINDING_NONZERO);
-            
             ofBeginShape();
                 ofVertex(0,0+scanLinePosition);
                 ofVertex(0,-scanLineWidth+scanLinePosition);
                 ofVertex(ofGetWidth(),-ofGetHeight()+scanLinePosition);
                 ofVertex(ofGetWidth(),-ofGetHeight()+scanLineWidth+scanLinePosition);
             ofEndShape();
-
-            
             scanLinePosition += scanLineSpeed;
             //cout<<scanLinePosition<<" <-- D_SHADOWSCAPES scanLinePosition: \n";
             
-            //once we've finished synthesis and capturing all the frames into RAM, we can then write the
-            //image vectors "imgs" backinto files / movies...
+            vectorOfPixels.push_back(pixels);
+            frameCounter++;
             
             if(scanLinePosition > 2*ofGetHeight()+(scanLineSpeed+scanLineWidth)) {
                 //cout<<scanLinePosition<<" <-- scanLinePosition \n";
-                
                 //cout<<ofGetHeight()<<" <-- ofGetHeight() \n";
                 //cout<<" ** scanLinePosition > ofGetHeight() \n";
                 
-                for (i = 0; i <= counter; i++)
+                for (i = 0; i < vectorOfPixels[i].size(); i++)
                 {
-                    //imgs[i].saveImage(whichAnalysis+"_"+ofToString(i)+".jpg");
+                    ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString((100*i*scanLineSpeed)/(2*ofGetHeight()))+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);                
                 }
-                
-                //imgs.clear();  //empty out the vector
-                scanLinePosition=0; //reset the scan line position
-                counter=0; //reset counter
-                synthesisComplete=true; //pronounce the process complete
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
+                scanLinePosition=0;
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";   
             }
             
         } else {
@@ -375,91 +314,56 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         
     }
 
-    
-    //The RELAXRATE synth and record method below loads the images as an array of pixels - in memory
-    //then finally writes them to a quicktime movie
-    
     //The analysis as a whole going to require some kind of "wait state" for us to be able to keep something on the screen 
     //for long enough to get an average overall light reading?  i.e: cosmic latte?
-    
     
     //*************  I THINK THIS IS THE MOST PROMISING WAY TO DO THE FILE SAVING - although it could be heavily RAM dependent?! **********//
     if(whichAnalysis=="RELAXRATE"){
         
         if(synthesisComplete==false){    
             
-            //REPLACED THIS WITH CURVE RELAXES
-            // white impulse 
-            //  ofSetColor(255-counter, 255-counter, 255-counter);               
-            // ofRect(0, 0, ofGetWidth(), ofGetHeight());
-            
-            //the below takes in the pixel as raw unsigned chars from the camera, 
-            //stores these in a vector, until the on-screen synthesis is finished 
-            //then the whole set of buffered images is written to a movie file
-            
-            //cout<<counter<<" <-- RELAXRATE COUNTER: \n";
+            //CURVE RELAXES
             
             cout<<"max result and maxtime "<<maxResultA<<" "<< maxTimeA<<" "<<divisionsA<<"\r";
-             if(whichGraph=="LINEAR"){
-             linear(maxResultA, maxTimeA, divisionsA, showGraphA);
-             }
-             if(whichGraph=="EXPONENTIAL"){
-             exponential(maxResultA, maxTimeA, showGraphA);
-             }
-             if(whichGraph=="SQUARE_WAVE"){
-             squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
-             }
-             if(whichGraph=="QUADRATIC"){
-             quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
-             }
-    
-          /*  if(whichGraph=="LINEAR"){
-                linear(255, 100, 5, true);
+            
+            if(whichGraph=="LINEAR"){
+                linear(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
+            
             if(whichGraph=="EXPONENTIAL"){
-                exponential(255, 100, true);
+                exponential(maxResultA, maxTimeA, showGraphA);
             }
+            
             if(whichGraph=="SQUARE_WAVE"){
-                squareWave(255, 100, 5, true);
+                squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
+            
             if(whichGraph=="QUADRATIC"){
-                quadratic(255, 100, 5, true);
-            }*/
-            
-            unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
-            imgPixels.push_back(someLocalPixels);  
-            
-            counter++;
-            
-            
+                quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
+            }
+
+            vectorOfPixels.push_back(pixels);
+            frameCounter++;
+                        
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
-            
-           // if(counter >= 255) { 
-            
             
             if(finishedGraph){
                 cout<<"TRYING TO START WRITING OUT BUFFER\r";
                 //cout<<" ** counter > 255 \n";
-                for (i = 0; i < counter; i++)
+                for (i = 0; i < frameCounter; i++)
                 {
                     //cout<<i<<"< i in RELAXRATE ** frame add counter \n";
-                    movieFromCamera.addFrame(imgPixels[i]);
-                }
-                cout<<"TRYING TO SAVE OUT\r";
-                movieFromCamera.finishMovie();  //wrap up the movie
-            
-                imgPixels.clear(); //empty out the vector
                 
+                        ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString((100*i*scanLineSpeed)/(2*ofGetHeight()))+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);                
+                }
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
                 scanLinePosition=0;
-                counter=0;
-                synthesisComplete=true; 
-
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
-            }
-            
-            
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";   
+            }            
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }

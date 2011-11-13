@@ -209,35 +209,13 @@ void testApp::draw(){
             //cout<<"in draw loop menuState 2 \n";
             
             if (vidGrabber.isFrameNew())
-            {     
-
-                    
-                camPixels = vidGrabber.getPixelsRef();  
-                
-                //ofImage currentFrame;
-                //camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, OF_IMAGE_COLOR);
-
-                //camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, 0x01);
-                            
-                //suggested by Kyle McDonald
-                //camPixels = vidGrabber ;
-                // or 
-                //camPixels = vidGrabber.getPixels();            
-            
-                //camPixels = new unsigned char[camWidth*camHeight*3];
-                //memcpy(camPixels, vidGrabber.getPixels(), (camWidth*camHeight*3));  
-                //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
-             
+            {   
+                camPixels = vidGrabber.getPixelsRef();
             } 
+                masterAnalysis.synthDrawCamRecord(camPixels);            
             
-            masterAnalysis.synthDrawCamRecord(camPixels);
-            // the old way:
-            // masterAnalysis.synthDrawCamRecord(vidGrabber.getPixels());
-
         } else {
             menuState = 3;
-            
-            //delete [] camPixels;
         }
     }
     
@@ -246,7 +224,7 @@ void testApp::draw(){
         //cout<<" delete [] camPixels; \n";
        
         
-         //cout<<"in draw loop menuState 3 \n";
+        //cout<<"in draw loop menuState 3 \n";
     }
     
 
@@ -254,11 +232,10 @@ void testApp::draw(){
         //masterAnalysis.displayResult();
         
     }
-
     
     if(showGui){
         gui.draw();
-         font.drawString(camStatus,50, ofGetHeight()-50);
+        font.drawString(camStatus,50, ofGetHeight()-50);
     }
 }
 
