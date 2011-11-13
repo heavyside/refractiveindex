@@ -61,7 +61,8 @@ class analysis{
     float timeDiff;
     float fadeTime;
     
-    int numberOfCameraImages;
+    int everyNthFrameCaptureImage;
+    int nCaptureFramesPerGreyLevel;
     
     unsigned char * analysedFrame;
     string dataPathName;
@@ -72,11 +73,15 @@ class analysis{
 
     //FOR ANALYSIS
     bool synthesisComplete;
+    bool morseComplete;
+    bool strobeComplete;
     bool analysed;
     
     //FOR RELAXRATE
     string whichGraph;
-    float 	graphCounter;
+    float graphCounter;
+    float rampCounter;
+    float rampSpeed;
     int dummyCounter;
     float level;
     float limiter;
@@ -119,9 +124,19 @@ class analysis{
     
     int check;
     int i,j,k;
-    float counter2;
-    float counter2max;
+    float currentGreyLevel;
     float testFloat;
+    int testInt;
+    
+    ofColor aColour;
+    ofColor bColour;
+    float rValue;
+    float gValue;
+    float bValue;
+    float cHue;
+    float greyValue;
+    float oldGreyValue;
+    float numberOfGreyLevels;
     
     int counter;
     float floatCounter;
@@ -134,16 +149,6 @@ class analysis{
 
     int framesPerGreyValue;
     int framesPerColourValue;
-    
-    ofColor aColour;
-    ofColor bColour;
-    float rValue;
-    float gValue;
-    float bValue;
-    float cHue;
-    float greyValue;
-    float oldGreyValue;
-    float numberOfGreyLevels;
     
     ofImage oneOfImage;
     

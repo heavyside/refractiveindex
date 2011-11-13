@@ -314,14 +314,11 @@ void testApp::eventsIn(guiCallbackData & data){
     string thisName=data.getDisplayName();
     cout<<thisName<<" this Name\n";
     
-    //SCAN LINE WIDTH 
-    //
-    //  
+    //animation time limit
     if( thisName == "animation time limit" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-                
                 masterAnalysis.animationTimeLimit=data.getFloat(k);
                 cout<<masterAnalysis.animationTimeLimit<<"masterAnalysis.animationTimeLimit \n";
             }
@@ -561,6 +558,8 @@ void testApp::eventsIn(guiCallbackData & data){
             }
         }
     }
+    
+    // TOM - doesn't this refer to the morse text INPUT on the GUI? 
     if( data.getDisplayName() == "morse output" ){
         cout<<"getting morse message\r";
     }
@@ -598,9 +597,6 @@ void testApp::keyReleased(int key){
     {
        ofToggleFullscreen(); 
     }
-    
-    
-    
 }
 
 //--------------------------------------------------------------

@@ -65,28 +65,28 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="I_RESPONSE") {
         
         lastTime = ofGetElapsedTimeMillis();
+        
         //amimationTimeLimit is now set in GUI
         //animationTimeLimit = 3000;  //milliseconds
+        
         timeDiff = 0;
         counter = 0;
         frameCounter = 0;
-        fadeTime = 3000;
-        numberOfCameraImages = 10;  //the lower this number the more camera images we get per white level shown
-        counter2max = 5;   //the number of grey levels we want to look at
-        counter2 = counter2max; 
+        level = 0;
+        
+        //TODO: Set fadeTime in GUI
+        fadeTime = 5000;
+        
+        //TODO: Set fadeTime in GUI
+        everyNthFrameCaptureImage = 2; //the lower this number the more camera images we get per white level shown
+        numberOfGreyLevels = 10;   //the number of grey levels we want to look at
+        currentGreyLevel = numberOfGreyLevels; 
     }
     
     if (whichAnalysis=="SHAPE_SHADING") {
-
-    } 
-
-    if (whichAnalysis=="M_CODE") {        
         
     } 
 
-    if (whichAnalysis=="CAM_FRAMERATE") {
-        
-    } 
     
     if (whichAnalysis=="CAM_NOISE") {
         counter = 0;
@@ -96,6 +96,13 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         newFrame = true;
         numberOfGreyLevels = 5.0;  //this number sets the number of grey levels that are shown  for each noise measurement
         k=1;// need to get my frames
+        frameCounter = 0;
+        localFrameCounter = 0;
+        gotAllLocalFrames1 = false;
+        counterMax = 500.;
+        counter = 0;
+        cHue = 0;
+        framesPerGreyValue = 3;
     } 
     
     if (whichAnalysis=="COLOR_SINGLE") {
@@ -117,6 +124,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         pauseBetween=0;
         //load morse code from text file 
         loadMorse();
+        morseComplete = FALSE;
         morseMessage=translateToMorse(morseMessage);
     }
     
@@ -125,8 +133,8 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     }
         
     if (whichAnalysis=="CAM_FRAMERATE") {
-         setupGraphs();
-         synthesisComplete=false;
+        setupGraphs();
+        synthesisComplete=false;
         floatCounter=0.0000001;
         currentFRate =0;
     } 
@@ -135,18 +143,6 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     
     }
     
-        
-    if (whichAnalysis=="CAM_NOISE") {
-        frameCounter = 0;
-        localFrameCounter = 0;
-        gotAllLocalFrames1 = false;
-        counterMax = 500.;
-        counter = 0;
-        cHue = 0;
-        framesPerGreyValue = 3;
-    } 
-        
-        
     if (whichAnalysis=="DIFF_NOISE") {
  
     
@@ -328,7 +324,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 lightLevel = 255*squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
-            //STILL NEED TO REMOVE THIS
+            //TODO: NEED TO REMOVE THIS from functions and GUI
             /*
             if(whichGraph=="QUADRATIC"){
                 quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
@@ -381,12 +377,10 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         }
     }
     
-    
     //The I_RESPONSE - see google docs
-    //Not quite there yet... 
-    
     if(whichAnalysis=="I_RESPONSE"){
-        if(synthesisComplete == FALSE ){     //other tests of file readyness, etc. go here 
+       
+           if(synthesisComplete == FALSE ){     //other tests of file readyness, etc. go here 
             /*
             //the below takes in the pixel as raw unsigned chars from the camera, 
             //stores these in a vector, until the on-screen synthesis is finished 
@@ -401,80 +395,83 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
 
             // want to hold the programme here - take a few images while the screen light level 
             // is at held constant, then fade what's on the screen away (this isn't for analytical purposes... just so it looks nice 
-            // then we 'hold' at these constant levels of 255, 254, 253 (not implemented yet - probably just a big for loop around the below 
-            */
+            // then we 'hold' at these constant levels of 255, 254, 253 
+             */
             
-           if (counter2 > 0 ) {
+           if (currentGreyLevel > 0) {
                 
                 thisTime = ofGetElapsedTimeMillis(); 
                 timeDiff = thisTime-lastTime; 
                 //cout<<timeDiff<<"<-- timeDiff \n";
                 //cout<<counter2<<"<-- counter2 \n";
            
-                if (timeDiff < animationTimeLimit) {
+               if (timeDiff < animationTimeLimit) {
                       
-                    ofSetColor(255.0*(counter2/counter2max), 255.0*(counter2/counter2max), 255.0*(counter2/counter2max));            
+                    ofSetColor(255.0*(currentGreyLevel/numberOfGreyLevels), 255.0*(currentGreyLevel/numberOfGreyLevels), 255.0*(currentGreyLevel/numberOfGreyLevels));            
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
 
-                    //cout<<timeDiff%numberOfCameraImages<<"<-- timeDiff%numberOfCameraImages \n";                        
+                    //cout<<timeDiff%everyNthFrameCaptureImage<<"<-- timeDiff%everyNthFrameCaptureImage \n";                        
                     /*
                     //this is kind of inexact as timeDiff returns semi-random numbers... what to do here instead?
                     //basically trying to get an exact number of images over the 5000 ms that the given white values is on screen
                     //e.g.: one per second is what i'm attempting
                     */  
                     counter++;
-                    
-                    cout<<counter%numberOfCameraImages<<"<-- counter%numberOfCameraImages \n";                        
+                    cout<<counter<<"<-- counter \n";                        
+                    testInt = counter/everyNthFrameCaptureImage;
             
-                    if (counter%numberOfCameraImages == 0)  
-                    {
-                        unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
-                        imgPixels.push_back(someLocalPixels);
-                        frameCounter++;  
-                        //cout<<frameCounter<<"<-- frameCounter \n";     
-                    }
+                    cout<<testInt<<"<-- counter/everyNthFrameCaptureImage \n";                        
                     
-                } else if ((timeDiff >= animationTimeLimit) && (timeDiff <= animationTimeLimit+fadeTime) ){
+                    if (counter%everyNthFrameCaptureImage == 0)  
+                    {
+                        vectorOfPixels.push_back(pixels);
+                        frameCounter++;
+                        cout<<frameCounter<<" <<-- frameCounter in I_RESPONSE \n";
+                    }
+               } 
+               
+               if ((timeDiff >= animationTimeLimit) && (timeDiff <= animationTimeLimit+fadeTime) ){
                     //cout<<"<-- inside first else if \n";
                     
                     //ofSetColor((255.0*(counter2/counter2max))-(timeDiff/3000.0),(255.0*(counter2/counter2max))-(timeDiff/3000.0),(255.0*(counter2/counter2max))-(timeDiff/3000.0)); 
-                    testFloat = (255.0*(counter2/counter2max))-(255.0*(counter2/counter2max)*(timeDiff-animationTimeLimit)/(fadeTime));
-                    //cout<<testFloat<<"<-- (255.0*(counter2/counter2max))-255*(timeDiff/3000.0); \n";
-                
-                    ofSetColor(testFloat,testFloat, testFloat);                     
-                    ofRect(0, 0, ofGetWidth(), ofGetHeight());
                     
-                } else if (timeDiff > (animationTimeLimit+fadeTime)) {
-                   // cout<<"<-- inside second else if \n";
+                    level = (255.0*(currentGreyLevel/numberOfGreyLevels))-(255.0*(currentGreyLevel/numberOfGreyLevels)*(timeDiff-animationTimeLimit)/(fadeTime));
+                    
+                    //cout<<testFloat<<"<-- (255.0*(counter2/counter2max))-255*(timeDiff/3000.0); \n";
+                   
+                    ofSetColor(level);                     
+                    ofRect(0, 0, ofGetWidth(), ofGetHeight());                    
+                } 
+               
+               if (timeDiff > (animationTimeLimit+fadeTime)) {
+                    //cout<<"<-- inside second else if \n";
                     ofSetColor(0, 0, 0);               
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
 
                     //once we've finished synthesis and capturing all the frames into RAM, we can then write the
-                    //image vectors "imgs" backinto a quicktime movie...
-                    
-                    for (i = 0; i < frameCounter; i++)
+                    //ofPixel vectors backinto image files
+                    string fileName; 
+                    for (i = 0; i < vectorOfPixels.size(); i++)
                     {
+                        fileName = whichAnalysis+"_"+ofToString(currentGreyLevel)+"_"+ofToString(i)+".jpg";
+                        ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                         //cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
-                        cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
-                        cameraCapture.saveImage(whichAnalysis+"_"+ofToString(counter2)+"_"+ofToString(i)+".jpg");
                     }
-                    
-                    imgPixels.clear(); //empty out the vector            
-                    frameCounter=0;
+                    vectorOfPixels.clear(); //empty out the vector
+                    frameCounter = 0;
                     counter=0;
+                    scanLinePosition=0;
+                    currentGreyLevel--;
                     lastTime = ofGetElapsedTimeMillis();
-                    counter2--;
-                }      
-            } else {
-                    synthesisComplete = true;
-                    cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
- 
-            }
-    } else {
+                } 
+           } else {
+               synthesisComplete=TRUE; 
+               cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n"; 
+           }     
+            
+           } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-    }
-        
+           }
     }       
     
     //skkpping this one for the moment...  This is going to be complicated - hoping for help from DAVID G
@@ -488,31 +485,82 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         synthesisComplete =TRUE;
 
     }    
-    
   
     if(whichAnalysis=="M_CODE"){
         
         if(synthesisComplete == FALSE ){
-          //  cout<<"showing morse "<<morseMessage<<"\r";
-            showMorse(morseMessage);
-            
-            
+        
+        //cout<<"showing morse "<<morseMessage<<"\r";
+        showMorse(morseMessage);
+        
+        //WHERE in here do we grab frames from the camera? 
+        // trying to grab one everytime through - see what we get... 
+        vectorOfPixels.push_back(pixels);
+        
+        if (morseComplete == TRUE)
+        {
+            string fileName; 
+            for (i = 0; i < vectorOfPixels.size(); i++)
+            {
+                fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                //cout<<i<<"< i in M_CODE ** frames being written to images \n";
+            }
+            vectorOfPixels.clear(); //empty out the vector
+            counter = 0;
+            frameCounter = 0;
+            scanLinePosition=0;
+            synthesisComplete=TRUE; 
+            cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+        }        
+
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
       //  synthesisComplete =TRUE;
 
     }
+
+    //CAM_FRAMERATE 
     
-    //skkpping this one for the moment...  Waiting for Tom's strobe function
     if(whichAnalysis=="CAM_FRAMERATE"){
         
         if(synthesisComplete == FALSE ){      
+    
             strobe();
+                        
+            //there should be a saving function - that takes frames in sync with the strobe (1 frame when on, 1 frame when off)  
+            //i don't understand how to do this with the strobe() encapsulated in a function like this 
             
+            //do we use strobe() elsewhere?  or could we just put the guts of the function here? 
+            
+            //The basics for file saving are... 
+        
+            vectorOfPixels.push_back(pixels);
+
+            if (strobeComplete == TRUE)
+            {
+                string fileName; 
+                for (i = 0; i < vectorOfPixels.size(); i++)
+                {
+                    fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                    ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                    //cout<<i<<"< i in M_CODE ** frames being written to images \n";
+                }
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
+                scanLinePosition=0;
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+            }        
+            
+                       
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
+        
+        
         //synthesisComplete =TRUE;
 
     }
@@ -545,6 +593,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             
             //cout << (greyValue==oldGreyValue)<<" <-- CAM_NOISE greyValue==oldGreyValue \n";
             //cout<<(counter%2)<<" <-- CAM_NOISE counter%2 \n";
+           
+            
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
             //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
 
@@ -930,6 +980,8 @@ void analysis::setupGraphs(){
     showGraphA = FALSE;
     graphCounter = 0;
     dummyCounter = 0;
+    rampCounter = 0;
+    rampSpeed = 10;
     limiter = 0;
     on = false; 
     flip = 1;    
@@ -1169,11 +1221,9 @@ void analysis::loadMorse(){
     }
     for(int i=0;i<morseCode.size();i++){
         
-        cout<<morseCode[i]<<" morse\n";
+        cout<<morseCode[i]<<" morse code is loaded\n";
     }
 }
-
-
 
 string analysis::translateToMorse(string messageToTranslate){
     string messageInMorse;
@@ -1207,15 +1257,13 @@ string analysis::translateToMorse(string messageToTranslate){
 }
 
 
-
 void analysis::showMorse(string message){
-  //  for(int i=0;i<message.length();i++){
+    
     if(counter<message.length()){
    // graphCounter++;
-        
    
     if(pauseBetween<=0){
-        cout<<"pause bettween is "<<pauseBetween  <<" "<<message.at(counter)<< " COUNTER IS "<<counter<<" message at counter \r";
+        cout<<"pause bettween is "<< pauseBetween  <<" "<<message.at(counter)<< " COUNTER IS "<<counter<<" message at counter \r";
         
         cout<<" on counter "<<onCounter<<" offCounter "<<offCounter<<"\r";
         //speed=5;
@@ -1226,20 +1274,23 @@ void analysis::showMorse(string message){
             on=true;
             
         }
+        
         if(message.at(counter)=='-'){
             thresh=3*speed;
             onCounter++;
             on=true;
             
         }
+        
         //char break
         if(message.at(counter)=='*'){
             thresh=2*speed;
-            cout<<"got star\r";
+            //cout<<"got star\r";
             offCounter++;
             on=false;
             
         }
+        
         //word break
         if(message.at(counter)=='/'){
             thresh=6*speed;
@@ -1252,7 +1303,7 @@ void analysis::showMorse(string message){
        
             onCounter=0;
             counter++;
-            pauseBetween=speed;
+            pauseBetween = speed;
         
         }
         if(offCounter>=thresh){
@@ -1273,38 +1324,37 @@ void analysis::showMorse(string message){
        
     //if we just finished one character pause for one beat
     else{
-        cout<<" pausing "<<pauseBetween<<"\r";
+        //cout<<" pausing "<<pauseBetween<<"\r";
        pauseBetween--;
-        
     }
     }
     else{
         cout<<"finished morse\r";
-        synthesisComplete=true;
+        morseComplete=true;
     }
 }
 
 float analysis::returnGaussian(float x, float spread, float height,   float centre, float range){
     float returnY;
-    
     float e=2.718281828;
-    
     float myPower=  - ( pow( (x-centre), 2) ) / (2* (spread*spread));
-    
     returnY= - x* height * pow(e,myPower);
     return returnY/range;
 }
 
 
-
 void analysis::strobe(){
+
     counter++;
+   
+    // int howLongToShowEachFrameRateFor=2*(31-currentFRate);
     
-   // int howLongToShowEachFrameRateFor=2*(31-currentFRate);
-     int howLongToShowEachFrameRateFor=60;
+    int howLongToShowEachFrameRateFor=2;
+    
     //the total length of time each fR is shown for needs to be 
     // exactly divisible by that frame rate or it will do (for example) a frame and a half and be impossible to count
-    if(counter>howLongToShowEachFrameRateFor){
+    
+    if(counter > howLongToShowEachFrameRateFor){
         //advance to next framerate   
         currentFRate = getRamp();
         cout<<"new frame rate is "<<currentFRate<<"\r";
@@ -1314,37 +1364,37 @@ void analysis::strobe(){
     }
     
     if (limiter<100) {
-  //this speed needs calibration
-        floatCounter+=1;//1/30;//1/speed
+        //this speed needs calibration
+        floatCounter+=1;
+        
+        //1/30;//1/speed
         //imagine a frame rate of 30fps
-        if(floatCounter>=30-currentFRate){
+        
+        if(floatCounter >= 30-currentFRate){
             on=!on;
             floatCounter=0;      
         }
-  
+        
         if(on){   
             ofSetColor(255);
         }
         else{
             ofSetColor(0);
         }
-  
+        
         ofRect(0, 0, ofGetWidth(), ofGetHeight());
         
-        
     }
+    
     else {
-        synthesisComplete=true;
-    }
-
+        strobeComplete=true;
+    }    
 }
     
-    
-float analysis::getRamp (){
+
+float analysis::getRamp(){
     float ramp;
-    float maxTime=100; 
-    
-    
+    float maxTime=200; 
     float maxFrameRate=30;
     float maxResult=maxFrameRate; 
     
@@ -1353,23 +1403,16 @@ float analysis::getRamp (){
     
     //go up in steps which are the total distance divided by number of changes in direction
     float adder=maxResult/threshold;
-    
-    level+=adder*flip;
+    level+=adder*flip;    
+    ramp=level;
 
-   // if (limiter<maxTime) {
-        ofSetColor(level);
-        ramp=level;
-        //graph counter is our position on the x axis
-        // graphCounter++;
-        //limiter is the overall counter 
-        // limiter++;
-    
-        if(graphCounter>=threshold){
-            graphCounter=0;
-            flip*=-1;
-        }      
+    if(rampCounter >= threshold){
+        rampCounter=0;
+        flip*=-1;
+    }      
     return ramp;
 }
+
 
 void analysis::setGUIDefaults (){    
         // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders
