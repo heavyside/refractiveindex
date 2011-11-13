@@ -23,7 +23,10 @@ class analysis{
     void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, int whichCodec);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
-    void synthDrawCamRecord(unsigned char * pixels);
+    void synthDrawCamRecord(ofPixels pixels);
+
+    //void synthDrawCamRecord(unsigned char * pixels);
+
     void synthUpdate();
     
     ////Analyse Input Methods//
@@ -36,6 +39,8 @@ class analysis{
 
     void setupQuicktimeMovieRecord(int camH, int camW, int codec);
     vector<ofImage> returnFrames();
+    
+    void setGUIDefaults();
     
     //analysis specific functions (this makes me think that we should have seperate classes for at least some of these analyses
     float returnGaussian(float x, float spread, float height, float centre, float range);
@@ -105,7 +110,6 @@ class analysis{
     float getRamp();
     float currentFRate;
     ofxQtVideoSaver movieFromCamera;
-    ofImage cameraCapture;
     ofVideoPlayer player;
     
     int camHeight;
@@ -140,11 +144,13 @@ class analysis{
     float oldGreyValue;
     float numberOfGreyLevels;
     
-    vector <ofImage> imgs;
+    ofImage oneOfImage;
+    
+    ofImage cameraCapture;
+    vector <ofImage> vectorOfImages;
+    vector <ofPixels> vectorOfPixels;
     vector <unsigned char *> imgPixels;
-    
-    
-        
+    unsigned char * imgPixel;
 };
 
 #endif

@@ -17,6 +17,7 @@ void testApp::setup(){
     //set default codec
     codecChooser=0;
     
+    
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);
     
@@ -110,6 +111,9 @@ void testApp::setup(){
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
     masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
+    
+    masterAnalysis.setGUIDefaults();
+    
     //get list of codecs from movie object in analysis class
     returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
     
@@ -142,6 +146,9 @@ void testApp::update(){
     
     vidGrabber.grabFrame();  // go get frame from OS
    
+//  vidGrabber.update();  // go get frame from OS
+    
+    
     //neutral, do nothing
     if(menuState==0){
 
@@ -151,10 +158,7 @@ void testApp::update(){
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
-        //masterAnalysis.setupSaver(camWidth, camHeight, whichCodec);   //Tom - I've removed this 
-                                                                        //as it's currently redundant with the setupAnalysis in the analysis class below 
-                                                                        // but we should put it back later -JA
-                                                                        // k16GrayCodecType...
+       
         masterAnalysis.morseMessage= tl->getValueText();
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
         
@@ -164,7 +168,7 @@ void testApp::update(){
     
     //play the synthesized stuff to screen 
     if(menuState==2){
-  
+       
     }
     
     //run analysis on the movie we've recorded during 'synthDraw'
@@ -201,18 +205,44 @@ void testApp::draw(){
         
         //vidGrabber.draw(0, 0);
         if(!masterAnalysis.synthesisComplete){
-            cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
-            cout<<"in draw loop menuState 2 \n";
-            masterAnalysis.synthDrawCamRecord(vidGrabber.getPixels());
+            //cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
+            //cout<<"in draw loop menuState 2 \n";
             
+            if (vidGrabber.isFrameNew())
+            {     
+                //ofImage currentFrame;
+                camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, OF_IMAGE_COLOR);
+
+                //camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, 0x01);
+                            
+                //suggested by Kyle McDonald
+                //camPixels = vidGrabber ;
+                // or 
+                //camPixels = vidGrabber.getPixels();            
+            
+                //camPixels = new unsigned char[camWidth*camHeight*3];
+                //memcpy(camPixels, vidGrabber.getPixels(), (camWidth*camHeight*3));  
+                //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+             
+            } 
+            
+            masterAnalysis.synthDrawCamRecord(camPixels);
+            // the old way:
+            // masterAnalysis.synthDrawCamRecord(vidGrabber.getPixels());
+
         } else {
             menuState = 3;
+            
+            //delete [] camPixels;
         }
     }
     
     //menustate  draw results of analysis
     if(menuState==3){
-         cout<<"in draw loop menuState 3 \n";
+        //cout<<" delete [] camPixels; \n";
+       
+        
+         //cout<<"in draw loop menuState 3 \n";
     }
     
 
@@ -270,6 +300,7 @@ void testApp::grabBackgroundEvent(guiCallbackData & data){
 		gui.setValueB("GRAB_BACKGROUND", false);
 	}
 }
+
 
 //this captures all our control panel events - unless its setup differently in testApp::setup
 //--------------------------------------------------------------
@@ -395,6 +426,7 @@ void testApp::eventsIn(guiCallbackData & data){
         masterAnalysis.showGraphA=showGraphLine;
         
     }
+    
     if( thisName == "graph max time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){

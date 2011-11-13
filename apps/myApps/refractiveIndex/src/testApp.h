@@ -85,7 +85,10 @@ public:
     ofxControlPanel gui;
     simpleFileLister lister;
     simpleLogger logger;
-        
+    
+    ofPixels camPixels;
+
+
 };
 
 #endif

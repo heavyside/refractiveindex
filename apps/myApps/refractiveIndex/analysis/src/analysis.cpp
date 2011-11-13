@@ -21,61 +21,42 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     camHeight=camH;
     camWidth=camW;
     check=0;
-    
-    counter=0;
+   
     synthesisComplete=false;
-
-    //you must call listCodecs();
-    movieFromCamera.listCodecs();    
-
-    //probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
-    //TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
+   
     
+    // dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
+    // dataPathName=ofToDataPath("")+"MEDIA/";
+    // ofSetDataPathRoot(dataPathName);
+    // probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
+    // TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names
+    // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
     
     //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
-    
-  //  dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
-  //  dataPathName=ofToDataPath("")+"MEDIA";
-  //  ofSetDataPathRoot(dataPathName);
-    
+
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
-        
         scanLinePosition= 0; 
+        counter=0;
+        frameCounter = 0;
         //scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //because this is called after the gui sets this - that's why ;) 
-        
-       // scanLineSpeed is now set in gui for all shadowscapes
-      //  scanLineSpeed = 10;
-        
-        //SETUP VIDEOSAVER
-        //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        //cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
-         cameraMovieName = ofToString(ofGetDay())+"_"+ofToString(ofGetHours())+"_"+ofToString(ofGetMinutes())+"_"+ofToString(ofGetSeconds())+whichAnalysis+ofToString(movieNameCounter)+".mov";   
-        
-        movieFromCamera.setCodecType(whichCodec);
-        
-        //movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
-        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
-                                                                                // and if you set it wrong you have to clean and rebuild
-        movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
-        movieNameCounter++;
+    
+        // scanLineSpeed is now set in gui for all shadowscapes
+        // scanLineSpeed = 10;
     }
 
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-      //  scanLineSpeed = 10;
-       
+        //scanLineSpeed = 10;
     } 
-    
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
         scanLinePosition=0; 
         scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-       // scanLineSpeed = 10;
-        
+        //scanLineSpeed = 10;
     } 
     
     if (whichAnalysis=="RELAXRATE") {
@@ -90,13 +71,13 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         // and if you set it wrong you have to clean and rebuild
         movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
         movieNameCounter++;
-
     } 
     
     if (whichAnalysis=="I_RESPONSE") {
+        
         lastTime = ofGetElapsedTimeMillis();
         //amimationTimeLimit is now set in GUI
-       // animationTimeLimit = 3000;  //milliseconds
+        //animationTimeLimit = 3000;  //milliseconds
         timeDiff = 0;
         counter = 0;
         frameCounter = 0;
@@ -129,7 +110,6 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     } 
     
     if (whichAnalysis=="COLOR_SINGLE") {
-       
         frameCounter = 0;
         framesPerColourValue = 5;
         localFrameCounter = 0;
@@ -218,72 +198,111 @@ void analysis::synthUpdate(){
 */
 
 
-void analysis::synthDrawCamRecord(unsigned char * pixels){
+void analysis::synthDrawCamRecord(ofPixels pixels){
 
-    //cout<<whichAnalysis<<" whichAnalysis \n";
-
-    //i've implemented the horizontal one with the movie quicktime saving... and the next one with image saving below
-    //currently i can't get the files to write properly 
-    //(see the note at the top of this file - always writes a black movie if there's already a file saved from a prior launch of the prog - why!?
-    
     if(whichAnalysis=="H_SHADOWSCAPES"){ 
  
         // cout<<"if(whichAnalysis=="H_SHADOWSCAPES") \n";
-        if(synthesisComplete==false && movieFromCamera.bAmSetupForRecording()){    
-        
-            //grab a frame from the camera
-            
-            movieFromCamera.addFrame(pixels);
+        if(synthesisComplete==FALSE){    
 
-            //is there a way to test here if the pixels have actually been written before we do the next line draw?
-            
             //draw the scanning bar
             ofSetColor(255, 255, 255);            
             ofRect(scanLinePosition, 0, scanLineWidth, ofGetWidth());
             scanLinePosition += scanLineSpeed;
             
+            // another memory allocation attempt
+            /*
+            unsigned char ** someLocalPixels;
+            someLocalPixels = new unsigned char* [1000];
+            someLocalPixels[frameCounter] = new unsigned char[camWidth*camHeight*3];
+            memcpy(someLocalPixels[frameCounter], pixels, (camWidth*camHeight*3)); 
+            imgPixels.push_back(someLocalPixels[frameCounter]);
+            */
+            /*
+            // How to get rid of the memory?
+            // free(someLocalPixels);
+            // delete [] someLocalPixels;            
+            */
+            /*  Could we use ofPixels? 
+            // ofPixels someLocalOfPixels;
+            // someLocalOfPixels.setFromPixels();  //????
+            */ 
+        
+            vectorOfPixels.push_back(pixels);
+            frameCounter++;
+            
             if(scanLinePosition >= ofGetWidth()+(scanLineSpeed+scanLineWidth)) {
-                counter=0;
+                for (i = 0; i < frameCounter; i++)  
+                {   
+                    //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
+                    //cameraCapture.setFromPixels(vectorOfPixels[i],camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
+                    
+                   // cameraCapture = vectorOfPixels[i].getPixels();
+                                       
+                    //vectorOfPixels[i].saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
+                    
+                    //imgPixel = vectorOfPixels[i].getPixels();  // try assigning to an unsigned char first 
+                    
+                    // this seems to write the images, but they're black and white and messed up looking
+                    //oneOfImage.setFromPixels(vectorOfPixels[i]);
+                    
+                    // this doesn't like the assignments of parameters
+                    //oneOfImage.setFromPixels(vectorOfPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
+                  
+                    // which one of these to use?
+                    //oneOfImage.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
+                    
+                    ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+
+                    //delete someLocalPixels[i];
+                    oneOfImage.clear();
+                }
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
                 scanLinePosition=0;
-                synthesisComplete=true; 
+                synthesisComplete=TRUE; 
                 cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
-                movieFromCamera.finishMovie();
-                 //write to file the video/wrap up the image sequence
             }   
+
             
         } else { 
-            
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-            
         }
     }
     
-    //The V_SHADOWSCAPES synth and record method below loads the individual frames as images 
+    
+    //The V_SHADOWSCAPES synth 
     
     if(whichAnalysis=="V_SHADOWSCAPES"){
                 
-        if(synthesisComplete==false){    
+        if(synthesisComplete==FALSE){    
       
-            //grab a frame from the camera - passed in to this class as 'pixels'
-            cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
- 
-            //should play here with the quality / size of the image
-            //greyscale, jpg probably will be fastest and all we need?  
-            //but there might be a better, more raw format that will keep us from having to decompress during analysis
-            cameraCapture.saveImage(whichAnalysis+"_"+ofToString(counter)+".jpg");
-           
             //draw the scanning bar
             ofSetColor(255, 255, 255);            
             ofRect(0, scanLinePosition, ofGetWidth(),scanLineWidth);
             scanLinePosition += scanLineSpeed;
-            counter++;
+            
+            unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
+            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+            imgPixels.push_back(someLocalPixels);
+            frameCounter++;
+            //delete [] someLocalPixels;  // delete the memory here results in a the same image being written over and over...
             
             if(scanLinePosition >= ofGetWidth()+(scanLineSpeed+scanLineWidth)) {
-                counter=0;
+                for (i = 0; i < frameCounter; i++)  
+                {   
+                    //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
+                    cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, TRUE);
+                    cameraCapture.saveImage(whichAnalysis+"_"+"_"+ofToString(i)+".jpg");
+                }
+                imgPixels.clear(); //empty out the vector
+                frameCounter = 0;
                 scanLinePosition=0;
-                synthesisComplete=true; 
-                cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";
-                //write to file the video/wrap up the image sequence
+                
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+               
             }
             
         } else {
@@ -302,12 +321,12 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         if(synthesisComplete==false){    
             
             //grab a frame from the camera - passed in to this class as 'pixels'
-            cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
+            //cameraCapture.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
             
             //this will take each new incoming ofImage and add it to the vector of images "imgs"
             //using imgs.push_back(img)
             
-            imgs.push_back(cameraCapture);
+            //imgs.push_back(cameraCapture);
             counter++;
             
             //cout<<counter<<" <-- D_SHADOWSCAPES COUNTER: \n";
@@ -340,10 +359,10 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                 
                 for (i = 0; i <= counter; i++)
                 {
-                    imgs[i].saveImage(whichAnalysis+"_"+ofToString(i)+".jpg");
+                    //imgs[i].saveImage(whichAnalysis+"_"+ofToString(i)+".jpg");
                 }
                 
-                imgs.clear();  //empty out the vector
+                //imgs.clear();  //empty out the vector
                 scanLinePosition=0; //reset the scan line position
                 counter=0; //reset counter
                 synthesisComplete=true; //pronounce the process complete
@@ -408,7 +427,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             }*/
             
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-            memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
             imgPixels.push_back(someLocalPixels);  
             
             counter++;
@@ -496,7 +515,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     if (counter%numberOfCameraImages == 0)  
                     {
                         unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+                        //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
                         imgPixels.push_back(someLocalPixels);
                         frameCounter++;  
                         //cout<<frameCounter<<"<-- frameCounter \n";     
@@ -612,7 +631,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             //cout << (greyValue==oldGreyValue)<<" <-- CAM_NOISE greyValue==oldGreyValue \n";
             //cout<<(counter%2)<<" <-- CAM_NOISE counter%2 \n";
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-            memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
 
             
             //cout <<     newFrame<<" <-- CAM_NOISE    newFrame \n";
@@ -704,7 +723,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                         //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
                         //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
                         unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+                        //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
                         imgPixels.push_back(someLocalPixels);
                         localFrameCounter++;  
                         //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
@@ -731,7 +750,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
                     //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
                     unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+                    //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
                     imgPixels.push_back(someLocalPixels);
                     localFrameCounter++;  
                     //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
@@ -758,7 +777,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
                     //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
                     unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
+                    //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
                     imgPixels.push_back(someLocalPixels);
                     localFrameCounter++;  
                     //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
@@ -842,7 +861,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
             // if( ( (int)cHue%255 < 255 ) && !gotAllLocalFrames1){
             
                 unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
+                //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
                 imgPixels.push_back(someLocalPixels);
                 localFrameCounter++;
                 gotAllLocalFrames1 = true;                
@@ -855,7 +874,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
                     
             if (counter >= counterMax) {  
                 
-                cout << counter << " <<-- counter >= counterMax in COLOR_MULTI \n";
+                //cout << counter << " <<-- counter >= counterMax in COLOR_MULTI \n";
                 
                 for (i = 0; i < localFrameCounter; i++)  
                 {   
@@ -874,24 +893,7 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
         }
 
     }
-    if(whichAnalysis=="COLOR_SINGLE"){
-        if(synthesisComplete == false){
-            if(counter<animationTimeLimit){
-                ofSetColor(red, green, blue);
-                ofRect(0, 0, ofGetWidth(), ofGetHeight());   
-                counter++;            
-            }
-            else{
-                synthesisComplete=true;
-                cout<<"completed colour single \r";
-            }
-            
-        } else {
-            cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-        }
-    
-        
-    }
+
 }
 
 
@@ -900,6 +902,12 @@ void analysis::synthDrawCamRecord(unsigned char * pixels){
 // the below functions run analysis on the recorded video to extract whatever information we might want... 
 // the output of this could be another video file, or a live rendering of the data
 void analysis::analyseInput(unsigned char * pixels){
+    
+    
+    /*
+     by calling setUseTexture(false) on the ofImage before you load it, you'll stop openFrameworks from uploading the pixels to the graphics card and save a lot of space.
+     */
+
     
     //Analysis for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
@@ -1014,6 +1022,8 @@ void analysis::setupGraphs(){
     finishedGraph=false;
 }
 
+
+
 //actually just to the power of a square
 void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
     if (limiter<maxTime) {
@@ -1060,6 +1070,9 @@ void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
         finishedGraph=true;
     }
 }
+
+
+
 void analysis::quadratic(float maxResult, float maxTime, float divisions, bool showGraph){
     if (limiter<maxTime) {
     ofNoFill();
@@ -1091,6 +1104,9 @@ void analysis::quadratic(float maxResult, float maxTime, float divisions, bool s
         finishedGraph=true;
     }
 }
+
+
+
 void analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
     float threshold=maxTime/divisions;
     ofFill();
@@ -1114,8 +1130,6 @@ void analysis::squareWave(float maxResult, float maxTime, float divisions, bool 
             graphCounter=0;
             on=!on;
         }
-   
-    
     
         if(showGraph){
             int adjust=0;
@@ -1152,6 +1166,8 @@ void analysis::squareWave(float maxResult, float maxTime, float divisions, bool 
     }
 }
 
+
+
 void analysis::linear( float maxResult, float maxTime, float divisions, bool showGraph){
     
     //it should change direction at every peak or trough
@@ -1174,9 +1190,6 @@ void analysis::linear( float maxResult, float maxTime, float divisions, bool sho
             graphCounter=0;
             flip*=-1;
         }
-        
-        
-        
         
         if(showGraph){
             ofSetColor(255, 0, 0);
@@ -1214,6 +1227,8 @@ void analysis::linear( float maxResult, float maxTime, float divisions, bool sho
     
 }
 
+
+
 void analysis::loadMorse(){
     string line;
     const char* filePath=ofToDataPath("morse.txt").c_str();
@@ -1240,6 +1255,9 @@ void analysis::loadMorse(){
         cout<<morseCode[i]<<" morse\n";
     }
 }
+
+
+
 string analysis::translateToMorse(string messageToTranslate){
     string messageInMorse;
     cout<<messageToTranslate.length()<<" message length\r";
@@ -1434,6 +1452,11 @@ float analysis::getRamp (){
         }
       
     return ramp;
+}
+
+
+void analysis::setGUIDefaults (){    
+        // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders
 }
 
 
