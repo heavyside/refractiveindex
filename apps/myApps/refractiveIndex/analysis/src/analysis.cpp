@@ -136,7 +136,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         setupGraphs();
         synthesisComplete=false;
         floatCounter=0.0000001;
-        currentFRate =0;
+        currentSRate =0;
     } 
 
     if (whichAnalysis=="COLOR_MULTI") {
@@ -1343,11 +1343,12 @@ float analysis::returnGaussian(float x, float spread, float height,   float cent
 }
 
 
+// This should probably strobe upwards and downwards.. 
 void analysis::strobe(){
 
     counter++;
    
-    // int howLongToShowEachFrameRateFor=2*(31-currentFRate);
+    // int howLongToShowEachFrameRateFor=2*(31-currentSRate);
     
     int howLongToShowEachFrameRateFor=2;
     
@@ -1355,9 +1356,9 @@ void analysis::strobe(){
     // exactly divisible by that frame rate or it will do (for example) a frame and a half and be impossible to count
     
     if(counter > howLongToShowEachFrameRateFor){
-        //advance to next framerate   
-        currentFRate = getRamp();
-        cout<<"new frame rate is "<<currentFRate<<"\r";
+        //advance to next stroberate   
+        currentSRate = getRamp();
+        cout<<"new frame rate is "<<currentSRate<<"\r";
         graphCounter++;
         limiter++;
         counter=0;
@@ -1370,7 +1371,7 @@ void analysis::strobe(){
         //1/30;//1/speed
         //imagine a frame rate of 30fps
         
-        if(floatCounter >= 30-currentFRate){
+        if(floatCounter >= 30-currentSRate){
             on=!on;
             floatCounter=0;      
         }
@@ -1383,9 +1384,7 @@ void analysis::strobe(){
         }
         
         ofRect(0, 0, ofGetWidth(), ofGetHeight());
-        
     }
-    
     else {
         strobeComplete=true;
     }    
@@ -1394,9 +1393,9 @@ void analysis::strobe(){
 
 float analysis::getRamp(){
     float ramp;
-    float maxTime=200; 
-    float maxFrameRate=30;
-    float maxResult=maxFrameRate; 
+    float maxTime=200;   // what is this number for?
+    float maxStrobeRate=30;  //TOM - why not make this equal to 'ofGetFrameRate()'?
+    float maxResult=maxStrobeRate;  //why this second variable? 
     
     //it should change direction at every peak or trough
     float threshold=maxTime/2;

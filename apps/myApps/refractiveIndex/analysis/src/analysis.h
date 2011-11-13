@@ -114,7 +114,7 @@ class analysis{
     //FOR CAM FRAME RATE
     void strobe();
     float getRamp();
-    float currentFRate;
+    float currentSRate;
     ofxQtVideoSaver movieFromCamera;
     ofVideoPlayer player;
     
