@@ -210,8 +210,12 @@ void testApp::draw(){
             
             if (vidGrabber.isFrameNew())
             {     
+
+                    
+                camPixels = vidGrabber.getPixelsRef();  
+                
                 //ofImage currentFrame;
-                camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, OF_IMAGE_COLOR);
+                //camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, OF_IMAGE_COLOR);
 
                 //camPixels.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight, 0x01);
                             

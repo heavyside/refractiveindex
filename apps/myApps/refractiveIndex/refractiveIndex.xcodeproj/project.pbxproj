@@ -299,9 +299,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4200370D146FE42F007A6F34 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				4200370D146FE42F007A6F34 /* New Group */,
 				E2A6CBB213FDB9ED0013126C /* ofxQtVideoSaver */,
 				E2A6CB0113FDB9AC0013126C /* ofx3DUtils */,
 				E2A6CB0B13FDB9AC0013126C /* ofxControlPanel */,
