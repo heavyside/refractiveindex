@@ -21,10 +21,10 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     camHeight=camH;
     camWidth=camW;
     check=0;
-   
+    counter=0;
+    frameCounter = 0;
     synthesisComplete=false;
    
-    
     // dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
     // dataPathName=ofToDataPath("")+"MEDIA/";
     // ofSetDataPathRoot(dataPathName);
@@ -38,24 +38,21 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
         scanLinePosition= 0; 
-        counter=0;
-        frameCounter = 0;
         //scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //because this is called after the gui sets this - that's why ;) 
     
         // scanLineSpeed is now set in gui for all shadowscapes
-        // scanLineSpeed = 10;
     }
 
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
-        scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        //scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //scanLineSpeed = 10;
     } 
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
-        scanLinePosition=0; 
-        scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
+        scanLinePosition = 0; 
+       // scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //scanLineSpeed = 10;
     } 
     
@@ -63,14 +60,6 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         //SETUP VIDEOSAVER
         //this function initalises on the variables for the graphs
         setupGraphs();
-        
-        //the name of the file will be the name of the analysis - but we always save all the files (never overwrite)
-        cameraMovieName = whichAnalysis+ofToString(movieNameCounter)+".mov";          
-        movieFromCamera.setCodecType(47);   //default is kJPEGCodecType = 47 (on my computer) a
-        movieFromCamera.setCodecQualityLevel(OF_QT_SAVER_CODEC_QUALITY_HIGH);   // note that kJPEGCodecType, which has no OF_QT_SAVER_CODEC_QUALITY_LOSSLESS
-        // and if you set it wrong you have to clean and rebuild
-        movieFromCamera.setup(camWidth, camHeight, cameraMovieName);   
-        movieNameCounter++;
     } 
     
     if (whichAnalysis=="I_RESPONSE") {
@@ -296,7 +285,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 //cout<<ofGetHeight()<<" <-- ofGetHeight() \n";
                 //cout<<" ** scanLinePosition > ofGetHeight() \n";
                 
-                for (i = 0; i < vectorOfPixels[i].size(); i++)
+                for (i = 0; i < vectorOfPixels.size(); i++)
                 {
                     ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString((100*i*scanLineSpeed)/(2*ofGetHeight()))+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);                
                 }
@@ -320,45 +309,66 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     //*************  I THINK THIS IS THE MOST PROMISING WAY TO DO THE FILE SAVING - although it could be heavily RAM dependent?! **********//
     if(whichAnalysis=="RELAXRATE"){
         
-        if(synthesisComplete==false){    
+        if(synthesisComplete==FALSE){    
             
+            float lightLevel = 0;
             //CURVE RELAXES
-            
-            cout<<"max result and maxtime "<<maxResultA<<" "<< maxTimeA<<" "<<divisionsA<<"\r";
+            //cout<<"max result and maxtime "<<maxResultA<<" "<< maxTimeA<<" "<<divisionsA<<"\r";
             
             if(whichGraph=="LINEAR"){
-                linear(maxResultA, maxTimeA, divisionsA, showGraphA);
+                lightLevel = linear(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
             if(whichGraph=="EXPONENTIAL"){
-                exponential(maxResultA, maxTimeA, showGraphA);
+                lightLevel = exponential(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
             if(whichGraph=="SQUARE_WAVE"){
-                squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
+                lightLevel = 255*squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
+            /*
             if(whichGraph=="QUADRATIC"){
                 quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
-
-            vectorOfPixels.push_back(pixels);
+             */
+            
+            //ofFill();
+            ofSetColor(lightLevel);
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            
+            vectorOfPixels.push_back(pixels);            
+            lightLevels.push_back(lightLevel);
             frameCounter++;
-                        
+            
+            cout<<frameCounter<<" <<-- frameCounter in RELAXRATE \n";
+
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
-            
-            if(finishedGraph){
-                cout<<"TRYING TO START WRITING OUT BUFFER\r";
-                //cout<<" ** counter > 255 \n";
-                for (i = 0; i < frameCounter; i++)
+                        
+            if (finishedGraph) {
+                string fileName; 
+                //cout << vectorOfPixels.size()<< "<< -- vectorOfPixels.size() \n";
+                for (i = 0; i < vectorOfPixels.size(); i++)
                 {
+                    ///cout<<lightLevels[i]<<"< lightLevels[i] in RELAXRATE \n";
                     //cout<<i<<"< i in RELAXRATE ** frame add counter \n";
                 
-                        ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString((100*i*scanLineSpeed)/(2*ofGetHeight()))+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);                
+                    //FOR SOME FUCKING REASON... the ofToString(lightLevels[i]) included below causes the files to write out of order!?  REALLY weird.
+                    //fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(lightLevels[i],2)+"_"+ofToString(i)+".jpg";
+                    //The below does the same thing...
+                    //ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+whichGraph+"_"+ofToString(lightLevels[i])+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);                
+
+                    //Might have something to do with using ofToString on a vector???
+                    
+                    //using the simpler one for now - JA Nov 13 
+                    fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+".jpg";
+                    
+                    ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);  
                 }
+            
                 vectorOfPixels.clear(); //empty out the vector
-                counter = 0;
+                lightLevels.clear();
                 frameCounter = 0;
                 scanLinePosition=0;
                 synthesisComplete=TRUE; 
@@ -367,7 +377,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        
     }
     
     
@@ -412,7 +421,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //e.g.: one per second is what i'm attempting
                     */  
                     counter++;
-                    
                     
                     cout<<counter%numberOfCameraImages<<"<-- counter%numberOfCameraImages \n";                        
             
@@ -464,6 +472,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
     }
+        
     }       
     
     //skkpping this one for the moment...  This is going to be complicated - hoping for help from DAVID G
@@ -516,7 +525,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             //stores these in a vector, until the on-screen synthesis is finished 
             //then the whole set of buffered images is written to a movie file
                        
-            greyValue = 255.0-((255.0/numberOfGreyLevels)*(int)((numberOfGreyLevels)*(double)counter/255.0));
+            greyValue = 255.0 - ((255.0/numberOfGreyLevels)*(int)((numberOfGreyLevels)*(double)counter/255.0));
     
             // white impulse 
             ofSetColor(greyValue, greyValue, greyValue);
@@ -537,8 +546,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
             //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
 
-            
-            //cout <<     newFrame<<" <-- CAM_NOISE    newFrame \n";
+            //cout << newFrame <<"<-- CAM_NOISE newFrame \n";
             
             if (greyValue - oldGreyValue == 0)  {
                 
@@ -917,41 +925,55 @@ vector<ofImage> analysis::returnFrames(){
 }
 
 void analysis::setupGraphs(){
-    
+    showGraphA = FALSE;
     graphCounter = 0;
+    dummyCounter = 0;
     limiter = 0;
-    on=false;
-    flip=1;    
-    level=0;
-    finishedGraph=false;
+    on = false; 
+    flip = 1;    
+    level = 0;
+    finishedGraph = FALSE;
 }
 
 
 
 //actually just to the power of a square
-void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
-    if (limiter<maxTime) {
-        ofFill();
-        float yPos;
+float analysis::exponential(float maxResult, float maxTime,  float divisions, bool showGraph){
+    divisions = 10.0;
+    float mappedLightLevel;
+    float threshold=maxTime/divisions;
         
+    if (limiter < maxTime) {
+        
+        float yPos;
         float lightLevel=pow(level,2);
-        float mappedLightLevel = ofMap(lightLevel,0,pow(maxTime/2,2), 0,maxResult);
+//        mappedLightLevel = ofMap(lightLevel, 0, pow(maxTime/2,2), 0,maxResult);
+        mappedLightLevel = ofMap(lightLevel, 0, pow(maxTime/divisions,2), 0,maxResult);
+
         graphCounter++;
         limiter++;
-        if (graphCounter< maxTime/2) {
-            level++;
-        }
-        else{
-            level--;
-        }
         
-        ofSetColor(mappedLightLevel);
-        ofRect(0,0,ofGetWidth(),ofGetHeight());
+        //cout<<graphCounter<<" <<-- graphCounter \n";
         
+        if (graphCounter < maxTime/divisions) {
+            level+=flip;
+            //level++;
+        } else {
+            level-=flip;
+            //level--;
+        }
+             
+        if(graphCounter >= threshold){
+            graphCounter = 0;
+            cout<<"graphCounter set to zero \n";
+            flip*=-1;
+        }
+
         if(showGraph){
             float localCount=0;
             ofNoFill();
             ofSetColor(255,0,0);
+            
             float xPos=ofMap(graphCounter, 0, maxTime, 0, ofGetWidth());
             ofLine(xPos, ofGetHeight()-1, xPos, ofGetHeight()-150);
             ofBeginShape();
@@ -967,28 +989,29 @@ void analysis::exponential(float maxResult, float maxTime,  bool showGraph){
                 }
             }
             ofEndShape();
-        }
+        }   
+    } else {
+        finishedGraph=TRUE;
     }
-    else{
-        
-        finishedGraph=true;
-    }
+
+    return mappedLightLevel;
 }
 
 
 
 void analysis::quadratic(float maxResult, float maxTime, float divisions, bool showGraph){
+ 
     if (limiter<maxTime) {
-    ofNoFill();
-    ofSetColor(255, 0, 0);
-    ofBeginShape();
-    for(float i=-maxTime/2;i<maxTime/2;i++){
+        ofNoFill();
+        ofSetColor(255, 0, 0);
+        ofBeginShape();
+    
+    for(float i=-maxTime/2; i<maxTime/2; i++) {
         
         float yPos;
         //makes it narrower
         float a=.2;
-        
-        
+    
         float b=.2;
         
         //shifts up or down
@@ -1004,32 +1027,27 @@ void analysis::quadratic(float maxResult, float maxTime, float divisions, bool s
     ofEndShape();
     }
     else{
-        
         finishedGraph=true;
     }
 }
 
 
 
-void analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
+bool analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
+    
+    bool myBoolean;
     float threshold=maxTime/divisions;
     ofFill();
+
     if (limiter<maxTime) {
-        
-        if(on){
-            ofSetColor(maxResult);
-        }
-        else{
-            ofSetColor(0);
-        }
-        ofRect(0, 0, ofGetWidth(), ofGetHeight());
-        
-        
         
         graphCounter++;
         limiter++;
         //reset graphCounter and flip boolean
         //maybe change this to a modulo
+        
+        myBoolean = on;
+        
         if(graphCounter>=threshold){
             graphCounter=0;
             on=!on;
@@ -1063,32 +1081,31 @@ void analysis::squareWave(float maxResult, float maxTime, float divisions, bool 
             }  
             ofEndShape();
         }
-    }
-    else{
         
+    } else {
         finishedGraph=true;
     }
+    
+    return myBoolean;
 }
 
 
-
-void analysis::linear( float maxResult, float maxTime, float divisions, bool showGraph){
-    
+float analysis::linear(float maxResult, float maxTime, float divisions, bool showGraph){
+    //showGraph = FALSE;
     //it should change direction at every peak or trough
     float threshold=maxTime/divisions;
-    
-    
     float adder=maxResult/threshold;
-    level+=adder*flip;
-    ofFill();
     
-    if (limiter<maxTime) {
-        ofSetColor(level);
-        ofRect(0, 0, ofGetWidth(), ofGetHeight());
-        
+    level+=adder*flip;
+    
+    //cout<<limiter<<" <<-- limiter in linear \n";
+    //cout<<maxTime<<" <<-- maxTime in linear \n";
+
+    if (limiter < maxTime) {
+
+        //cout<<level<<" <<-- level in linear \n";
         graphCounter++;
         limiter++;
-        
         
         if(graphCounter>=threshold){
             graphCounter=0;
@@ -1110,27 +1127,23 @@ void analysis::linear( float maxResult, float maxTime, float divisions, bool sho
                 cout<<adder<<" adder \r";
                 localLevel+=adder*localFlip;
                 
-                ofVertex( ofMap(i, 0, maxTime, 0, ofGetWidth()) ,  ofGetHeight()- localLevel);
-                
+                ofVertex(ofMap(i, 0, maxTime, 0, ofGetWidth()), ofGetHeight()-localLevel);
                 localCounter++;
                 if(localCounter>=threshold){
                     localCounter=0;
                     localFlip*=-1;
                     
                 }
-                
             }
             ofEndShape();
         }
-        
     }
     else{
-        
         finishedGraph=true;
     }
-    
+    //cout<<level<<" <<-- level in linear \n";
+    return level;
 }
-
 
 
 void analysis::loadMorse(){
@@ -1139,10 +1152,9 @@ void analysis::loadMorse(){
     ifstream myfile (filePath);
     if (myfile.is_open())
     {
-        while ( myfile.good() )
+        while (myfile.good() )
         {
             getline (myfile,line);
-            
             vector<string> twoHalves = ofSplitString(line, "\t");
             textTranslation.push_back(twoHalves[0]);
             morseCode.push_back(twoHalves[1]);
@@ -1151,7 +1163,6 @@ void analysis::loadMorse(){
         myfile.close();
     }
     else{
-        
         cout<<"can't open file \n";
     }
     for(int i=0;i<morseCode.size();i++){
@@ -1190,10 +1201,10 @@ string analysis::translateToMorse(string messageToTranslate){
     }
     cout<<messageInMorse<<" message in morse \r";
     
-    
-    
     return messageInMorse;
 }
+
+
 
 void analysis::showMorse(string message){
   //  for(int i=0;i<message.length();i++){
@@ -1282,6 +1293,8 @@ float analysis::returnGaussian(float x, float spread, float height,   float cent
     return returnY/range;
 }
 
+
+
 void analysis::strobe(){
     counter++;
     
@@ -1345,19 +1358,16 @@ float analysis::getRamp (){
         ofSetColor(level);
         ramp=level;
         //graph counter is our position on the x axis
-       // graphCounter++;
+        // graphCounter++;
         //limiter is the overall counter 
-       // limiter++;
-        
-        
+        // limiter++;
+    
         if(graphCounter>=threshold){
             graphCounter=0;
             flip*=-1;
-        }
-      
+        }      
     return ramp;
 }
-
 
 void analysis::setGUIDefaults (){    
         // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders

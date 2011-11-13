@@ -44,10 +44,10 @@ class analysis{
     
     //analysis specific functions (this makes me think that we should have seperate classes for at least some of these analyses
     float returnGaussian(float x, float spread, float height, float centre, float range);
-    void linear(float maxResult, float maxTime, float divisions, bool showGraph);
+    float linear(float maxResult, float maxTime, float divisions, bool showGraph);
     float skewNormalDistribution(float x, float spread, float height, float max, float centre, float shiftCentre);
-    void squareWave(float maxResult, float maxTime, float divisions, bool showGraph);
-    void exponential(float maxResult, float maxTime, bool showGraph);
+    bool squareWave(float maxResult, float maxTime, float divisions, bool showGraph);
+    float exponential(float maxResult, float maxTime, float divisions, bool showGraph);
     void quadratic(float maxResult, float maxTime, float divisions, bool showGraph);
     void setupGraphs(); // not a great/clear name feel free to find a better one ;) 
 
@@ -77,6 +77,7 @@ class analysis{
     //FOR RELAXRATE
     string whichGraph;
     float 	graphCounter;
+    int dummyCounter;
     float level;
     float limiter;
     bool on;
@@ -148,6 +149,7 @@ class analysis{
     
     ofImage cameraCapture;
     vector <ofImage> vectorOfImages;
+    vector <float> lightLevels;
     vector <ofPixels> vectorOfPixels;
     vector <unsigned char *> imgPixels;
     unsigned char * imgPixel;
