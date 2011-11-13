@@ -23,7 +23,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     check=0;
     counter=0;
     frameCounter = 0;
-    synthesisComplete=false;
+    synthesisComplete=FALSE;
    
     // dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
     // dataPathName=ofToDataPath("")+"MEDIA/";
@@ -134,9 +134,11 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         
     if (whichAnalysis=="CAM_FRAMERATE") {
         setupGraphs();
-        synthesisComplete=false;
-        floatCounter=0.0000001;
-        currentSRate =0;
+        strobeCounter = 0;
+        synthesisComplete=FALSE;
+        strobeToggleCounter = 0.0000001;
+        currentSRate = 0;
+        strobeComplete = FALSE;
     } 
 
     if (whichAnalysis=="COLOR_MULTI") {
@@ -535,11 +537,12 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             //do we use strobe() elsewhere?  or could we just put the guts of the function here? 
             
             //The basics for file saving are... 
-        
-            vectorOfPixels.push_back(pixels);
+
+            // vectorOfPixels.push_back(pixels);
 
             if (strobeComplete == TRUE)
             {
+              /*
                 string fileName; 
                 for (i = 0; i < vectorOfPixels.size(); i++)
                 {
@@ -547,6 +550,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                     //cout<<i<<"< i in M_CODE ** frames being written to images \n";
                 }
+               */
                 vectorOfPixels.clear(); //empty out the vector
                 counter = 0;
                 frameCounter = 0;
@@ -980,8 +984,8 @@ void analysis::setupGraphs(){
     showGraphA = FALSE;
     graphCounter = 0;
     dummyCounter = 0;
-    rampCounter = 0;
-    rampSpeed = 10;
+    intervalCounter = 0;
+    intervalSpeed = 10;
     limiter = 0;
     on = false; 
     flip = 1;    
@@ -1319,7 +1323,7 @@ void analysis::showMorse(string message){
         else{
             ofSetColor(0);
         }
-               ofRect(0, 0, ofGetWidth(), ofGetHeight());
+            ofRect(0, 0, ofGetWidth(), ofGetHeight());
     }
        
     //if we just finished one character pause for one beat
@@ -1343,37 +1347,36 @@ float analysis::returnGaussian(float x, float spread, float height,   float cent
 }
 
 
-// This should probably strobe upwards and downwards.. 
+// This should probably strobe upwards and downwards.. and give us a straightforward rate variable that can be set from a GUI - is that what howLongToShowEachFrameRateFor?
 void analysis::strobe(){
 
-    counter++;
-   
+    strobeCounter++;
     // int howLongToShowEachFrameRateFor=2*(31-currentSRate);
     
-    int howLongToShowEachFrameRateFor=2;
+    int howLongToStrobeAtEachStrobeSpeed=20;
     
     //the total length of time each fR is shown for needs to be 
     // exactly divisible by that frame rate or it will do (for example) a frame and a half and be impossible to count
     
-    if(counter > howLongToShowEachFrameRateFor){
+    if(strobeCounter > howLongToStrobeAtEachStrobeSpeed){
         //advance to next stroberate   
-        currentSRate = getRamp();
+        currentSRate = intervalGenerator();
         cout<<"new frame rate is "<<currentSRate<<"\r";
         graphCounter++;
         limiter++;
-        counter=0;
+        strobeCounter=0;
     }
     
-    if (limiter<100) {
+    if (limiter < 500) {
         //this speed needs calibration
-        floatCounter+=1;
+        strobeToggleCounter+=1;
         
         //1/30;//1/speed
         //imagine a frame rate of 30fps
         
-        if(floatCounter >= 30-currentSRate){
+        if(strobeToggleCounter >= 30-currentSRate){
             on=!on;
-            floatCounter=0;      
+            strobeToggleCounter=0;      
         }
         
         if(on){   
@@ -1385,31 +1388,30 @@ void analysis::strobe(){
         
         ofRect(0, 0, ofGetWidth(), ofGetHeight());
     }
+    
     else {
         strobeComplete=true;
     }    
 }
-    
 
-float analysis::getRamp(){
-    float ramp;
-    float maxTime=200;   // what is this number for?
-    float maxStrobeRate=30;  //TOM - why not make this equal to 'ofGetFrameRate()'?
-    float maxResult=maxStrobeRate;  //why this second variable? 
+float analysis::intervalGenerator(){
+    float interval;
+    float maxStrobeRate=ofGetFrameRate();  //TOM - why not make this equal to 'ofGetFrameRate()'?
     
     //it should change direction at every peak or trough
-    float threshold=maxTime/2;
+    float threshold=maxTimeA/2;
     
     //go up in steps which are the total distance divided by number of changes in direction
-    float adder=maxResult/threshold;
+    float adder=maxStrobeRate/threshold;
     level+=adder*flip;    
-    ramp=level;
-
-    if(rampCounter >= threshold){
-        rampCounter=0;
+    interval=level;
+    intervalCounter++;
+    
+    if(intervalCounter >= threshold){
+        intervalCounter=0;
         flip*=-1;
     }      
-    return ramp;
+    return interval;
 }
 
 

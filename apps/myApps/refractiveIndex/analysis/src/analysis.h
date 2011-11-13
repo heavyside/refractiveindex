@@ -80,9 +80,10 @@ class analysis{
     //FOR RELAXRATE
     string whichGraph;
     float graphCounter;
-    float rampCounter;
-    float rampSpeed;
+    float intervalCounter;
+    float intervalSpeed;
     int dummyCounter;
+    int strobeCounter;
     float level;
     float limiter;
     bool on;
@@ -113,7 +114,7 @@ class analysis{
     
     //FOR CAM FRAME RATE
     void strobe();
-    float getRamp();
+    float intervalGenerator();
     float currentSRate;
     ofxQtVideoSaver movieFromCamera;
     ofVideoPlayer player;
@@ -139,7 +140,7 @@ class analysis{
     float numberOfGreyLevels;
     
     int counter;
-    float floatCounter;
+    float strobeToggleCounter;
     int counterMax;
     int frameCounter;
     int localFrameCounter;
