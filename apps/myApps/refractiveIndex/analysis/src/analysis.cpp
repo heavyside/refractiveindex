@@ -91,18 +91,12 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     if (whichAnalysis=="CAM_NOISE") {
         counter = 0;
         frameCounter = 0;
+        localFrameCounter = 0;
         framesPerGreyValue = 5;
         localFrameCounter = 0;
         newFrame = true;
-        numberOfGreyLevels = 5.0;  //this number sets the number of grey levels that are shown  for each noise measurement
+        numberOfGreyLevels = 10.0;  //this number sets the number of grey levels that are shown  for each noise measurement
         k=1;// need to get my frames
-        frameCounter = 0;
-        localFrameCounter = 0;
-        gotAllLocalFrames1 = false;
-        counterMax = 500.;
-        counter = 0;
-        cHue = 0;
-        framesPerGreyValue = 3;
     } 
     
     if (whichAnalysis=="COLOR_SINGLE") {
@@ -534,9 +528,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             //there should be a saving function - that takes frames in sync with the strobe (1 frame when on, 1 frame when off)  
             //i don't understand how to do this with the strobe() encapsulated in a function like this 
             
-            //do we use strobe() elsewhere?  or could we just put the guts of the function here? 
+            //do we use strobe() elsewhere?  or could we just put the guts of the function here so we can save a frame on the up and downswing of the strobe? 
             
-            //The basics for file saving are... 
+            //The basics for file saving are below... 
 
             // vectorOfPixels.push_back(pixels);
 
@@ -572,7 +566,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     //Writes a given grey value to the screen, then grabs 'X' number of grames while that grey value is on the screen     
     if(whichAnalysis=="CAM_NOISE"){
         
-        if(synthesisComplete==false){    ///may have to add a little thing in here that ensures the camera buffer (of frames) is empty
+        if(synthesisComplete==FALSE){    ///may have to add a little thing in here that ensures the camera buffer (of frames) is empty
+  
             counter++;
             
             //the below takes in the pixel as raw unsigned chars from the camera, 
@@ -591,36 +586,16 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             
             //cout << greyValue-oldGreyValue<<" <-- CAM_NOISE greyValue-oldGreyValue \n";
             //cout << greyValue<<" <-- CAM_NOISE greyValue \n";
-            // if (greyValue-oldGreyValue != 0){  //if we have a new grey value on screen - grab three frames
             
-            //whenever the greyValue is the same, take three images 
-            
-            //cout << (greyValue==oldGreyValue)<<" <-- CAM_NOISE greyValue==oldGreyValue \n";
-            //cout<<(counter%2)<<" <-- CAM_NOISE counter%2 \n";
-           
-            
-            unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-            //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
-
-            //cout << newFrame <<"<-- CAM_NOISE newFrame \n";
-            
+            //whenever the greyValue is the same, take X images 
+                        
             if (greyValue - oldGreyValue == 0)  {
                 
                 if ((localFrameCounter < framesPerGreyValue) && (k==1))
                 {
-                    if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
-                    {
-                        //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
-                        //solution - get every other eligible frame - valid as long as the greyvalues are the same should work
-                        imgPixels.push_back(someLocalPixels);
-                        
-                        localFrameCounter++;  
-                        //cout<<localFrameCounter<<"<-- frameCounter \n";    
-                        frameCounter++;
-                        cout<<frameCounter<<"<-- frameCounter \n";   
+                        vectorOfPixels.push_back(pixels); 
+                    localFrameCounter++;
                         k=1;
-                    }
-                    
                 } else {
                     localFrameCounter=0;
                     k=0;
@@ -630,39 +605,25 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             }
             
             oldGreyValue = greyValue;
-            /*
-                for (i=0; i < framesPerGreyValue; i++)  //number of camera frames per output grey value 
-                {
-                    cout << i <<" <-- CAM_NOISE i \n";
-                    unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                    memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));  
-                    imgPixels.push_back(someLocalPixels);  
-                    frameCounter++;
-                    cout << frameCounter<<" <-- frameCounter i \n";
-                }
-                       */   
             
-            //      oldGreyValue = greyValue;
-            //  }
             //once we've finished synthesis and capturing all the frames into RAM, we can then write the
             //image vectors "imgs" backinto a quicktime movie...
             
             if(counter >= 255) {
-               
-                for (i = 0; i < frameCounter; i++)
+                string fileName; 
+                for (i = 0; i < vectorOfPixels.size(); i++)
                 {
-                        //cout<<i<<"< i in CAM_NOISE ** frames being written to images \n";
-                        //cout << i/framesPerGreyValue << " frameCounter/framesPerGreyValue \n";
-                        //cout << i%framesPerGreyValue << " frameCounter%framesPerGreyValue \n";
-                        cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
-                        cameraCapture.saveImage(whichAnalysis+"_"+ofToString(i/framesPerGreyValue)+"_"+ofToString(i)+".jpg");
+                  //  cout<<i<<" <<-- i inside CAM_NOISE \n";
+                    fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                    ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                 }
-                cameraCapture.clear();
-                imgPixels.clear(); //empty out the vector            
-                frameCounter=0;
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
                 counter=0;
-                synthesisComplete=true; 
-                //cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+                 
             }
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
@@ -1367,7 +1328,7 @@ void analysis::strobe(){
         strobeCounter=0;
     }
     
-    if (limiter < 500) {
+    if (limiter < 200) {
         //this speed needs calibration
         strobeToggleCounter+=1;
         
