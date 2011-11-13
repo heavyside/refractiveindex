@@ -319,6 +319,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 lightLevel = linear(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
+            // TODO:  TOM - could you hook up 'division' to the GUI for exponential?  and also i don't think the math is exactly right in the function - division is hardcoded for now
             if(whichGraph=="EXPONENTIAL"){
                 lightLevel = exponential(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
@@ -327,6 +328,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 lightLevel = 255*squareWave(maxResultA, maxTimeA, divisionsA, showGraphA);
             }
             
+            //STILL NEED TO REMOVE THIS
             /*
             if(whichGraph=="QUADRATIC"){
                 quadratic(maxResultA, maxTimeA, divisionsA, showGraphA);
