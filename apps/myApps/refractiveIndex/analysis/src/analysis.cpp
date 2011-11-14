@@ -94,10 +94,10 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         counter = 0;
         frameCounter = 0;
         localFrameCounter = 0;
-        framesPerGreyValue = 5;
+        framesPerGreyValue = 20;
         localFrameCounter = 0;
         newFrame = true;
-        numberOfGreyLevels = 10.0;  //this number sets the number of grey levels that are shown  for each noise measurement
+        numberOfGreyLevels = 5.0;  //this number sets the number of grey levels that are shown  for each noise measurement
         k=1;// need to get my frames
     } 
     
@@ -464,6 +464,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     currentGreyLevel--;
                     lastTime = ofGetElapsedTimeMillis();
                 } 
+               
            } else {
                synthesisComplete=TRUE; 
                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n"; 
@@ -485,7 +486,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         if(synthesisComplete == FALSE ){ 
             if (counter<maxTimeA) {
                 
-               
                 //draw top middle
                 if(counter<maxTimeA*0.25){
                     xPos= ofGetWidth()*0.5;
@@ -497,6 +497,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofCircle(xPos, yPos, circleDia);
                     
                 }
+                
+                
                 //draw right
                 if(counter>=maxTimeA*0.25 && counter<maxTimeA*0.5){
                     xPos= ofGetWidth();
@@ -507,7 +509,13 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSetColor(255);
                     ofCircle(xPos, yPos, circleDia);
                     
+                    
+                    
+                    
+                    
                 }
+                
+                
                 //draw bottom middle
                 if(counter>=maxTimeA*0.5 && counter<maxTimeA*0.75){
                     xPos= ofGetWidth()*0.5;
@@ -531,13 +539,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofCircle(xPos, yPos, circleDia);
                     
                 }
-
                 
-               
-               
-                
-                
-                 counter++;
+                counter++;
                
             }
             else{
@@ -640,10 +643,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
   
             counter++;
             
-            //the below takes in the pixel as raw unsigned chars from the camera, 
-            //stores these in a vector, until the on-screen synthesis is finished 
-            //then the whole set of buffered images is written to a movie file
-                       
             greyValue = 255.0 - ((255.0/numberOfGreyLevels)*(int)((numberOfGreyLevels)*(double)counter/255.0));
     
             // white impulse 
@@ -664,6 +663,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 if ((localFrameCounter < framesPerGreyValue) && (k==1))
                 {
                     vectorOfPixels.push_back(pixels); 
+                    lightLevels.push_back(greyValue);
                     localFrameCounter++;
                     k=1;
                 } else {
@@ -680,11 +680,13 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             //image vectors "imgs" backinto a quicktime movie...
             
             if(counter >= 255) {
+                
                 string fileName; 
+                
                 for (i = 0; i < vectorOfPixels.size(); i++)
                 {
                   //  cout<<i<<" <<-- i inside CAM_NOISE \n";
-                    fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                    fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                 }
                 vectorOfPixels.clear(); //empty out the vector
@@ -1015,8 +1017,6 @@ void analysis::setupGraphs(){
     level = 0;
     finishedGraph = FALSE;
 }
-
-
 
 //actually just to the power of a square
 float analysis::exponential(float maxResult, float maxTime,  float divisions, bool showGraph){
@@ -1439,13 +1439,16 @@ float analysis::intervalGenerator(){
 }
 
 
+
+// TODO:  These defaults are not reflected at programme startup when the GUIs launch - i.e.:  These don't 'set' the GUI values at the beginning but should
+
 void analysis::setGUIDefaults (){    
         // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders
     
     //Tom S - completed 14 nov 19:06;03 
     animationTimeLimit = 2000;
     scanLineWidth = 10;
-    scanLineSpeed = 5;
+    scanLineSpeed = 100;
 
     //max white value to go to
     maxResultA = 255;
@@ -1458,11 +1461,12 @@ void analysis::setGUIDefaults (){
     showGraphA = false;
     
     //morse flash rate
-    speed = 30;
-    red = 0;
-    green = 0;
-    blue = 0;
-    whichGraph = "EXPONENTIAL";
+    speed=30;
+    red=0;
+    green=0;
+    blue=0;
+    whichGraph="EXPONENTIAL";
+    morseMessage="HELLO_WORLD";
 }
 
 
