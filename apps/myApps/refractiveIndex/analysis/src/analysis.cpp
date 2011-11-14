@@ -1506,6 +1506,7 @@ void analysis::setGUIDefaults (){
     green=0;
     blue=0;
     whichGraph="EXPONENTIAL";
+    morseMessage="HELLO_WORLD";
 }
 
 

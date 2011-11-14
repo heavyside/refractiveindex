@@ -87,7 +87,7 @@ void testApp::setup(){
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
     gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
     gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
-    gui.addButtonSlider("num of complete cycles", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
+    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
     gui.addButtonSlider("morse speed", "MORSE_SPEED", 10, 1, 25, TRUE);
@@ -258,11 +258,79 @@ void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bo
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-   
+  //Tom S added key press launcher for all analyses with default values
     //use g as gui toggle
     if(key=='g'){
         showGui=!showGui;
     }
+    
+    if(key=='0'){
+        analysisChooser="H_SHADOWSCAPES";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='1'){
+        analysisChooser="V_SHADOWSCAPES";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='2'){
+        analysisChooser="D_SHADOWSCAPES";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='3'){
+        analysisChooser="RELAXRATE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='4'){
+        analysisChooser="I_RESPONSE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='5'){
+        analysisChooser="SHAPE_SHADING";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='6'){
+        analysisChooser="M_CODE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='7'){
+        analysisChooser="CAM_FRAMERATE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='8'){
+        analysisChooser="CAM_NOISE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='9'){
+        analysisChooser="COLOR_SINGLE";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='a'){
+        analysisChooser="PHYS_TEST";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='b'){
+        analysisChooser="COLOR_MULTI";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='c'){
+        analysisChooser="DIFF_NOISE";
+        showGui=false;
+        menuState=1;
+    }
+
+    
     
     else {
     
@@ -386,7 +454,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "num of complete cycles" ){
+    if( thisName == "num of impulses" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
