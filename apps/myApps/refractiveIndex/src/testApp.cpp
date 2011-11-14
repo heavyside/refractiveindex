@@ -1,6 +1,38 @@
 #include "testApp.h"
 
 
+//----ON THE QUESTION OF VIDEO LAG ------------------//
+
+/* 
+ http://www.cycling74.com/forums/topic.php?id=32247
+ 
+ You can use the Pinnacle Dazzle RCA/Composite / USB 2.0 adaptor which gives you uncompressed NTSC/PAL over USB 2.0.
+ 
+ Daystar XTraview, also uncompressed NTSC/PAL over USB 2.0
+ 
+ Aditionally you can use similar and cheaper devices that work with the Video Glide Driver
+ 
+ (IIRC the Xtraview comes with a license of VideoGlide driver). All the video glide devices are Uncompressed, USB 2.0.
+ 
+ Here is an image of the capture devices for size.
+ http://i.imgur.com/CKLbM.jpg
+ 
+ Note, the Diamond Multimedia device shows up in the driver list, but I've not gotten it to work. I would stay away from it if on the Mac. The Pinnacle and the XLR8 work just fine, and show up in Jitter and other Quicktime compatible applications.
+ 
+ Here is the Jitter list:
+ http://i.imgur.com/m0IA7.jpg
+ 
+ I've tested all 3 of the above, and they all work about the same (albeit the Diamond on PC only). I suspect they use the same chipset or same family of device, with small changes to provide vendor lockout (Diamond, im looking at you).
+ 
+ These devices are cheap, but they work. Latency is I want to say around 3-4 frames (been a while since I tested). Better than DV (which usually 7, although some folks say 4 on new machines/OS'es, ive never seen 4 frames personally), and I think thats about on par with the DFG-1394.
+ 
+ 
+ SO IT'S NEVER GOING TO BE CONSISTENT... OR "REAL TIME" - jamie... \
+ 
+ */
+
+
+
 //--------------------------------------------------------------
 void testApp::setup(){
     

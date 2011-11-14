@@ -593,9 +593,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 
                 if ((localFrameCounter < framesPerGreyValue) && (k==1))
                 {
-                        vectorOfPixels.push_back(pixels); 
+                    vectorOfPixels.push_back(pixels); 
                     localFrameCounter++;
-                        k=1;
+                    k=1;
                 } else {
                     localFrameCounter=0;
                     k=0;
@@ -648,16 +648,13 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames1) )
                 {
                  //  if (counter%2)  // this gives us 1 and 0 alternating with each new 'pixel' load (frame)
-                 //  {
-                        //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
-                        //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
-                        unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                        //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
-                        imgPixels.push_back(someLocalPixels);
-                        localFrameCounter++;  
-                        //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
-                        frameCounter++;
-                        cout<<frameCounter<<"<-- frameCounter \n";
+                 // {
+                    //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
+                    //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
+                    
+                    vectorOfPixels.push_back(pixels); 
+                    localFrameCounter++;
+                    cout<<frameCounter<<"<-- frameCounter \n";
                   // }
                 } else {
                     gotAllLocalFrames1 = true;
@@ -678,13 +675,10 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //  {
                     //****PROBLEM*** - for some reason this is doubling up frames - i.e.: every other frame is the same??! 
                     //solution - get every other eligible frame - valid as long as the greyvalues are the same should wor
-                    unsigned char * someLocalPixels = new unsigned char[camWidth*camHeight*3];
-                    //memcpy(someLocalPixels, pixels, (camWidth*camHeight*3));
-                    imgPixels.push_back(someLocalPixels);
-                    localFrameCounter++;  
-                    //cout<<localFrameCounter<<"<-- localFrameCounter \n";    
-                    frameCounter++;
+                    vectorOfPixels.push_back(pixels); 
+                    localFrameCounter++;
                     cout<<frameCounter<<"<-- frameCounter \n";
+                    
                     // }
                 } else {
                     gotAllLocalFrames2 = true;
@@ -693,8 +687,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             } 
             
             if (200 <= counter && counter < 300) {
-                
-                
                 // blue
                 ofSetColor(0, 0, 255);
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
@@ -721,21 +713,21 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
 
             if(counter >= counterMax) {
                 cout<<"counter >= counterMax in COLOR_SINGLE \n";
-
-                for (i = 0; i < frameCounter; i++)
+                string fileName;
+                for (i = 0; i < vectorOfPixels.size(); i++)
                 {
-                    //cout<<i<<"< i in COLOR_SINGLE ** frames being written to images \n";
-                    //cout << i/framesPerGreyValue << " frameCounter/framesPerGreyValue \n";
-                    //cout << i%framesPerGreyValue << " frameCounter%framesPerGreyValue \n";
-                    cameraCapture.setFromPixels(imgPixels[i], camWidth, camHeight, OF_IMAGE_COLOR, true);
-                    cameraCapture.saveImage(whichAnalysis+"_"+ofToString(i)+"_"+ofToString(i)+".jpg");
+                    //  cout<<i<<" <<-- i inside CAM_NOISE \n";
+                    fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                    ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                 }
-                cameraCapture.clear();
-                imgPixels.clear(); //empty out the vector            
-                frameCounter=0;
+                
+                vectorOfPixels.clear(); //empty out the vector
+                counter = 0;
+                frameCounter = 0;
                 counter=0;
-                synthesisComplete=true; 
-                // cout<<whichAnalysis<<" <<-- synthesis and recording complete: \n";   
+                synthesisComplete=TRUE; 
+                cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+
             }
             
             
