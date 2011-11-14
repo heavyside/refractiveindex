@@ -362,7 +362,10 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //Might have something to do with using ofToString on a vector???
                     
                     //using the simpler one for now - JA Nov 13 
-                    fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+".jpg";
+                    
+                    //Tom Nov 14th 19:03:01 ;) no its to do with the way that osx reads file names - I just switched the order of fToString(lightLevels[i]) and ofToString(i)and its fine
+                    fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
+                   // fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+".jpg";
                     
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);  
                 }
