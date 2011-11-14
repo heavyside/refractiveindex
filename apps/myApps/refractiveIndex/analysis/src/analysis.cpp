@@ -416,16 +416,15 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //e.g.: one per second is what i'm attempting
                     */  
                     counter++;
-                    cout<<counter<<"<-- counter \n";                        
+                    //cout<<counter<<"<-- counter \n";                        
                     testInt = counter/everyNthFrameCaptureImage;
-            
-                    cout<<testInt<<"<-- counter/everyNthFrameCaptureImage \n";                        
+                    //cout<<testInt<<"<-- counter/everyNthFrameCaptureImage \n";                        
                     
                     if (counter%everyNthFrameCaptureImage == 0)  
                     {
                         vectorOfPixels.push_back(pixels);
-                        frameCounter++;
-                        cout<<frameCounter<<" <<-- frameCounter in I_RESPONSE \n";
+                        //frameCounter++;
+                        //cout<<frameCounter<<" <<-- frameCounter in I_RESPONSE \n";
                     }
                } 
                
@@ -535,11 +534,11 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             
             //The basics for file saving are below... 
 
-            // vectorOfPixels.push_back(pixels);
-
+            vectorOfPixels.push_back(pixels);
+            
             if (strobeComplete == TRUE)
             {
-              /*
+                /*
                 string fileName; 
                 for (i = 0; i < vectorOfPixels.size(); i++)
                 {
@@ -547,13 +546,14 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                     //cout<<i<<"< i in M_CODE ** frames being written to images \n";
                 }
-               */
+    
                 vectorOfPixels.clear(); //empty out the vector
                 counter = 0;
                 frameCounter = 0;
                 scanLinePosition=0;
                 synthesisComplete=TRUE; 
                 cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+                */
             }        
             
                        
@@ -961,7 +961,7 @@ float analysis::exponential(float maxResult, float maxTime,  float divisions, bo
         
         float yPos;
         float lightLevel=pow(level,2);
-//        mappedLightLevel = ofMap(lightLevel, 0, pow(maxTime/2,2), 0,maxResult);
+        // mappedLightLevel = ofMap(lightLevel, 0, pow(maxTime/2,2), 0,maxResult);
         mappedLightLevel = ofMap(lightLevel, 0, pow(maxTime/divisions,2), 0,maxResult);
 
         graphCounter++;
@@ -1375,22 +1375,26 @@ void analysis::setGUIDefaults (){
         // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders
     
     //Tom S - completed 14 nov 19:06;03 
-    animationTimeLimit =2000;
-    scanLineWidth=5;
-    scanLineSpeed=3;
+    animationTimeLimit = 2000;
+    scanLineWidth = 10;
+    scanLineSpeed = 5;
+
     //max white value to go to
-    maxResultA=255;
+    maxResultA = 255;
+    
     //how many frames to take to do it
-    maxTimeA=120;
+    maxTimeA = 100;
+    
     //how many times to change direction up or down - 2 divisions is one complete cycle
-    divisionsA=2;
-    showGraphA=false;
+    divisionsA = 2;
+    showGraphA = false;
+    
     //morse flash rate
-    speed=30;
-    red=0;
-    green=0;
-    blue=0;
-    whichGraph="EXPONENTIAL";
+    speed = 30;
+    red = 0;
+    green = 0;
+    blue = 0;
+    whichGraph = "EXPONENTIAL";
 }
 
 
