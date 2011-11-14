@@ -356,7 +356,10 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //Might have something to do with using ofToString on a vector???
                     
                     //using the simpler one for now - JA Nov 13 
-                    fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+".jpg";
+                    
+                    //Tom Nov 14th 19:03:01 ;) no its to do with the way that osx reads file names - I just switched the order of fToString(lightLevels[i]) and ofToString(i)and its fine
+                    fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
+                   // fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+".jpg";
                     
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);  
                 }
@@ -1370,6 +1373,24 @@ float analysis::intervalGenerator(){
 
 void analysis::setGUIDefaults (){    
         // this is called in the main programme setup - in testApp.cpp - and should contain all the default values for the GUI sliders
+    
+    //Tom S - completed 14 nov 19:06;03 
+    animationTimeLimit =2000;
+    scanLineWidth=5;
+    scanLineSpeed=3;
+    //max white value to go to
+    maxResultA=255;
+    //how many frames to take to do it
+    maxTimeA=120;
+    //how many times to change direction up or down - 2 divisions is one complete cycle
+    divisionsA=2;
+    showGraphA=false;
+    //morse flash rate
+    speed=30;
+    red=0;
+    green=0;
+    blue=0;
+    whichGraph="EXPONENTIAL";
 }
 
 
