@@ -84,7 +84,9 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     }
     
     if (whichAnalysis=="SHAPE_SHADING") {
-        
+        counter=0;
+        ofSetCircleResolution(100);
+        ofEnableSmoothing();
     } 
 
     
@@ -473,15 +475,80 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     }       
     
     //skkpping this one for the moment...  This is going to be complicated - hoping for help from DAVID G
+    
+    //Tom S added copy of shapes from "Trimensional" iphone app. 
     if(whichAnalysis=="SHAPE_SHADING"){
-        
-        if(synthesisComplete == FALSE ){    
+        int xPos;
+        int yPos;
+        float circleDia=ofGetWidth()*0.33;
+        float smallCircleDia=ofGetWidth()*0.3;
+        if(synthesisComplete == FALSE ){ 
+            if (counter<maxTimeA) {
+                
+               
+                //draw top middle
+                if(counter<maxTimeA*0.25){
+                    xPos= ofGetWidth()*0.5;
+                    yPos=0;
+                    ofSetColor(155);
+                    ofCircle(xPos-circleDia/2, yPos, smallCircleDia);
+                    ofCircle(xPos+circleDia/2, yPos, smallCircleDia);
+                    ofSetColor(255);
+                    ofCircle(xPos, yPos, circleDia);
+                    
+                }
+                //draw right
+                if(counter>=maxTimeA*0.25 && counter<maxTimeA*0.5){
+                    xPos= ofGetWidth();
+                    yPos=ofGetHeight()*0.5;
+                    ofSetColor(155);
+                    ofCircle(xPos, yPos-circleDia/2, smallCircleDia);
+                    ofCircle(xPos, yPos+circleDia/2, smallCircleDia);
+                    ofSetColor(255);
+                    ofCircle(xPos, yPos, circleDia);
+                    
+                }
+                //draw bottom middle
+                if(counter>=maxTimeA*0.5 && counter<maxTimeA*0.75){
+                    xPos= ofGetWidth()*0.5;
+                    yPos=ofGetHeight();
+                    ofSetColor(155);
+                    ofCircle(xPos-circleDia/2, yPos, smallCircleDia);
+                    ofCircle(xPos+circleDia/2, yPos, smallCircleDia);
+                    ofSetColor(255);
+                    ofCircle(xPos, yPos, circleDia);
+                    
+                    
+                }
+                //draw left
+                if(counter>=maxTimeA*0.75 && counter<maxTimeA){
+                    xPos= 0;
+                    yPos=ofGetHeight()*0.5;
+                    ofSetColor(155);
+                    ofCircle(xPos, yPos-circleDia/2, smallCircleDia);
+                    ofCircle(xPos, yPos+circleDia/2, smallCircleDia);
+                    ofSetColor(255);
+                    ofCircle(xPos, yPos, circleDia);
+                    
+                }
+
+                
+               
+               
+                
+                
+                 counter++;
+               
+            }
+            else{
+                synthesisComplete =TRUE;   
+                counter=0;
+            }
             
         } else {
             cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
         }
-        synthesisComplete =TRUE;
-
+       
     }    
   
     if(whichAnalysis=="M_CODE"){
@@ -953,7 +1020,8 @@ void analysis::setupGraphs(){
 
 //actually just to the power of a square
 float analysis::exponential(float maxResult, float maxTime,  float divisions, bool showGraph){
-    divisions = 10.0;
+    //removed this and returned control of variable to gui
+   // divisions = 10.0;
     float mappedLightLevel;
     float threshold=maxTime/divisions;
         
@@ -1050,7 +1118,7 @@ void analysis::quadratic(float maxResult, float maxTime, float divisions, bool s
 bool analysis::squareWave(float maxResult, float maxTime, float divisions, bool showGraph){
     
     bool myBoolean;
-    float threshold=maxTime/divisions;
+    float threshold=maxTime/(divisions+1);
     ofFill();
 
     if (limiter<maxTime) {
