@@ -16,7 +16,8 @@ void testApp::setup(){
     ofSetVerticalSync(TRUE);
     //set default codec
     codecChooser=0;
-    
+    //default analysis
+    analysisChooser="M_CODE";
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);
@@ -130,7 +131,7 @@ void testApp::setup(){
 	ofAddListener(gui.guiEvent, this, &testApp::eventsIn);
     
     ////////////END OF GUI SETUP STUFF////////////////
-    
+    masterAnalysis.setGUIDefaults();
    
     
 }
@@ -404,8 +405,8 @@ void testApp::eventsIn(guiCallbackData & data){
         masterAnalysis.showGraphA=showGraphLine;
         
     }
-    
-    if( thisName == "graph max time" ){
+    //Tom S 14 Nov 19:10somehow this function appears to have been repeated so have commented out
+   /* if( thisName == "graph max time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -418,7 +419,7 @@ void testApp::eventsIn(guiCallbackData & data){
             }
         }
         
-    }
+    }*/
     
     if( thisName == "morse speed" ){
         
