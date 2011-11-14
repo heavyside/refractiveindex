@@ -54,7 +54,12 @@ public:
     
     //report string for letting us know whats what with the camera settings
     string camStatus;
+    string keyControlMessage1;
+    string keyControlMessage2;
+
+    bool showCursor;
     bool showGui;
+    bool showCameraInput;
     int menuState;
     int mouseX, mouseY;
     

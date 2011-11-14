@@ -44,22 +44,29 @@ void testApp::setup(){
     //some change
     camWidth=640;
     camHeight=480;
+    desFrameRate=-111;// the camera framerate
     ofSetFrameRate(30);
+    ofEnableSmoothing();
     ofSetVerticalSync(TRUE);
     //set default codec
     codecChooser=0;
+    
     //default analysis
-    analysisChooser="M_CODE";
+    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have 
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
-    setupCamera(camWidth, camHeight,2,30,true);
+    setupCamera(camWidth, camHeight,2,30,true);    
+    //set initial report
+    camStatus="Camera not setup";  //    //WHY say this if we've just set up the camera?
+    
+    keyControlMessage1="Use 1-9 & q+w+e+r to launch the analyses";
+    keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui";
     
     font.loadFont("MONACO.TTF", 10);
     
-    showGui=true;
-    //set initial report
-    camStatus="camera not setup";
-        
+    showGui=TRUE;
+    showCursor=TRUE;
+    showCameraInput=FALSE;
     
     //talk to me about your troubles openframeworks
     ofSetLogLevel(OF_LOG_VERBOSE);  
@@ -178,13 +185,13 @@ void testApp::update(){
     //set the window title to "framerate"
     
     vidGrabber.grabFrame();  // go get frame from OS
-   
 //  vidGrabber.update();  // go get frame from OS
-    
+
     
     //neutral, do nothing
     if(menuState==0){
-
+      
+        //before analysis - wait state
     }
     
     //setup analysis
@@ -216,27 +223,27 @@ void testApp::update(){
     }
     
     gui.update();
+    
 }
 
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofSetColor(0);
     
-    //if no analysis, draw grabber
+    //ofSetColor(0);
+      
     if(menuState==0){
-        vidGrabber.draw(0, 0);
+        
     }
     
     //continue to draw grabber in setup phase
     if(menuState==1){
-        //vidGrabber.draw(0, 0);
+        
     }
     
     //drawing synthesized impulses, etc., to the screen
     if(menuState==2){
         
-        //vidGrabber.draw(0, 0);
         if(!masterAnalysis.synthesisComplete){
             //cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
             //cout<<"in draw loop menuState 2 \n";
@@ -256,19 +263,32 @@ void testApp::draw(){
     if(menuState==3){
         //cout<<" delete [] camPixels; \n";
        
-        
         //cout<<"in draw loop menuState 3 \n";
     }
     
-
     if(menuState==4){
         //masterAnalysis.displayResult();
-        
     }
     
+    //if no analysis, draw grabber
+    if(showCameraInput){
+        vidGrabber.draw(0, 0, ofGetWidth(), ofGetHeight());
+    }
+    
+    // always show gui on top of everything else (if shown) 
     if(showGui){
         gui.draw();
-        font.drawString(camStatus,50, ofGetHeight()-50);
+        font.drawString(camStatus,50, ofGetHeight()-120);
+        font.drawString(keyControlMessage1, 50, ofGetHeight()-90);
+        font.drawString(keyControlMessage2, 50, ofGetHeight()-60);
+
+    }
+    
+    if(showCursor)
+    {
+        ofShowCursor();
+    } else {
+        ofHideCursor();
     }
 }
 
@@ -278,91 +298,105 @@ void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bo
     cout<<whichSource<<" this source\n";
     
     vidGrabber.close();
-    
     camWidth = w;
     camHeight =h;
     
     vidGrabber.setVerbose(true);
     vidGrabber.setDeviceID(whichSource);
     vidGrabber.initGrabber(camWidth,camHeight);
-    
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-  //Tom S added key press launcher for all analyses with default values
+    //Tom S added key press launcher for all analyses with default values
+    //use g as gui toggle
+
+    //use c as cursor toggle
+    if(key=='c'){
+        showCursor=!showCursor;
+    }
+
+    //use v as video toggle
+    if(key=='v'){
+        showCameraInput=!showCameraInput;
+    }
+    
+    //use f as gui toggle
+    if( key =='f')
+    {
+        ofToggleFullscreen(); 
+    }
+    
     //use g as gui toggle
     if(key=='g'){
         showGui=!showGui;
     }
     
-    if(key=='0'){
+    if(key=='1'){
         analysisChooser="H_SHADOWSCAPES";
         showGui=false;
         menuState=1;
     }
-    if(key=='1'){
+    if(key=='2'){
         analysisChooser="V_SHADOWSCAPES";
         showGui=false;
         menuState=1;
     }
-    if(key=='2'){
+    if(key=='3'){
         analysisChooser="D_SHADOWSCAPES";
         showGui=false;
         menuState=1;
     }
-    if(key=='3'){
+    if(key=='4'){
         analysisChooser="RELAXRATE";
         showGui=false;
         menuState=1;
     }
-    if(key=='4'){
+    if(key=='5'){
         analysisChooser="I_RESPONSE";
         showGui=false;
         menuState=1;
     }
-    if(key=='5'){
+    if(key=='6'){
         analysisChooser="SHAPE_SHADING";
         showGui=false;
         menuState=1;
     }
-    if(key=='6'){
+    if(key=='7'){
         analysisChooser="M_CODE";
         showGui=false;
         menuState=1;
     }
-    if(key=='7'){
+    if(key=='8'){
         analysisChooser="CAM_FRAMERATE";
         showGui=false;
         menuState=1;
     }
-    if(key=='8'){
+    if(key=='9'){
         analysisChooser="CAM_NOISE";
         showGui=false;
         menuState=1;
     }
-    if(key=='9'){
+    if(key=='q'){
         analysisChooser="COLOR_SINGLE";
         showGui=false;
         menuState=1;
     }
-    if(key=='a'){
+    if(key=='w'){
         analysisChooser="PHYS_TEST";
         showGui=false;
         menuState=1;
     }
-    if(key=='b'){
+    if(key=='e'){
         analysisChooser="COLOR_MULTI";
         showGui=false;
         menuState=1;
     }
-    if(key=='c'){
+    if(key=='r'){
         analysisChooser="DIFF_NOISE";
         showGui=false;
         menuState=1;
     }
-
-    
     
     else {
     
@@ -688,16 +722,16 @@ void testApp::eventsIn(guiCallbackData & data){
         }
     }
     
+    //TODO:  are any of these camera settings actually working or updating?
+    //
     //UPDATE THE REPORT STRING FOR CURRENT SETTINGS
-    camStatus="CAMERA STATUS:: width :"+ofToString(camWidth)+" height :"+ofToString(camHeight)+" frame rate :"+ofToString(desFrameRate)+"\nsource :"+camInputName+"\ncodec: "+codecName;
+    camStatus="CAMERA STATUS:: width :"+ofToString(camWidth)+" height :"+ofToString(camHeight)+"  frame rate :"+ofToString(desFrameRate)+"  source :"+camInputName+"codec: "+codecName;
+  
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-    if( key =='f')
-    {
-       ofToggleFullscreen(); 
-    }
+  
 }
 
 //--------------------------------------------------------------

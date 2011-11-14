@@ -12,7 +12,7 @@ int movieNameCounter = 0;
 ////////////////////////---------/////////////////////////////////////
 void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, int whichCodec){//, ofVideoGrabber &grabber){
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
-
+    
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
     
@@ -33,7 +33,6 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
     
     //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
-
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
@@ -590,6 +589,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
     }
 
     //CAM_FRAMERATE 
+    
+    // TODO: This is still a bit fucked up - the timing goes 'over' 30 and under 'zero' 
+    // TODO: The frame rate should probably ramp as a gaussian (not linearly)
     
     if(whichAnalysis=="CAM_FRAMERATE"){
         
@@ -1466,6 +1468,7 @@ void analysis::setGUIDefaults (){
     green=0;
     blue=0;
     whichGraph="EXPONENTIAL";
+    
     morseMessage="HELLO_WORLD";
 }
 
