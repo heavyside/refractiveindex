@@ -85,9 +85,9 @@ void testApp::setup(){
     
     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
-    gui.addButtonSlider("graph max result", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-    gui.addButtonSlider("graph max time", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
-    gui.addButtonSlider("graph num divisions", "GRAPH_NUM_DIVISIONS", 10, 1, 25, TRUE);
+    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of complete cycles", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
     gui.addButtonSlider("morse speed", "MORSE_SPEED", 10, 1, 25, TRUE);
@@ -189,7 +189,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofSetColor(255, 255, 255);
+    ofSetColor(0);
     
     //if no analysis, draw grabber
     if(menuState==0){
@@ -357,7 +357,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph max result" ){
+    if( thisName == "max white level to ramp to" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -372,7 +372,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph max time" ){
+    if( thisName == "num of frames to last for" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -386,12 +386,12 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph num divisions" ){
+    if( thisName == "num of complete cycles" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                masterAnalysis.divisionsA=(int)data.getFloat(k);
+                masterAnalysis.divisionsA=(2*(int)data.getFloat(k));
                 cout<<"masterAnalysis.divisionsA = "<<masterAnalysis.divisionsA<<"  \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
