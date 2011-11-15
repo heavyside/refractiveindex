@@ -36,7 +36,9 @@ public:
     
     analysis masterAnalysis;
     vector<ofImage> resultsOfAnalysis;
-   
+    
+    ofImage startImage, endImage;
+    
     string analysisChooser;
     int codecChooser;
     int whichCodec;

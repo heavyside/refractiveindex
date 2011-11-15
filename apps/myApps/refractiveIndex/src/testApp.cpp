@@ -54,17 +54,22 @@ void testApp::setup(){
     //default analysis
     analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have 
     
+    startImage.loadImage("refractiveindeximage.jpg");
+    
+    
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight,2,30,true);    
     //set initial report
     camStatus="Camera not setup";  //    //WHY say this if we've just set up the camera?
     
     keyControlMessage1="Use 1-9 & q+w+e+r to launch the analyses";
-    keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui";
+    keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui    'z'-to start";
     
     font.loadFont("MONACO.TTF", 10);
-    
-    showGui=TRUE;
+    startImage.loadImage("refractiveindexstart.jpg");
+    endImage.loadImage("refractiveindexend.jpg");
+
+    showGui=FALSE;
     showCursor=TRUE;
     showCameraInput=FALSE;
     
@@ -76,7 +81,7 @@ void testApp::setup(){
 	ofxControlPanel::setTextColor(simpleColor(0, 250, 0, 255));
     
 	gui.loadFont("MONACO.TTF", 8);		
-	gui.setup("refractive index", 0, 0, ofGetWidth(), ofGetHeight());
+	gui.setup("Refractive Index", 0, 0, ofGetWidth(), ofGetHeight());
 	
     //FIRST PANEL HOLDS CAMERA CONTROLS
     gui.addPanel("camera control", 4, false);
@@ -190,7 +195,7 @@ void testApp::update(){
     
     //neutral, do nothing
     if(menuState==0){
-      
+        
         //before analysis - wait state
     }
     
@@ -231,9 +236,14 @@ void testApp::update(){
 void testApp::draw(){
     
     //ofSetColor(0);
-      
+    //if no analysis, draw grabber
+
     if(menuState==0){
-        
+        ofSetColor(255,255,255);
+        startImage.draw(0,0,ofGetWidth(), ofGetHeight());
+        font.drawString("Refractive Index", ofGetWidth()-250, ofGetHeight()-70);
+        font.drawString("Jamie Allen", ofGetWidth()-250, ofGetHeight()-50);
+        font.drawString("refractiveindex.cc", ofGetWidth()-250, ofGetHeight()-30);
     }
     
     //continue to draw grabber in setup phase
@@ -261,8 +271,14 @@ void testApp::draw(){
     
     //menustate  draw results of analysis
     if(menuState==3){
+        
+        ofSetColor(255,255,255);
+        endImage.draw(0,0,ofGetWidth(), ofGetHeight());
+        font.drawString("Refractive Index", ofGetWidth()-250, ofGetHeight()-70);
+        font.drawString("Jamie Allen", ofGetWidth()-250, ofGetHeight()-50);
+        font.drawString("refractiveindex.cc", ofGetWidth()-250, ofGetHeight()-30);
+        
         //cout<<" delete [] camPixels; \n";
-       
         //cout<<"in draw loop menuState 3 \n";
     }
     
@@ -270,7 +286,7 @@ void testApp::draw(){
         //masterAnalysis.displayResult();
     }
     
-    //if no analysis, draw grabber
+    
     if(showCameraInput){
         vidGrabber.draw(0, 0, ofGetWidth(), ofGetHeight());
     }
@@ -281,7 +297,7 @@ void testApp::draw(){
         font.drawString(camStatus,50, ofGetHeight()-120);
         font.drawString(keyControlMessage1, 50, ofGetHeight()-90);
         font.drawString(keyControlMessage2, 50, ofGetHeight()-60);
-
+        
     }
     
     if(showCursor)
@@ -290,6 +306,7 @@ void testApp::draw(){
     } else {
         ofHideCursor();
     }
+    
 }
 
 
@@ -311,6 +328,13 @@ void testApp::keyPressed(int key){
     //Tom S added key press launcher for all analyses with default values
     //use g as gui toggle
 
+    
+    //use z as return to beginning of program toggle
+    if(key=='z'){
+        menuState=0;
+    }
+
+    
     //use c as cursor toggle
     if(key=='c'){
         showCursor=!showCursor;
@@ -340,61 +364,73 @@ void testApp::keyPressed(int key){
     if(key=='2'){
         analysisChooser="V_SHADOWSCAPES";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='3'){
         analysisChooser="D_SHADOWSCAPES";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='4'){
         analysisChooser="RELAXRATE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='5'){
         analysisChooser="I_RESPONSE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='6'){
         analysisChooser="SHAPE_SHADING";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='7'){
         analysisChooser="M_CODE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='8'){
         analysisChooser="CAM_FRAMERATE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='9'){
         analysisChooser="CAM_NOISE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='q'){
         analysisChooser="COLOR_SINGLE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='w'){
         analysisChooser="PHYS_TEST";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='e'){
         analysisChooser="COLOR_MULTI";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='r'){
         analysisChooser="DIFF_NOISE";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     
@@ -716,8 +752,6 @@ void testApp::eventsIn(guiCallbackData & data){
                         codecChooser=i;
                     }
                 }
-                
-                
             }
         }
     }

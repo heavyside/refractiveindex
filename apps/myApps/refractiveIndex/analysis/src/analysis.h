@@ -19,7 +19,7 @@ class analysis{
     public:
     
     int myVariable;
-        
+
     void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, int whichCodec);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
@@ -69,7 +69,7 @@ class analysis{
     string whichAnalysis;
 
     bool newFrame;
-    bool gotAllLocalFrames1,gotAllLocalFrames2,gotAllLocalFrames3 ;
+    bool gotAllLocalFrames1, gotAllLocalFrames2, gotAllLocalFrames3, gotAllLocalFrames4;
 
     //FOR ANALYSIS
     bool synthesisComplete;
@@ -80,6 +80,11 @@ class analysis{
     //FOR RELAXRATE
     string whichGraph;
     float graphCounter;
+    int latencyFrameCounter;
+    int framesToGrabBeforeReallyRecording;
+    bool gotAllLatencyFrames;
+    bool nowDoAnalyses;
+    
     float intervalCounter;
     float intervalSpeed;
     int dummyCounter;
@@ -150,6 +155,9 @@ class analysis{
 
     int framesPerGreyValue;
     int framesPerColourValue;
+    int framesPerQuadrant;
+    
+    float rand255, rand10;
     
     ofImage oneOfImage;
     
