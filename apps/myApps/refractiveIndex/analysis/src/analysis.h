@@ -81,7 +81,7 @@ class analysis{
     string whichGraph;
     float graphCounter;
     int latencyFrameCounter;
-    int framesToGrabBeforeReallyRecording;
+    int latencyFrames;
     bool gotAllLatencyFrames;
     bool nowDoAnalyses;
     

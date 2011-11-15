@@ -45,7 +45,17 @@ void testApp::setup(){
     camWidth=640;
     camHeight=480;
     desFrameRate=-111;// the camera framerate
-    ofSetFrameRate(30);
+    
+    //ofSetFrameRate(60);   // this produces 10 or 11 frames of latency frames in the camera feed 
+    
+    ofSetFrameRate(30);   // this produces 5 or 6 frames of latency frames in the camera feed 
+    //ofSetFrameRate(15);     // this produces 2 or 3 frames of latency frames in the camera feed 
+    
+    //ofSetFrameRate(5);   // this produces  or 1 or 2 frames of latency
+    // ofSetFrameRate(1);   // this produces?  i'm not patient enough to figure this out... 
+    
+    // i.e.:  the frame lag seems to be ofGetFrameRate()/6 or thereabouts.
+        
     ofEnableSmoothing();
     ofSetVerticalSync(TRUE);
     //set default codec
@@ -54,11 +64,8 @@ void testApp::setup(){
     //default analysis
     analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have 
     
-    startImage.loadImage("refractiveindeximage.jpg");
-    
-    
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
-    setupCamera(camWidth, camHeight,2,30,true);    
+    setupCamera(camWidth, camHeight, 2, 120,true);    
     //set initial report
     camStatus="Camera not setup";  //    //WHY say this if we've just set up the camera?
     
@@ -66,8 +73,8 @@ void testApp::setup(){
     keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui    'z'-to start";
     
     font.loadFont("MONACO.TTF", 10);
-    startImage.loadImage("refractiveindexstart.jpg");
-    endImage.loadImage("refractiveindexend.jpg");
+    startImage.loadImage("resourceimages/refractiveindexstart.jpg");
+    endImage.loadImage("resourceimages/refractiveindexend.jpg");
 
     showGui=FALSE;
     showCursor=TRUE;
@@ -189,9 +196,22 @@ void testApp::update(){
     ofSetWindowTitle(str);
     //set the window title to "framerate"
     
-    vidGrabber.grabFrame();  // go get frame from OS
-//  vidGrabber.update();  // go get frame from OS
 
+// kylemcdonald's solution for getting the most recent frame from here: 
+// http://forum.openframeworks.cc/index.php?topic=7237.0
+    /*
+    int frames = 0;  
+    while(frames < 4) {  
+        vidGrabber.grabFrame();  
+        if(vidGrabber.isFrameNew()) {  
+            frames++;  
+        }  
+        ofSleepMillis(2);  
+    }  
+*/
+
+    vidGrabber.grabFrame();  // go get frame from OS
+    //vidGrabber.update();  // go get frame from OS
     
     //neutral, do nothing
     if(menuState==0){
@@ -261,9 +281,9 @@ void testApp::draw(){
             if (vidGrabber.isFrameNew())
             {   
                 camPixels = vidGrabber.getPixelsRef();
+                        
             } 
-                masterAnalysis.synthDrawCamRecord(camPixels);            
-            
+            masterAnalysis.synthDrawCamRecord(camPixels);    
         } else {
             menuState = 3;
         }
@@ -452,7 +472,6 @@ void testApp::grabBackgroundEvent(guiCallbackData & data){
 		gui.setValueB("GRAB_BACKGROUND", false);
 	}
 }
-
 
 //this captures all our control panel events - unless its setup differently in testApp::setup
 //--------------------------------------------------------------

@@ -17,10 +17,11 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     analysisTime = analasisTimePass;
     
     latencyFrameCounter = 0;
-    framesToGrabBeforeReallyRecording = 10;
+    latencyFrames = 1+ofGetFrameRate()/6;
     gotAllLatencyFrames = FALSE; 
     
-    // set this to true to turn off the latency frame collector at the beginning of synthDrawCamRecord - i don't think it's really working anyway... JA - nov 15 01:22 
+    // set this to TRUE to turn off the latency frame collector at the beginning of synthDrawCamRecord - 
+    // i don't think it's really working anyway... JA - nov 15 01:22 
     nowDoAnalyses = TRUE;
     //nowDoAnalyses = FALSE;
     
@@ -29,7 +30,6 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     camHeight=camH;
     camWidth=camW;
     check=0;
-    
     
     synthesisComplete=FALSE;
    
@@ -45,21 +45,16 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
         scanLinePosition= 0; 
-        //scanLineWidth = 50;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
-        //because this is called after the gui sets this - that's why ;) 
-    
         // scanLineSpeed is now set in gui for all shadowscapes
     }
 
     if (whichAnalysis=="V_SHADOWSCAPES") {
         scanLinePosition=0; 
-        //scanLineWidth = 25;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //scanLineSpeed = 10;
     } 
 
     if (whichAnalysis=="D_SHADOWSCAPES") {
         scanLinePosition = 0; 
-       // scanLineWidth = 15;  //if i initialise this here the scanLineWidth GUI slider doesn't work!  why!!!??? 
         //scanLineSpeed = 10;
     } 
     
@@ -186,20 +181,28 @@ void analysis::synthUpdate(){
 11 analysisNames.push_back("PHYS_TEST");
 12 analysisNames.push_back("COLOR_MULTI");
 13 analysisNames.push_back("DIFF_NOISE");
+13 analysisNames.push_back("DIFF_NOISE");
 */
 
 
 void analysis::synthDrawCamRecord(ofPixels pixels){
     
+    /* notes on the latency - 
+     
+    - setting the frame rate LOWER on the ofApp in main.cpp DECREASES the number of latency frames we seem to be getting before the color changes - in COLOR_SINGLE at least 
+    - setting the frame rate HIGHER on the ofApp in main.cpp INCREASES the number of latency frames we are getting before the color changes - in COLOR_SINGLE at least 
+                ** this means that the drawing of the app is perhaps lagging behind the camera 'new frame' coming in?  i.e.: if we slow the drawing rate down, we're allowing the drawing to catch up with the camera?     
+    */
     
-    //GRAB THE FRAME #DELAY HERE
-    if((latencyFrameCounter < framesToGrabBeforeReallyRecording) && (!gotAllLatencyFrames) && (!nowDoAnalyses))
+    
+    //GRAB THE INITAL FRAME #DELAY HERE
+    if((latencyFrameCounter < latencyFrames) && (!gotAllLatencyFrames) && (!nowDoAnalyses))
     {
         vectorOfPixels.push_back(pixels);
         latencyFrameCounter++;
         nowDoAnalyses = FALSE;
         cout<<"getting latency frames into vector of ofPixels \n";
-    } else if ((latencyFrameCounter >= framesToGrabBeforeReallyRecording) && (!nowDoAnalyses)) 
+    } else if ((latencyFrameCounter >= latencyFrames) && (!nowDoAnalyses)) 
     {
         
         for (i = 0; i < vectorOfPixels.size(); i++)  
@@ -212,12 +215,11 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         nowDoAnalyses = TRUE;
         cout<<"nowDoAnalyses = TRUE;\n";
     }
+
     
-
-
+    
     if (nowDoAnalyses == TRUE)
     {
-        
         if(whichAnalysis=="H_SHADOWSCAPES"){ 
      
             // cout<<"if(whichAnalysis=="H_SHADOWSCAPES") \n";
@@ -230,7 +232,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
             
                 vectorOfPixels.push_back(pixels);
                 frameCounter++;
-                            
+                  
+                
+                
                 if(scanLinePosition >= ofGetWidth()+(scanLineSpeed+scanLineWidth)) {
                     for (i = 0; i < vectorOfPixels.size(); i++)  
                     {   
@@ -813,10 +817,14 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         //Writes a color to the screen and reads back X number of frames
         if(whichAnalysis=="COLOR_SINGLE"){
             
+            // TODO - new strategy for latency - wait for X frames before grabbing, then stop grabbing Y frames before a color change  
+            // The frame lag (empirically, using the isight camera) seems to be ofGetFrameRate()/6, so we'll wait that, plus 1
+
+            
             if(synthesisComplete==FALSE){    ///may have to add a little thing in here that ensures the camera buffer (of frames) is empty
             
                 counter++;
-                cout<<counter<<"<<-- counter COLOR_SINGLE \n";
+                //cout<<counter<<"<<-- counter COLOR_SINGLE \n";
                 // cout<<counterMax/3<<"<<- counterMax/3 COLOR_SINGLE \n";
                 
                 if (0*counterMax <= counter && counter < counterMax/3)  {
@@ -825,16 +833,26 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSetColor(255, 0, 0);
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
                     
-                    if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames1) )
-                    {
-                        vectorOfPixels.push_back(pixels); 
-                        lightLevels.push_back(1);
-                        localFrameCounter++;
-                        //cout<<frameCounter<<"<-- frameCounter \n";
-                        cout<<localFrameCounter<<"<-- localFrameCounter RED \n";
+                    latencyFrameCounter++;
+                    //skip looking at the first ofGetFrameRate()/6 frames
+                    if (counter < latencyFrames){
+                        //do nothing
                     } else {
-                        gotAllLocalFrames1 = true;
-                        localFrameCounter = 0;
+                    
+                        latencyFrameCounter = 0;
+                        
+                        if (((localFrameCounter-latencyFrames) < framesPerColourValue) && (!gotAllLocalFrames1) )
+                        {
+                            vectorOfPixels.push_back(pixels); 
+                            lightLevels.push_back(1);
+                            localFrameCounter++;
+                            //cout<<frameCounter<<"<-- frameCounter \n";
+                            cout<<localFrameCounter<<"<-- localFrameCounter RED \n";
+                        } else {
+                            gotAllLocalFrames1 = true;
+                            localFrameCounter = 0;
+                        }
+                        
                     }
                 }
                 
@@ -845,15 +863,25 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSetColor(0, 255, 0);
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
                     
-                    if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames2) )
-                    {
-                        vectorOfPixels.push_back(pixels); 
-                        lightLevels.push_back(2);
-                        localFrameCounter++;
-                        cout<<localFrameCounter<<"<-- localFrameCounter GREEN \n";
+                    
+                    latencyFrameCounter++;
+                    //skip looking at the first ofGetFrameRate()/6 frames
+                    if (counter < ofGetFrameRate()/6){
+                        //do nothing
                     } else {
-                        gotAllLocalFrames2 = true;
-                        localFrameCounter = 0;
+                
+                        latencyFrameCounter = 0;
+                    
+                        if (((localFrameCounter-latencyFrames) < framesPerColourValue) && (!gotAllLocalFrames2) )
+                        {
+                            vectorOfPixels.push_back(pixels); 
+                            lightLevels.push_back(2);
+                            localFrameCounter++;
+                            //cout<<localFrameCounter<<"<-- localFrameCounter GREEN \n";
+                        } else {
+                            gotAllLocalFrames2 = TRUE;
+                            localFrameCounter = 0;
+                        }
                     }
                 } 
                 
@@ -862,15 +890,26 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     ofSetColor(0, 0, 255);
                     ofRect(0, 0, ofGetWidth(), ofGetHeight());
                     
-                    if ( (localFrameCounter < framesPerColourValue) && (!gotAllLocalFrames3) )
-                    {
-                        vectorOfPixels.push_back(pixels); 
-                        lightLevels.push_back(3);
-                        localFrameCounter++;
-                        cout<<localFrameCounter<<"<-- localFrameCounter BLUE \n";
+                    latencyFrameCounter++;
+                    //skip looking at the first ofGetFrameRate()/6 frames
+                    if (counter < ofGetFrameRate()/6){
+                        //do nothing
                     } else {
-                        gotAllLocalFrames3 = true;
-                        localFrameCounter = 0;
+                        // get frames
+                        latencyFrameCounter = 0;
+            
+                        // the latencyFrames variable below causes us to get "latencyFrames" more frames than we normally would 
+                        // - in order to compensate for the lateness of the 
+                        if (((localFrameCounter-latencyFrames) < framesPerColourValue) && (!gotAllLocalFrames3) )
+                        {
+                            vectorOfPixels.push_back(pixels); 
+                            lightLevels.push_back(3);
+                            localFrameCounter++;
+                            //cout<<localFrameCounter<<"<-- localFrameCounter BLUE \n";
+                        } else {
+                            gotAllLocalFrames3 = TRUE;
+                            localFrameCounter = 0;
+                        }
                     }
                 } 
 
