@@ -275,18 +275,22 @@ void testApp::draw(){
     if(menuState==2){
         
         if(!masterAnalysis.synthesisComplete){
+            
             //cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
             //cout<<"in draw loop menuState 2 \n";
-            
             if (vidGrabber.isFrameNew())
             {   
                 camPixels = vidGrabber.getPixelsRef();
-                        
             } 
+            
             masterAnalysis.synthDrawCamRecord(camPixels);    
+            
         } else {
+            
             menuState = 3;
+        
         }
+    
     }
     
     //menustate  draw results of analysis

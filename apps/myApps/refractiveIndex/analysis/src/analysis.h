@@ -81,7 +81,7 @@ class analysis{
     string whichGraph;
     float graphCounter;
     int latencyFrameCounter;
-    int latencyFrames;
+    int noOfLatencyFrames;
     bool gotAllLatencyFrames;
     bool nowDoAnalyses;
     
@@ -139,7 +139,7 @@ class analysis{
     float rValue;
     float gValue;
     float bValue;
-    float cHue;
+    float cHue, oldHue, newHue, howDifferentHuesNeedToBeBeforeFrameSaved;
     float greyValue;
     float oldGreyValue;
     float numberOfGreyLevels;
@@ -167,6 +167,12 @@ class analysis{
     vector <ofPixels> vectorOfPixels;
     vector <unsigned char *> imgPixels;
     unsigned char * imgPixel;
+    
+    ofImage noisey; 
+    ofPixels myPixels;  
+    ofTexture noiseTexture;
+    int imgWidth;
+    int imgHeight;
 };
 
 #endif
