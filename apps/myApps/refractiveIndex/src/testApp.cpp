@@ -73,8 +73,38 @@ void testApp::setup(){
     keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui    'z'-to start";
     
     font.loadFont("MONACO.TTF", 10);
-    startImage.loadImage("resourceimages/refractiveindexstart.jpg");
-    endImage.loadImage("resourceimages/refractiveindexend.jpg");
+    
+    //AT the moment - this WILL COMPILE for 10.5 if we remove the below image loaders - problem with POCO library - see here:
+    // http://forum.openframeworks.cc/index.php?topic=6351.0
+    
+    //startImage.loadImage("resourceimages/refractiveindexstart.jpg");
+    //endImage.loadImage("resourceimages/refractiveindexend.jpg");
+    
+    /*  compiling for 10.5 - we get a bunch of POCO errors
+     
+     SOLUTION:  http://forum.openframeworks.cc/index.php?topic=6351.0
+     
+     https://github.com/openframeworks/openFrameworks/issues/387
+     
+     http://forum.openframeworks.cc/index.php?topic=7549.0
+     
+     following error appears when i try to load an image; commenting out the call to loadImage("...") makes the error go away.
+     
+     Undefined symbols:
+     "std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int)", 
+     referenced from:
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     ld: symbol(s) not found
+     
+     */
 
     showGui=FALSE;
     showCursor=TRUE;
