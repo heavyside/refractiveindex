@@ -62,7 +62,7 @@ void testApp::setup(){
     codecChooser=0;
     
     //default analysis
-    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have 
+    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have it set in the GUI?
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight, 2, 120,true);    
@@ -77,8 +77,8 @@ void testApp::setup(){
     //AT the moment - this WILL COMPILE for 10.5 if we remove the below image loaders - problem with POCO library - see here:
     // http://forum.openframeworks.cc/index.php?topic=6351.0
     
-    //startImage.loadImage("resourceimages/refractiveindexstart.jpg");
-    //endImage.loadImage("resourceimages/refractiveindexend.jpg");
+    startImage.loadImage("resourceimages/refractiveindexstart.jpg");
+    endImage.loadImage("resourceimages/refractiveindexend.jpg");
     
     /*  compiling for 10.5 - we get a bunch of POCO errors
      
@@ -192,8 +192,7 @@ void testApp::setup(){
         
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
-    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
-    
+    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);    
     masterAnalysis.setGUIDefaults();
     
     //get list of codecs from movie object in analysis class
@@ -362,6 +361,13 @@ void testApp::draw(){
     }
     
 }
+
+
+
+void testApp::exit(){
+     
+}
+
 
 
 //---------------  CALLED FROM INSIDE EVENT FUNCTION WHEN CAMERA SETTINGS HAVE BEEN SELECTED ---------------------------------------

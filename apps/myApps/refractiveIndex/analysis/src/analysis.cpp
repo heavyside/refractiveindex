@@ -1,6 +1,14 @@
 #include "analysis.h"
+#include <ctime>
+#include "time.h"
 
-//
+/* TIME OF DAY CODE WILL BE DIFFERENT ON WINDOWS>>>.
+ #include "windows.h"
+ SYSTEMTIME time;
+ GetSystemTime(&time);
+ WORD millis = (time.wSeconds * 1000) + time.wMilliseconds;
+*/
+
 /*
      * daktronics  - WINDOWS 7 
      - ATI Radeon HD 3450 - is this the capture card 
@@ -11,7 +19,6 @@
      - might have a different card 
      
      * mini to DVI out of the lapop 
-
      * make a compile for 10.5.8 system - 1.83GHZ Intel Core 2 Duo - 1GB 6667 MHz DDR2 SDRAM
 */
 
@@ -28,10 +35,91 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
     
     multipleAnalysisCounter++;
-    cout<< multipleAnalysisCounter<<" <<-- multiple analysis counter";
+    cout<< multipleAnalysisCounter<<" <<-- multiple analysis counter \n";
     
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
+    
+    time_t rawtime;
+    time(&rawtime);
+    string time = ctime(&rawtime);
+    cout<< time << " <---  time \n";
+
+    //TODO : The data path should be the date of the program running - create new folder with 15Nov
+   
+    //TODO: Tom can we have this location set by the GUI in the main? Perhaps just Location 1, Location 2, Location 3 drop down for now - as we don't have the locations confirmed    
+    whichLocation = "MIDDLESBROUGH";    
+    
+    if (!myFileHelper.doesDirectoryExist(whichLocation)){
+        ofxFileHelper::makeDirectory(whichLocation);
+    }
+    
+    if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis)){
+        ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis);
+    }
+    
+    if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter))){
+        ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+    }
+    
+    saveFolderPath = whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter)+"/";
+    
+    //sec_t mySec;		/* seconds after the minute [0-60] */
+    //tm_min myMin;		/* minutes after the hour [0-59] */
+    //tm_hour myHour;	/* hours since midnight [0-23] */
+	//tm_mday myDay;	/* day of the month [1-31] */
+        
+    //if (myFileHelper.doesDirectoryExist(whichLocation)){
+    
+        //create the next folder in 
+    //    myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
+    
+     //   if (myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis)){
+        
+            //create the next folder in 
+      //      myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+        
+    //    } else {
+    //        myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
+    //        myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+   //     }
+        
+   // } else {
+        // create the folder 
+     //    myFileHelper.makeDirectory(whichLocation);
+     //  and create the next folder in
+     //   myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
+        
+  //  }
+     
+     
+    
+    //dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
+    //dataPathName=ofToDataPath("")+"MEDIA/";
+ 
+    //cout<< dataPathName << " <<-- data Path \n";
+    
+    //    myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+    //    string whereToSaveAnalysisOutputFiles;
+    //    whereToSaveAnalysisOutputFiles = whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter);
+    //    cout<<whereToSaveAnalysisOutputFiles<< " <<---whereToSaveAnalysisOutputFiles \n";
+    //    ofSetDataPathRoot(whereToSaveAnalysisOutputFiles);
+    
+    /*
+    // To copy a folder's contents to a new location:
+    // Create a new target folder, if necessary.
+    if (!System.IO.Directory.Exists(targetPath))
+    {
+        System.IO.Directory.CreateDirectory(targetPath);
+    }
+ */
+    
+    // probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
+    
+    // TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names
+    // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
+    
+    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
     
     latencyFrameCounter = -1;
     noOfLatencyFrames = 1+ofGetFrameRate()/6;
@@ -48,19 +136,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     camWidth=camW;
     check=0;
     
-    synthesisComplete=FALSE;
-   
-    // TODO : The data path should be the date of the program running - create new folder with 15Nov 
-    
-    
-    // dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
-    // dataPathName=ofToDataPath("")+"MEDIA/";
-    // ofSetDataPathRoot(dataPathName);
-    // probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
-    // TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names
-    // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
-    
-    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
+    synthesisComplete=FALSE;   
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
@@ -240,7 +316,11 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         for (i = 0; i < vectorOfPixels.size(); i++)  
         {   
             //cout<<i<<"< i LATENCY FRAMES \n";
-            ofSaveImage(vectorOfPixels[i], "latencyFrame_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+
+            //THIS needs to be fixed with the folder saving paths
+            ofSaveImage(vectorOfPixels[i], saveFolderPath+"latencyFrame_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+            
+            //ofSaveImage(vectorOfPixels[i], "latencyFrame_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
         }
         vectorOfPixels.clear();
         gotAllLatencyFrames = TRUE;
@@ -271,7 +351,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
                             //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(i)+"_"+ofToString(100.0*i*scanLineSpeed/ofGetWidth(),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);
+                            ofSaveImage(vectorOfPixels[i], saveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(100.0*i*scanLineSpeed/ofGetWidth(),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);
 
                             //ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
                         }
@@ -313,7 +393,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
                             //cout<<i<<"< i in V_SHADOWSCAPES ** frames being written to images \n";
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(100.0*i*scanLineSpeed/ofGetHeight(),2)+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+                            ofSaveImage(vectorOfPixels[i], saveFolderPath+whichAnalysis+"_"+ofToString(100.0*i*scanLineSpeed/ofGetHeight(),2)+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
                         }
                         vectorOfPixels.clear(); //empty out the vector
                         counter = 0;
@@ -362,7 +442,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         
                         for (i = 0; i < vectorOfPixels.size(); i++)
                         {
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(i)+"_"+ofToString((100.0*i*scanLineSpeed)/(2*ofGetHeight()),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);                
+                            ofSaveImage(vectorOfPixels[i], saveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString((100.0*i*scanLineSpeed)/(2*ofGetHeight()),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);                
                         }
                         
                         vectorOfPixels.clear(); //empty out the vector
@@ -435,7 +515,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             {
                                 //cout<<lightLevels[i]<<"< lightLevels[i] in RELAXRATE \n";
                                 fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);  
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);  
                             }
                         
                             vectorOfPixels.clear(); //empty out the vector
@@ -540,7 +620,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             {
                                 fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
                                 cout<<ofToString(lightLevels[i],2)<<"<<-- ofToString(lightLevels[i],2) \n";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                                 //cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
                             }
                             
@@ -603,7 +683,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
                                 fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q1"+".jpg";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
                             gotAllLocalFrames1 = TRUE;
@@ -631,7 +711,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
                                 fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q2"+".jpg";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
                             gotAllLocalFrames2 = TRUE;
@@ -658,7 +738,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
                                 fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q3"+".jpg";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
                             gotAllLocalFrames3 = TRUE;
@@ -685,7 +765,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
                                 fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q4"+".jpg";
-                                ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                                ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
                             lightLevels.clear();
@@ -731,7 +811,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 for (i = 0; i < vectorOfPixels.size(); i++)
                 {
                     fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
-                    ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                    ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                     //cout<<i<<"< i in M_CODE ** frames being written to images \n";
                 }
                 vectorOfPixels.clear(); //empty out the vector
@@ -857,7 +937,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         {
                           //  cout<<i<<" <<-- i inside CAM_NOISE \n";
                             fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
-                            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                            ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                         }
                         vectorOfPixels.clear(); //empty out the vector
                         lightLevels.clear();
@@ -987,7 +1067,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     for (i = 0; i < vectorOfPixels.size(); i++)
                     {
                         fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
-                        ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                        ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                     }
                     vectorOfPixels.clear(); //empty out the vector
                     lightLevels.clear();
@@ -1075,7 +1155,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
                             fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
-                            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                            ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                         }
                         
                         vectorOfPixels.clear(); //empty out the vector
@@ -1130,7 +1210,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     for (i = 0; i < vectorOfPixels.size(); i++)  
                     {   
                         fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
-                        ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                        ofSaveImage(vectorOfPixels[i], saveFolderPath+fileName, OF_IMAGE_QUALITY_BEST);
                     }
                     vectorOfPixels.clear(); //empty out the vector
                     counter = 0;

@@ -10,13 +10,17 @@ ANALYSIS CLASS FOR INPLEMENTING AND DISPLAYING DIFFERENT LIVE VIDEO ALGORITHMS
 #include "ofxQtVideoSaver.h"
 #include "ofxXmlSettings.h"
 #include "ThreePhaseDecoder.h"
-
+#include "ofxFileHelper.h"
 
 using namespace std;
 
 class analysis{
     
     public:
+        
+    ofxFileHelper myFileHelper;
+    string saveFolderPath;
+    string whichLocation;
     
     int myVariable;
 
