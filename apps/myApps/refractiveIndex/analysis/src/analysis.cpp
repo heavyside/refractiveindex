@@ -22,9 +22,6 @@
      * make a compile for 10.5.8 system - 1.83GHZ Intel Core 2 Duo - 1GB 6667 MHz DDR2 SDRAM
 */
 
-// hacky solution to count the number of times per launch that we've run any analysis
-int multipleAnalysisCounter = 0;
-
 ////////////////////////---------/////////////////////////////////////
 //SETUP THE CLASS
 //Composed of things this class will always need, i.e.: a way of synthesizing the outputs, recording images
@@ -34,66 +31,57 @@ int multipleAnalysisCounter = 0;
 void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, int whichCodec){//, ofVideoGrabber &grabber){
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
     
-    multipleAnalysisCounter++;
-    cout<< multipleAnalysisCounter<<" <<-- multiple analysis counter \n";
-    
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
+    /*
+    time_t rawtime;
+     struct tm * timeinfo;
+    time(&rawtime);
+    timeinfo = localtime ( &rawtime );
+      string time = asctime(&rawtime);
+    cout<< time << " <---  time \n";
+    */
     
     time_t rawtime;
-    time(&rawtime);
-    string time = ctime(&rawtime);
-    cout<< time << " <---  time \n";
+    struct tm * timeinfo;
+    
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    string time = asctime(timeinfo);
+    //printf ( "Current local time and date: %s", asctime (timeinfo) );
+    
 
     //TODO : The data path should be the date of the program running - create new folder with 15Nov
    
     //TODO: Tom can we have this location set by the GUI in the main? Perhaps just Location 1, Location 2, Location 3 drop down for now - as we don't have the locations confirmed    
-    whichLocation = "MIDDLESBROUGH";    
+    whichLocation = "MIDDLESBROUGH";        
+    saveFolderPath = whichLocation+"/"+whichAnalysis+"/"+time+"/";
     
     if (!myFileHelper.doesDirectoryExist(whichLocation)){
         ofxFileHelper::makeDirectory(whichLocation);
     }
-    
+     
     if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis)){
         ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis);
     }
     
+    if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis+"/"+time)){
+        ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis+"/"+time);
+    }
+                
+    if (!myFileHelper.doesDirectoryExist(saveFolderPath)){
+        ofxFileHelper::makeDirectory(saveFolderPath);
+    }
+             
+    // add one here that does time as a subfolder?
+/*
     if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter))){
         ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
     }
+*/
     
-    saveFolderPath = whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter)+"/";
-    
-    //sec_t mySec;		/* seconds after the minute [0-60] */
-    //tm_min myMin;		/* minutes after the hour [0-59] */
-    //tm_hour myHour;	/* hours since midnight [0-23] */
-	//tm_mday myDay;	/* day of the month [1-31] */
-        
-    //if (myFileHelper.doesDirectoryExist(whichLocation)){
-    
-        //create the next folder in 
-    //    myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
-    
-     //   if (myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis)){
-        
-            //create the next folder in 
-      //      myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
-        
-    //    } else {
-    //        myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
-    //        myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
-   //     }
-        
-   // } else {
-        // create the folder 
-     //    myFileHelper.makeDirectory(whichLocation);
-     //  and create the next folder in
-     //   myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis);
-        
-  //  }
-     
-     
-    
+
+
     //dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
     //dataPathName=ofToDataPath("")+"MEDIA/";
  
