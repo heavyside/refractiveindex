@@ -19,12 +19,12 @@ class analysis{
     public:
         
     ofxFileHelper myFileHelper;
-    string saveFolderPath;
+    string imageSaveFolderPath;
     string whichLocation;
     
     int myVariable;
 
-    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, int whichCodec);//, ofVideoGrabber &grabber);
+    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, string whichLocation, int whichCodec);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
     void synthDrawCamRecord(ofPixels pixels);

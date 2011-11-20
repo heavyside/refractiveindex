@@ -40,7 +40,10 @@ public:
     
     ofImage startImage, endImage;
     
+    string locationChooser;
+    
     string analysisChooser;
+    
     int codecChooser;
     int whichCodec;
     vector<string> returnedCodecNames;
