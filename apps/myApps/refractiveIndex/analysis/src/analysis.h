@@ -133,6 +133,7 @@ class analysis{
     string cameraMovieName;
     
     int check;
+    int num;
     int i,j,k;
     float currentGreyLevel;
     float testFloat;

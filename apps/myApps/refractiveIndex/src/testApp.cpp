@@ -32,7 +32,6 @@
  */
 
 
-
 //--------------------------------------------------------------
 void testApp::setup(){
     
@@ -116,10 +115,13 @@ void testApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);  
     
     ////////////GUI SETUP STUFF////////////////
-    ofxControlPanel::setBackgroundColor(simpleColor(30, 30, 60, 200));
-	ofxControlPanel::setTextColor(simpleColor(255, 250, 255, 255));
-    ofxControlPanel::setOutlineColor(simpleColor(255, 250, 255, 255));   
-    ofxControlPanel::setForegroundColor(simpleColor(100, 100, 100, 255));
+    
+    
+    // RI PURPLE  #716e88 =     113, 110, 136
+    ofxControlPanel::setBackgroundColor(simpleColor(113, 110, 136, 200));
+    ofxControlPanel::setTextColor(simpleColor(255, 255, 255, 255));
+    ofxControlPanel::setOutlineColor(simpleColor(255, 255, 255, 255));   
+    ofxControlPanel::setForegroundColor(simpleColor(50, 50, 50, 255));
 
 	gui.loadFont("MONACO.TTF", 8);		
 	gui.setup("Refractive Index", 0, 0, ofGetWidth(), ofGetHeight());
@@ -174,7 +176,7 @@ void testApp::setup(){
     analysisNames.push_back("CAM_FRAMERATE");
     analysisNames.push_back("CAM_NOISE");
     analysisNames.push_back("COLOR_SINGLE");
-    analysisNames.push_back("PHYS_TEST");
+    analysisNames.push_back("LATENCY_TEST");
     analysisNames.push_back("COLOR_MULTI");
     analysisNames.push_back("DIFF_NOISE");
     
@@ -497,7 +499,7 @@ void testApp::keyPressed(int key){
         menuState=1;
     }
     if(key=='w'){
-        analysisChooser="PHYS_TEST";
+        analysisChooser="LATENCY_TEST";
         showGui=false;
         showCursor=false;
         menuState=1;

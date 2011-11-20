@@ -215,10 +215,13 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         morseMessage=translateToMorse(morseMessage);
     }
     
-    //THIS DOESN REALLY DO ANYTHING RIGHT NOW - draws a big circle.  perhaps repurpose as the framelag calculator
-    if (whichAnalysis=="PHYS_TEST") {
+    //LATENCY TEST
+    if (whichAnalysis=="LATENCY_TEST") {
         counter = 0;
-     
+        num = 0;
+        aColour.r=num;
+        aColour.g=num;
+        aColour.b=num;
     }
         
     if (whichAnalysis=="CAM_FRAMERATE") {
@@ -266,12 +269,11 @@ void analysis::synthUpdate(){
 8 analysisNames.push_back("CAM_FRAMERATE");
 9 analysisNames.push_back("CAM_NOISE");
 10 analysisNames.push_back("COLOR_SINGLE");
-11 analysisNames.push_back("PHYS_TEST");
+11 analysisNames.push_back("LATENCY_TEST");
 12 analysisNames.push_back("COLOR_MULTI");
 13 analysisNames.push_back("DIFF_NOISE");
 13 analysisNames.push_back("DIFF_NOISE");
 */
-
 
 void analysis::synthDrawCamRecord(ofPixels pixels){
     
@@ -308,10 +310,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         nowDoAnalyses = TRUE;
         cout<<"nowDoAnalyses = TRUE;\n";
     }
-
     */
-    
-    
     
     if (nowDoAnalyses == TRUE)
     {
@@ -1074,13 +1073,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     synthesisComplete=TRUE; 
                     cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
                 }
-                
-                
             } else {
                 cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
             }
-            
-            
         }
         
         
@@ -1089,36 +1084,86 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         //i.e.: Play black to screen, start recording frames, play white to screen, average pixels to detect the change - calculate how many frames after the actual output change
         // NOte - this is currently set as  ofGetFramerate()/6, empirically
         
-        if(whichAnalysis=="PHYS_TEST"){
+        if(whichAnalysis=="LATENCY_TEST"){
             
             if(synthesisComplete == FALSE ){    
-                counter++;
                 
-                if (counter < 100)
+                ofSetColor(aColour);
+                ofRect(0, 0, ofGetWidth(), ofGetHeight());
+                aColour.r = num;
+                aColour.g = num;
+                aColour.b = num;
+                
+                counter++;
+                cout<<counter<<" <<-- counter\n";
+                
+                if((0 < counter) && (counter <= 30))
                 {
-                    ofSetCircleResolution(100);
-                    ofSetColor(255,255,0);
-                    ofCircle(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()/2);
-                } else {
-                    ofSetColor(0,0,0);
-                    ofCircle(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()/2);
-                    synthesisComplete =TRUE;
+                    cout<<" 0 <= counter < 30\n";
+                    num = 0;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if((30 < counter) && (counter <= 60))  
+                {
+                    cout<<" 30<=counter < 60\n";
+                    num = 255;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if((60 < counter) && (counter < 90))
+                {
+                    cout<<" 60 <= counter < 90\n";
+                    num = 0;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if(counter >= 90)
+                {
+                    string fileName;
+                    for (i = 0; i < vectorOfPixels.size(); i++)
+                    {
+                        fileName = imageSaveFolderPath + whichAnalysis + "_" + ofToString(i) + "_" + ofToString(lightLevels[i]) + ".jpg";
+                        ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                    }
+                    vectorOfPixels.clear(); //empty out the vector
+                    lightLevels.clear();
+                    counter = 0;
+                    synthesisComplete=TRUE; 
+                    cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+
+                    ofImage reLoadedImage;
+                    for (i = 0; i < vectorOfPixels.size(); i++)
+                    {
+                        fileName = imageSaveFolderPath + whichAnalysis + "_" + ofToString(i) + "_" + ofToString(lightLevels[i]) + ".jpg";
+                       
+                        if (myFileHelper.doesFileExist(fileName)){
+                            reLoadedImage.loadImage(fileName);
+                        }
+                    }
+                    
+                    //load in images 
+                    //take average 'luminance' and brightness of each image 
+                    //detect the frame number 'after' the intended one that the 
+                    
+                    
+                    
                 }
+                
+                vectorOfPixels.push_back(pixels); 
+                lightLevels.push_back(num);
+                
             } else {
                 cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-
             }
         }
         
         
         //This will record as many frames as possible at specific output light hues
-
         if(whichAnalysis=="COLOR_MULTI"){
             
             if(synthesisComplete == FALSE ){    
-                   
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
-
                 counter++;
                 //cout<<counter<<" <<-- counter in COLOR_MULTI \n";
                 
@@ -1281,7 +1326,7 @@ void analysis::analyseInput(unsigned char * pixels){
         
     } 
     
-    if (whichAnalysis=="PHYS_TEST") {
+    if (whichAnalysis=="LATENCY_TEST") {
         
     }
     
