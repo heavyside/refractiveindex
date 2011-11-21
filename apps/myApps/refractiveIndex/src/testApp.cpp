@@ -108,8 +108,11 @@ void testApp::setup(){
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
         
-    vector<string> names=vidGrabber.returnDeviceNames();
-    cout<<names.size()<<" number of inputs found\n";
+    
+    //@dviid: am running pure vidGrabber
+    //vector<string> names=vidGrabber.returnDeviceNames();
+    //cout<<names.size()<<" number of inputs found\n";
+    
     masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
     
     masterAnalysis.setGUIDefaults();
@@ -118,8 +121,9 @@ void testApp::setup(){
     returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
     
     //CURRENTLY UNUSED
-    cout<<names[names.size()-1]<<" names at 2\n";
-    gui.addTextDropDown("inputs", "INPUTS", 130, names);
+    //@dviid: am running pure vidGrabber
+    //cout<<names[names.size()-1]<<" names at 2\n";
+    //gui.addTextDropDown("inputs", "INPUTS", 130, names);
     gui.setWhichColumn(2);
     gui.addTextDropDown("codecs", "CODECS", 130, returnedCodecNames);
     

@@ -9,7 +9,7 @@ ANALYSIS CLASS FOR INPLEMENTING AND DISPLAYING DIFFERENT LIVE VIDEO ALGORITHMS
 #include "ofMain.h"
 #include "ofxQtVideoSaver.h"
 #include "ofxXmlSettings.h"
-#include "ThreePhaseDecoder.h"
+//#include "ThreePhaseDecoder.h"
 
 
 using namespace std;
