@@ -35,6 +35,7 @@ void testApp::setup(){
     ofxControlPanel::setBackgroundColor(simpleColor(30, 30, 60, 200));
 	ofxControlPanel::setTextColor(simpleColor(0, 250, 0, 255));
     
+    //
 	gui.loadFont("MONACO.TTF", 8);		
 	gui.setup("refractive index", 0, 0, ofGetWidth(), ofGetHeight());
 	
