@@ -957,6 +957,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         //Writes a color to the screen and reads back X number of frames
         if(whichAnalysis=="COLOR_SINGLE"){
             
+           
+            
             // TODO - new strategy for latency - wait for X frames before grabbing, then stop grabbing Y frames before a color change  
             // The frame lag (empirically, using the isight camera) seems to be ofGetFrameRate()/6, so we'll wait that, plus 1
 

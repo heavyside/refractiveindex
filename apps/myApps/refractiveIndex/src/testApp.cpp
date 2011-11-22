@@ -158,7 +158,7 @@ void testApp::setup(){
     gui.setWhichColumn(2);
     
     //will handle which analysis we are doing this time
-    vector<string>analysisNames;
+    //TomS 22.11.11 vector<string>analysisNames; moved to h file - this needs to be global as its now used to get the panel number when switching panel in the gui event
     
     analysisNames.push_back("H_SHADOWSCAPES");
     analysisNames.push_back("V_SHADOWSCAPES");
@@ -174,19 +174,122 @@ void testApp::setup(){
     analysisNames.push_back("COLOR_MULTI");
     analysisNames.push_back("DIFF_NOISE");
     
-    gui.addTextDropDown("run analysis", "ANALYSIS_TYPE", 130, analysisNames);
+    gui.addTextDropDown("choose analysis", "ANALYSIS_TYPE", 130, analysisNames);
     gui.setWhichColumn(3);
     /*  float maxResultA; 
      float maxTimeA; 
      float divisionsA; 
      bool showGraphA;*/
     
+    /////////////ADD ONE PANEL FOR EACH ANALYSIS///////////
+    for(int i = 0;i< analysisNames.size();i++){
+        gui.addPanel(analysisNames[i], 4, false);
+    }
+    
+    ///TOM 21/11/11 NOW SETTING THE CORRECT GUI ELEMENTS FOR EACH ANALYSIS, PAINFULLY, ONE BY ONE
+    ///Note counterMax in the analysis class seem to do exactly the same job as maxTimeA which is currently connected to gui, show we merge these variables? 
+    //H_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(2);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //V_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(3);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //D_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(4);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //RELAXRATE GUI OPTIONS
+    gui.setWhichPanel(5);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
     gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
     gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    vector<string>graphNames;
+    graphNames.push_back("LINEAR");
+    graphNames.push_back("EXPONENTIAL");
+    graphNames.push_back("SQUARE_WAVE");
+    graphNames.push_back("QUADRATIC");
+    
+    gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
+    
+    //I_RESPONSE GUI OPTIONS
+    gui.setWhichPanel(6);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
+
+    //SHAPE_SHADING GUI OPTIONS
+    gui.setWhichPanel(7);
+    gui.setWhichColumn(0);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    
+    //M_CODE GUI OPTIONS
+    gui.setWhichPanel(8);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
+    //gui.addTextInput("morse output", "input morse here", 250 );
+    //nasty hack for getting text back
+    tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
+    
+    
+    //CAM_FRAMERATE GUI OPTIONS
+    gui.setWhichPanel(9);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //CAM_NOISE GUI OPTIONS
+    gui.setWhichPanel(10);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //COLOR_SINGLE GUI OPTIONS
+    gui.setWhichPanel(11);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //LATENCY_TEST GUI OPTIONS
+    gui.setWhichPanel(12);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //COLOR_MULTI GUI OPTIONS
+    gui.setWhichPanel(13);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    
+    //Tom S 21.11.11 colour multi now fades through the whole spectrum so doesn't need these any more
+    //gui.addButtonSlider("red level", "RED_LEVEL", 10, 1, 255, TRUE);
+    //gui.addButtonSlider("green level", "GREEN_LEVEL", 10, 1, 255, TRUE);
+    //gui.addButtonSlider("blue level", "BLUE_LEVEL", 10, 1, 255, TRUE);
+    
+    //DIFF_NOISE GUI OPTIONS
+    gui.setWhichPanel(14);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //Tom S 21/11/11 all below commented out and shifted to individual tabs above - left in comments for now just in case I've missed something
+    /*gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+  
+    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
+    gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
     gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
@@ -203,7 +306,7 @@ void testApp::setup(){
     graphNames.push_back("QUADRATIC");
     
     gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
-    
+    */
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
         
@@ -227,9 +330,11 @@ void testApp::setup(){
     //  -- this gives you back an ofEvent for all events in this control panel object
 	ofAddListener(gui.guiEvent, this, &testApp::eventsIn);
     
+   
+    
     ////////////END OF GUI SETUP STUFF////////////////
     masterAnalysis.setGUIDefaults();
-   
+
     
 }
 
@@ -561,6 +666,13 @@ void testApp::eventsIn(guiCallbackData & data){
     string thisName=data.getDisplayName();
     cout<<thisName<<" this Name\n";
     
+    
+    //START ANALYSIS IS NOW FROM A BUTTON
+    if( thisName == "GO" ){
+        showGui=false;
+        menuState=1;
+    }
+    
     //animation time limit
     if( thisName == "animation time limit" ){
         
@@ -741,17 +853,28 @@ void testApp::eventsIn(guiCallbackData & data){
 
     
     //START ANALYSIS
-   // string isThisAnAnlysisButton = data.getDisplayName().substr(0,12);
-    if( data.getDisplayName()== "run analysis" ){
+   //Tom 22/11/11 changed this from starting analysis to choosing panel of gui
+    if( data.getDisplayName()== "choose analysis" ){
        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 analysisChooser=data.getString(k);
-                cout<<data.getString(k)<<" <<-- lets run THIS analysis\n";    
+                cout<<data.getString(k)<<" "<<k<<" <<-- lets jump to this tab\n";   
+                
+                 //Tom 22/11/11
+                for(int i=0;i<analysisNames.size();i++){
+                    //check if the clicked option in the dropdown matches this analysis name
+                    if(analysisNames[i]==data.getString(k)){
+                        //if it does, jump to the correct gui panel
+                        gui.setSelectedPanel(i+2);
+                        //exit for loop
+                        exit();
+                    }
+                }
+                
+                
             }
         }
-        showGui=false;
-        menuState=1;
     }
     
     //WHAT KIND OF GRAPH
@@ -762,6 +885,7 @@ void testApp::eventsIn(guiCallbackData & data){
                 
                 //copy string straight into class
                 masterAnalysis.whichGraph=data.getString(k);
+                
                 cout<<data.getString(k)<<" <<-- lets run THIS graph\n";    
             }
         }
