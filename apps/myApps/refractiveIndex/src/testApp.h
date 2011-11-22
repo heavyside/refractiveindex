@@ -17,6 +17,7 @@ public:
     void setup();
     void update();
     void draw();
+    void exit();
     
     void keyPressed  (int key);
     void keyReleased(int key);
@@ -36,8 +37,13 @@ public:
     
     analysis masterAnalysis;
     vector<ofImage> resultsOfAnalysis;
-   
+    
+    ofImage startImage, endImage;
+    
+    string locationChooser;
+    
     string analysisChooser;
+    
     int codecChooser;
     int whichCodec;
     vector<string> returnedCodecNames;
@@ -54,7 +60,12 @@ public:
     
     //report string for letting us know whats what with the camera settings
     string camStatus;
+    string keyControlMessage1;
+    string keyControlMessage2;
+
+    bool showCursor;
     bool showGui;
+    bool showCameraInput;
     int menuState;
     int mouseX, mouseY;
     

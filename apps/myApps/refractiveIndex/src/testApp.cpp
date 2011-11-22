@@ -1,6 +1,37 @@
 #include "testApp.h"
 
 
+//----ON THE QUESTION OF VIDEO LAG ------------------//
+
+/* 
+ http://www.cycling74.com/forums/topic.php?id=32247
+ 
+ You can use the Pinnacle Dazzle RCA/Composite / USB 2.0 adaptor which gives you uncompressed NTSC/PAL over USB 2.0.
+ 
+ Daystar XTraview, also uncompressed NTSC/PAL over USB 2.0
+ 
+ Aditionally you can use similar and cheaper devices that work with the Video Glide Driver
+ 
+ (IIRC the Xtraview comes with a license of VideoGlide driver). All the video glide devices are Uncompressed, USB 2.0.
+ 
+ Here is an image of the capture devices for size.
+ http://i.imgur.com/CKLbM.jpg
+ 
+ Note, the Diamond Multimedia device shows up in the driver list, but I've not gotten it to work. I would stay away from it if on the Mac. The Pinnacle and the XLR8 work just fine, and show up in Jitter and other Quicktime compatible applications.
+ 
+ Here is the Jitter list:
+ http://i.imgur.com/m0IA7.jpg
+ 
+ I've tested all 3 of the above, and they all work about the same (albeit the Diamond on PC only). I suspect they use the same chipset or same family of device, with small changes to provide vendor lockout (Diamond, im looking at you).
+ 
+ These devices are cheap, but they work. Latency is I want to say around 3-4 frames (been a while since I tested). Better than DV (which usually 7, although some folks say 4 on new machines/OS'es, ive never seen 4 frames personally), and I think thats about on par with the DFG-1394.
+ 
+ 
+ SO IT'S NEVER GOING TO BE CONSISTENT... OR "REAL TIME" - jamie... \
+ 
+ */
+
+
 //--------------------------------------------------------------
 void testApp::setup(){
     
@@ -12,35 +43,85 @@ void testApp::setup(){
     //some change
     camWidth=640;
     camHeight=480;
-    ofSetFrameRate(30);
+    desFrameRate=-111;// the camera framerate
+    
+    //ofSetFrameRate(60);   // this produces 10 or 11 frames of latency frames in the camera feed 
+    
+    ofSetFrameRate(30);   // this produces 5 or 6 frames of latency frames in the camera feed 
+    //ofSetFrameRate(15);     // this produces 2 or 3 frames of latency frames in the camera feed 
+    
+    //ofSetFrameRate(5);   // this produces  or 1 or 2 frames of latency
+    // ofSetFrameRate(1);   // this produces?  i'm not patient enough to figure this out... 
+    
+    // i.e.:  the frame lag seems to be ofGetFrameRate()/6 or thereabouts.
+        
+    ofEnableSmoothing();
     ofSetVerticalSync(TRUE);
     //set default codec
     codecChooser=0;
+
+    //default location
+    locationChooser="MIDDLESBROUGH";   //
     
+    //default analysis
+    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have it set in the GUI?
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
-    setupCamera(camWidth, camHeight,2,30,true);
+    setupCamera(camWidth, camHeight, 2, 120,true);    
+    //set initial report
+    camStatus="Camera not setup";  //    //WHY say this if we've just set up the camera?
+    
+    keyControlMessage1="Use 1-9 & q+w+e+r to launch the analyses";
+    keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui    'z'-to start";
     
     font.loadFont("MONACO.TTF", 10);
     
-    showGui=true;
-    //set initial report
-    camStatus="camera not setup";
-        
+    //AT the moment - this WILL COMPILE for 10.5 if we remove the below image loaders - problem with POCO library - see here:
+    // http://forum.openframeworks.cc/index.php?topic=6351.0
+    
+    startImage.loadImage("resourceimages/refractiveindexstart.jpg");
+    endImage.loadImage("resourceimages/refractiveindexend.jpg");
+    
+    /*  compiling for 10.5 - we get a bunch of POCO errors
+     
+     SOLUTION:  http://forum.openframeworks.cc/index.php?topic=6351.0
+     
+     https://github.com/openframeworks/openFrameworks/issues/387
+     
+     http://forum.openframeworks.cc/index.php?topic=7549.0
+     
+     following error appears when i try to load an image; commenting out the call to loadImage("...") makes the error go away.
+     
+     Undefined symbols:
+     "std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int)", 
+     referenced from:
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     ld: symbol(s) not found
+     */
+
+    showGui=FALSE;
+    showCursor=TRUE;
+    showCameraInput=FALSE;
     
     //talk to me about your troubles openframeworks
     ofSetLogLevel(OF_LOG_VERBOSE);  
     
     ////////////GUI SETUP STUFF////////////////
-    ofxControlPanel::setBackgroundColor(simpleColor(30, 30, 60, 200));
-	ofxControlPanel::setTextColor(simpleColor(0, 250, 0, 255));
     
     //
 	gui.loadFont("MONACO.TTF", 8);		
-	gui.setup("refractive index", 0, 0, ofGetWidth(), ofGetHeight());
+	gui.setup("Refractive Index", 0, 0, ofGetWidth(), ofGetHeight());
 	
     //FIRST PANEL HOLDS CAMERA CONTROLS
-    gui.addPanel("camera control", 4, false);
+    gui.addPanel("Camera Settings", 4, false);
     gui.setWhichPanel(0);
     gui.setWhichColumn(0);
     gui.addToggle("set up camera input", "CAM_IS_GO", 0);
@@ -48,18 +129,35 @@ void testApp::setup(){
 	gui.addButtonSlider("camera height", "CAM_HEIGHT", camHeight, 1.0, 1080, true);
     gui.addButtonSlider("desired frame rate", "FRAME_RATE", 1., 1.0, 30, true);
 	gui.setWhichColumn(1);
-    gui.addTextInput("display message", "input here for the text input field!", 250 );
-    
+    gui.addTextInput("text message", "input text here", 250 );
+
     //GET THE INPUT NAMES FROM THE QT VIDEO GRABBER
     vidGrabber.listDevices();
     gui.addToggle("more cam settings", "SETTINGS", 0);
     
     //A NEW PANEL
-    gui.addPanel("analysis management", 4, false);
+    gui.addPanel("Analyses", 4, false);
+    
     gui.setWhichPanel(1);
+    gui.setWhichColumn(1);
+    
+    vector<string>locationNames;
+    locationNames.push_back("MIDDLESBROUGH");
+    locationNames.push_back("BRADFORD");
+    locationNames.push_back("BIRMINGHAM");
+    locationNames.push_back("SWANSEA");
+    locationNames.push_back("BRISTOL");
+    locationNames.push_back("WOOLWICH");
+    locationNames.push_back("DOVER");
+    locationNames.push_back("BELFAST");
+    locationNames.push_back("EDINRBURGH");
+    locationNames.push_back("MANCHESTER");
+    locationNames.push_back("LIVERPOOL");
+    
+    gui.addTextDropDown("location", "LOCATION", 130, locationNames);
+    gui.setWhichColumn(2);
     
     //will handle which analysis we are doing this time
- 
     vector<string>analysisNames;
     
     analysisNames.push_back("H_SHADOWSCAPES");
@@ -72,12 +170,12 @@ void testApp::setup(){
     analysisNames.push_back("CAM_FRAMERATE");
     analysisNames.push_back("CAM_NOISE");
     analysisNames.push_back("COLOR_SINGLE");
-    analysisNames.push_back("PHYS_TEST");
+    analysisNames.push_back("LATENCY_TEST");
     analysisNames.push_back("COLOR_MULTI");
     analysisNames.push_back("DIFF_NOISE");
     
-    gui.addTextDropDown("analysis type", "ANALYSIS_TYPE", 130, analysisNames);
-    gui.setWhichColumn(2);
+    gui.addTextDropDown("run analysis", "ANALYSIS_TYPE", 130, analysisNames);
+    gui.setWhichColumn(3);
     /*  float maxResultA; 
      float maxTimeA; 
      float divisionsA; 
@@ -85,12 +183,12 @@ void testApp::setup(){
     
     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
-    gui.addButtonSlider("graph max result", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-    gui.addButtonSlider("graph max time", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
-    gui.addButtonSlider("graph num divisions", "GRAPH_NUM_DIVISIONS", 10, 1, 25, TRUE);
+    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
-    gui.addButtonSlider("morse speed", "MORSE_SPEED", 10, 1, 25, TRUE);
+    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
     //nasty hack for getting text back
     tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
@@ -104,15 +202,14 @@ void testApp::setup(){
     graphNames.push_back("SQUARE_WAVE");
     graphNames.push_back("QUADRATIC");
     
-    gui.addTextDropDown("graph type", "GRAPH_TYPE", 130, graphNames);
+    gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
     
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
         
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
-    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
-    
+//    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);    
     masterAnalysis.setGUIDefaults();
     
     //get list of codecs from movie object in analysis class
@@ -131,7 +228,7 @@ void testApp::setup(){
 	ofAddListener(gui.guiEvent, this, &testApp::eventsIn);
     
     ////////////END OF GUI SETUP STUFF////////////////
-    
+    masterAnalysis.setGUIDefaults();
    
     
 }
@@ -145,14 +242,27 @@ void testApp::update(){
     ofSetWindowTitle(str);
     //set the window title to "framerate"
     
+
+// kylemcdonald's solution for getting the most recent frame from here: 
+// http://forum.openframeworks.cc/index.php?topic=7237.0
+    /*
+    int frames = 0;  
+    while(frames < 4) {  
+        vidGrabber.grabFrame();  
+        if(vidGrabber.isFrameNew()) {  
+            frames++;  
+        }  
+        ofSleepMillis(2);  
+    }  
+*/
+
     vidGrabber.grabFrame();  // go get frame from OS
-   
-//  vidGrabber.update();  // go get frame from OS
-    
+    //vidGrabber.update();  // go get frame from OS
     
     //neutral, do nothing
     if(menuState==0){
-
+        
+        //before analysis - wait state
     }
     
     //setup analysis
@@ -161,7 +271,7 @@ void testApp::update(){
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
        
         masterAnalysis.morseMessage= tl->getValueText();
-        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
+        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);
         
         //now we are setup lets analyse
         menuState=2;
@@ -184,61 +294,97 @@ void testApp::update(){
     }
     
     gui.update();
+    
 }
 
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofSetColor(255, 255, 255);
     
+    //ofSetColor(0);
     //if no analysis, draw grabber
+
     if(menuState==0){
-        vidGrabber.draw(0, 0);
+        ofSetColor(255,255,255);
+        startImage.draw(0,0,ofGetWidth(), ofGetHeight());
+        font.drawString("Refractive Index", ofGetWidth()-250, ofGetHeight()-70);
+        font.drawString("Jamie Allen", ofGetWidth()-250, ofGetHeight()-50);
+        font.drawString("refractiveindex.cc", ofGetWidth()-250, ofGetHeight()-30);
     }
     
     //continue to draw grabber in setup phase
     if(menuState==1){
-        //vidGrabber.draw(0, 0);
+        
     }
     
     //drawing synthesized impulses, etc., to the screen
     if(menuState==2){
         
-        //vidGrabber.draw(0, 0);
         if(!masterAnalysis.synthesisComplete){
+            
             //cout<<masterAnalysis.synthesisComplete<<"masterAnalysis.synthesisComplete \n";
             //cout<<"in draw loop menuState 2 \n";
-            
             if (vidGrabber.isFrameNew())
             {   
                 camPixels = vidGrabber.getPixelsRef();
             } 
-                masterAnalysis.synthDrawCamRecord(camPixels);            
+            
+            masterAnalysis.synthDrawCamRecord(camPixels);    
             
         } else {
+            
             menuState = 3;
+        
         }
+    
     }
     
     //menustate  draw results of analysis
     if(menuState==3){
-        //cout<<" delete [] camPixels; \n";
-       
         
+        ofSetColor(255,255,255);
+        endImage.draw(0,0,ofGetWidth(), ofGetHeight());
+        font.drawString("Refractive Index", ofGetWidth()-250, ofGetHeight()-70);
+        font.drawString("Jamie Allen", ofGetWidth()-250, ofGetHeight()-50);
+        font.drawString("refractiveindex.cc", ofGetWidth()-250, ofGetHeight()-30);
+        
+        //cout<<" delete [] camPixels; \n";
         //cout<<"in draw loop menuState 3 \n";
     }
     
-
     if(menuState==4){
         //masterAnalysis.displayResult();
+    }
+    
+    
+    if(showCameraInput){
+        vidGrabber.draw(0, 0, ofGetWidth(), ofGetHeight());
+    }
+    
+    // always show gui on top of everything else (if shown) 
+    if(showGui){
+        gui.draw();
+        font.drawString(camStatus,30, ofGetHeight()-80);
+        font.drawString(keyControlMessage1, 30, ofGetHeight()-60);
+        font.drawString(keyControlMessage2, 30, ofGetHeight()-40);
         
     }
     
-    if(showGui){
-        gui.draw();
-        font.drawString(camStatus,50, ofGetHeight()-50);
+    if(showCursor)
+    {
+        ofShowCursor();
+    } else {
+        ofHideCursor();
     }
+    
 }
+
+
+
+void testApp::exit(){
+     
+}
+
 
 
 //---------------  CALLED FROM INSIDE EVENT FUNCTION WHEN CAMERA SETTINGS HAVE BEEN SELECTED ---------------------------------------
@@ -246,22 +392,123 @@ void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bo
     cout<<whichSource<<" this source\n";
     
     vidGrabber.close();
-    
     camWidth = w;
     camHeight =h;
     
     vidGrabber.setVerbose(true);
     vidGrabber.setDeviceID(whichSource);
     vidGrabber.initGrabber(camWidth,camHeight);
-    
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-   
+    //Tom S added key press launcher for all analyses with default values
+    //use g as gui toggle
+
+    
+    //use z as return to beginning of program toggle
+    if(key=='z'){
+        menuState=0;
+    }
+
+    
+    //use c as cursor toggle
+    if(key=='c'){
+        showCursor=!showCursor;
+    }
+
+    //use v as video toggle
+    if(key=='v'){
+        showCameraInput=!showCameraInput;
+    }
+    
+    //use f as gui toggle
+    if( key =='f')
+    {
+        ofToggleFullscreen(); 
+    }
+    
     //use g as gui toggle
     if(key=='g'){
         showGui=!showGui;
+    }
+    
+    if(key=='1'){
+        analysisChooser="H_SHADOWSCAPES";
+        showGui=false;
+        menuState=1;
+    }
+    if(key=='2'){
+        analysisChooser="V_SHADOWSCAPES";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='3'){
+        analysisChooser="D_SHADOWSCAPES";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='4'){
+        analysisChooser="RELAXRATE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='5'){
+        analysisChooser="I_RESPONSE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='6'){
+        analysisChooser="SHAPE_SHADING";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='7'){
+        analysisChooser="M_CODE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='8'){
+        analysisChooser="CAM_FRAMERATE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='9'){
+        analysisChooser="CAM_NOISE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='q'){
+        analysisChooser="COLOR_SINGLE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='w'){
+        analysisChooser="LATENCY_TEST";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='e'){
+        analysisChooser="COLOR_MULTI";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
+    }
+    if(key=='r'){
+        analysisChooser="DIFF_NOISE";
+        showGui=false;
+        showCursor=false;
+        menuState=1;
     }
     
     else {
@@ -282,7 +529,6 @@ void testApp::grabBackgroundEvent(guiCallbackData & data){
 		gui.setValueB("GRAB_BACKGROUND", false);
 	}
 }
-
 
 //this captures all our control panel events - unless its setup differently in testApp::setup
 //--------------------------------------------------------------
@@ -357,7 +603,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph max result" ){
+    if( thisName == "max white level to ramp to" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -372,7 +618,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph max time" ){
+    if( thisName == "num of frames to last for" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -386,12 +632,12 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
-    if( thisName == "graph num divisions" ){
+    if( thisName == "num of impulses" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-                masterAnalysis.divisionsA=(int)data.getFloat(k);
+                masterAnalysis.divisionsA=(2*(int)data.getFloat(k));
                 cout<<"masterAnalysis.divisionsA = "<<masterAnalysis.divisionsA<<"  \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
@@ -405,8 +651,8 @@ void testApp::eventsIn(guiCallbackData & data){
         masterAnalysis.showGraphA=showGraphLine;
         
     }
-    
-    if( thisName == "graph max time" ){
+    //Tom S 14 Nov 19:10somehow this function appears to have been repeated so have commented out
+   /* if( thisName == "graph max time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -418,10 +664,9 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
-    }
+    }*/
     
-    if( thisName == "morse speed" ){
+    if( thisName == "morse pause time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -482,14 +727,27 @@ void testApp::eventsIn(guiCallbackData & data){
         
     }
     
+    
+    //LOCATION SELECTIO
+    if( data.getDisplayName()== "location" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_STRING ){
+                locationChooser=data.getString(k);
+                cout<<data.getString(k)<<" <<-- is our location \n";    
+            }
+        }
+    }
+
+    
     //START ANALYSIS
    // string isThisAnAnlysisButton = data.getDisplayName().substr(0,12);
-    if( data.getDisplayName()== "analysis type" ){
+    if( data.getDisplayName()== "run analysis" ){
        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 analysisChooser=data.getString(k);
-                cout<<data.getString(k)<<" lets run tHIS analysis\n";    
+                cout<<data.getString(k)<<" <<-- lets run THIS analysis\n";    
             }
         }
         showGui=false;
@@ -497,14 +755,14 @@ void testApp::eventsIn(guiCallbackData & data){
     }
     
     //WHAT KIND OF GRAPH
-    if( data.getDisplayName()== "graph type" ){
+    if( data.getDisplayName()== "RELAXRATE response curve" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 
                 //copy string straight into class
                 masterAnalysis.whichGraph=data.getString(k);
-                cout<<data.getString(k)<<" lets run tHIS analysis\n";    
+                cout<<data.getString(k)<<" <<-- lets run THIS graph\n";    
             }
         }
        
@@ -582,22 +840,20 @@ void testApp::eventsIn(guiCallbackData & data){
                         codecChooser=i;
                     }
                 }
-                
-                
             }
         }
     }
     
+    //TODO:  are any of these camera settings actually working or updating?
+    //
     //UPDATE THE REPORT STRING FOR CURRENT SETTINGS
-    camStatus="CAMERA STATUS:: width :"+ofToString(camWidth)+" height :"+ofToString(camHeight)+" frame rate :"+ofToString(desFrameRate)+"\nsource :"+camInputName+"\ncodec: "+codecName;
+    camStatus="CAMERA STATUS:: width :"+ofToString(camWidth)+" height :"+ofToString(camHeight)+"  frame rate :"+ofToString(desFrameRate)+"  source :"+camInputName+"codec: "+codecName;
+  
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-    if( key =='f')
-    {
-       ofToggleFullscreen(); 
-    }
+  
 }
 
 //--------------------------------------------------------------
