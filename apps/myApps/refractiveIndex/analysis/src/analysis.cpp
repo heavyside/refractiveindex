@@ -222,6 +222,7 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         aColour.r=num;
         aColour.g=num;
         aColour.b=num;
+        counterMax = 300;
     }
         
     if (whichAnalysis=="CAM_FRAMERATE") {
@@ -1097,21 +1098,21 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 counter++;
                 cout<<counter<<" <<-- counter\n";
                 
-                if((0 < counter) && (counter <= 30))
+                if((0 < counter) && (counter <= counterMax/3))
                 {
                     cout<<" 0 <= counter < 30\n";
                     num = 0;
                     //  cout<<num<<" <<-- num\n";
                 } 
                 
-                if((30 < counter) && (counter <= 60))  
+                if((counterMax/3 < counter) && (counter <= 2*counterMax/3))  
                 {
                     cout<<" 30<=counter < 60\n";
                     num = 255;
                     //  cout<<num<<" <<-- num\n";
                 } 
                 
-                if((60 < counter) && (counter < 90))
+                if((2*counterMax/3 < counter) && (counter < counterMax))
                 {
                     cout<<" 60 <= counter < 90\n";
                     num = 0;
@@ -1141,13 +1142,6 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             reLoadedImage.loadImage(fileName);
                         }
                     }
-                    
-                    //load in images 
-                    //take average 'luminance' and brightness of each image 
-                    //detect the frame number 'after' the intended one that the 
-                    
-                    
-                    
                 }
                 
                 vectorOfPixels.push_back(pixels); 
