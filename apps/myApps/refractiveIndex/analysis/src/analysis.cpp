@@ -1121,7 +1121,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //  cout<<num<<" <<-- num\n";
                 } 
                 
-                if(counter >= 90)
+                if(counter >= counterMax)
                 {
                     string fileName;
                     for (i = 0; i < vectorOfPixels.size(); i++)
