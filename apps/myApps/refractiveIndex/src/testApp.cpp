@@ -60,6 +60,12 @@ void testApp::setup(){
     //set default codec
     codecChooser=0;
 
+
+    if (!mainFileHelper.doesDirectoryExist("IMAGES/")){
+        mainFileHelper.makeDirectory("IMAGES/");
+    }
+    
+    
     //default location
     locationChooser="MIDDLESBROUGH";   //
     

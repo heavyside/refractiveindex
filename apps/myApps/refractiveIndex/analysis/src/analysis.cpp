@@ -51,23 +51,23 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     timeinfo = localtime ( &rawtime );
     string time = asctime(timeinfo);
     //printf ( "Current local time and date: %s", asctime (timeinfo) );
-    
+        
     imageSaveFolderPath = "IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time+"/";
     
     if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation)){
-        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation);
+        myFileHelper.makeDirectory("IMAGES/"+whichLocation);
     }
      
     if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation+"/"+whichAnalysis)){
-        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis);
+        myFileHelper.makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis);
     }
     
     if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time)){
-        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time);
+        myFileHelper.makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time);
     }
                 
     if (!myFileHelper.doesDirectoryExist(imageSaveFolderPath)){
-        ofxFileHelper::makeDirectory(imageSaveFolderPath);
+        myFileHelper.makeDirectory(imageSaveFolderPath);
     }
              
     // add one here that does time as a subfolder?

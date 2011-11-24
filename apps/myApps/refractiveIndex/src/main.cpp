@@ -1,6 +1,7 @@
 #include "ofAppGlutWindow.h"
 #include "testApp.h"
 
+
 int main() {
 	ofAppGlutWindow window;
     //window.setGlutDisplayString("rgba double samples >= 8");

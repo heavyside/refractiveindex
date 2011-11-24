@@ -5,6 +5,7 @@
 #include "ofMain.h"
 #include "analysis.h"
 #include "ofxControlPanel.h"
+#include "ofxFileHelper.h"
 
 //change
 //MOVED TO ANALYSIS CLASS
@@ -41,8 +42,9 @@ public:
     ofImage startImage, endImage;
     
     string locationChooser;
-    
     string analysisChooser;
+    
+    ofxFileHelper mainFileHelper;
     
     int codecChooser;
     int whichCodec;
