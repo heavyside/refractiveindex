@@ -1,6 +1,14 @@
 #include "analysis.h"
+#include <ctime>
+#include "time.h"
 
-//
+/* TIME OF DAY CODE WILL BE DIFFERENT ON WINDOWS>>>.
+ #include "windows.h"
+ SYSTEMTIME time;
+ GetSystemTime(&time);
+ WORD millis = (time.wSeconds * 1000) + time.wMilliseconds;
+*/
+
 /*
      * daktronics  - WINDOWS 7 
      - ATI Radeon HD 3450 - is this the capture card 
@@ -11,12 +19,8 @@
      - might have a different card 
      
      * mini to DVI out of the lapop 
-
      * make a compile for 10.5.8 system - 1.83GHZ Intel Core 2 Duo - 1GB 6667 MHz DDR2 SDRAM
 */
-
-// hacky solution to count the number of times per launch that we've run any analysis
-int multipleAnalysisCounter = 0;
 
 ////////////////////////---------/////////////////////////////////////
 //SETUP THE CLASS
@@ -24,14 +28,76 @@ int multipleAnalysisCounter = 0;
 //from the camera, analysing the recorded data and outputting resulting info to the screen.
 
 ////////////////////////---------/////////////////////////////////////
-void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, int whichCodec){//, ofVideoGrabber &grabber){
+void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string whichAnalysisPass, string whichLocationPass, int whichCodec){//, ofVideoGrabber &grabber){
     //i included an argument which is the pointer to the grabber in case this is better than passing in pixel array? not currently used
-    
-    multipleAnalysisCounter++;
-    cout<< multipleAnalysisCounter<<" <<-- multiple analysis counter";
     
     whichAnalysis = whichAnalysisPass;
     analysisTime = analasisTimePass;
+    whichLocation = whichLocationPass;  
+    
+    /*
+    time_t rawtime;
+     struct tm * timeinfo;
+    time(&rawtime);
+    timeinfo = localtime ( &rawtime );
+      string time = asctime(&rawtime);
+    cout<< time << " <---  time \n";
+    */
+    
+    time_t rawtime;
+    struct tm * timeinfo;
+    
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    string time = asctime(timeinfo);
+    //printf ( "Current local time and date: %s", asctime (timeinfo) );
+    
+    imageSaveFolderPath = "IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time+"/";
+    
+    if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation)){
+        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation);
+    }
+     
+    if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation+"/"+whichAnalysis)){
+        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis);
+    }
+    
+    if (!myFileHelper.doesDirectoryExist("IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time)){
+        ofxFileHelper::makeDirectory("IMAGES/"+whichLocation+"/"+whichAnalysis+"/"+time);
+    }
+                
+    if (!myFileHelper.doesDirectoryExist(imageSaveFolderPath)){
+        ofxFileHelper::makeDirectory(imageSaveFolderPath);
+    }
+             
+    // add one here that does time as a subfolder?
+/*
+    if (!myFileHelper.doesDirectoryExist(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter))){
+        ofxFileHelper::makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+    }
+*/
+    
+
+
+    //dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
+    //dataPathName=ofToDataPath("")+"MEDIA/";
+ 
+    //cout<< dataPathName << " <<-- data Path \n";
+    
+    //    myFileHelper.makeDirectory(whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter));
+    //    string whereToSaveAnalysisOutputFiles;
+    //    whereToSaveAnalysisOutputFiles = whichLocation+"/"+whichAnalysis+"/"+ofToString(multipleAnalysisCounter);
+    //    cout<<whereToSaveAnalysisOutputFiles<< " <<---whereToSaveAnalysisOutputFiles \n";
+    //    ofSetDataPathRoot(whereToSaveAnalysisOutputFiles);
+    
+
+    
+    // probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
+    
+    // TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names
+    // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
+    
+    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
     
     latencyFrameCounter = -1;
     noOfLatencyFrames = 1+ofGetFrameRate()/6;
@@ -42,25 +108,13 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
     nowDoAnalyses = TRUE;
     //nowDoAnalyses = FALSE;
     
-    cout<<whichAnalysis<<" WHICH ANALYSIS AT SETUP\n";
-    cout<<"chosen codec number "<<whichCodec<<"\r";
+    //cout<<whichAnalysis<<" WHICH ANALYSIS AT SETUP\n";
+    //cout<<"chosen codec number "<<whichCodec<<"\r";
     camHeight=camH;
     camWidth=camW;
     check=0;
     
-    synthesisComplete=FALSE;
-   
-    // TODO : The data path should be the date of the program running - create new folder with 15Nov 
-    
-    
-    // dataPathName = "/Users/jamieallen/Projects/newcastle/projects/RefractiveIndexLaptop/openframeworks/refractiveindex/apps/myApps/refractiveIndex/bin/data/MEDIA/";
-    // dataPathName=ofToDataPath("")+"MEDIA/";
-    // ofSetDataPathRoot(dataPathName);
-    // probably good in future to have one of these for each analysis - and then have the folder name increment for each 'run' of the analysis at a given site
-    // TOM-> JAMIE dod you mean have a different folder? if so why don't we just use the analysis names
-    // as the folder names we could also set the site name in the gui if you like and use this? we could have a folder for each site with subfolders for each analysis
-    
-    //this is the short cut to get the data path (ie location of "data folder") ofToDataPath("") so ofToDataPath("")+"MEDIA" is prob what we want here
+    synthesisComplete=FALSE;   
     
     //Setups for the specific analyses as needed...    
     if (whichAnalysis=="H_SHADOWSCAPES") {
@@ -160,10 +214,15 @@ void analysis::setupAnalysis(int camW, int camH, int analasisTimePass, string wh
         morseComplete = FALSE;
         morseMessage=translateToMorse(morseMessage);
     }
-    //THIS DOESN REALLY DO ANYTHING RIGHT NOW - draws a bit circle.  perhaps repurpose as the framelag calculator
-    if (whichAnalysis=="PHYS_TEST") {
+    
+    //LATENCY TEST
+    if (whichAnalysis=="LATENCY_TEST") {
         counter = 0;
-     
+        num = 0;
+        aColour.r=num;
+        aColour.g=num;
+        aColour.b=num;
+        counterMax = 300;
     }
         
     if (whichAnalysis=="CAM_FRAMERATE") {
@@ -211,12 +270,11 @@ void analysis::synthUpdate(){
 8 analysisNames.push_back("CAM_FRAMERATE");
 9 analysisNames.push_back("CAM_NOISE");
 10 analysisNames.push_back("COLOR_SINGLE");
-11 analysisNames.push_back("PHYS_TEST");
+11 analysisNames.push_back("LATENCY_TEST");
 12 analysisNames.push_back("COLOR_MULTI");
 13 analysisNames.push_back("DIFF_NOISE");
 13 analysisNames.push_back("DIFF_NOISE");
 */
-
 
 void analysis::synthDrawCamRecord(ofPixels pixels){
     
@@ -227,7 +285,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 ** this means that the drawing of the app is perhaps lagging behind the camera 'new frame' coming in?  i.e.: if we slow the drawing rate down, we're allowing the drawing to catch up with the camera?     
     */
     
-    
+    /*
     //GRAB THE INITAL FRAME #DELAY HERE
     if((latencyFrameCounter < noOfLatencyFrames) && (!gotAllLatencyFrames) && (!nowDoAnalyses))
     {
@@ -237,17 +295,24 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         cout<<"getting latency frames into vector of ofPixels \n";
     } else if ((latencyFrameCounter >= noOfLatencyFrames) && (!nowDoAnalyses)) 
     {
+        string filename;
         for (i = 0; i < vectorOfPixels.size(); i++)  
         {   
             //cout<<i<<"< i LATENCY FRAMES \n";
-            ofSaveImage(vectorOfPixels[i], "latencyFrame_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+
+            //THIS needs to be fixed with the folder saving paths
+            fileName = imageSaveFolderPath+"latencyFrame_"+ofToString(i)+".jpg";
+            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+            
+            //ofSaveImage(vectorOfPixels[i], "latencyFrame_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
         }
         vectorOfPixels.clear();
         gotAllLatencyFrames = TRUE;
         nowDoAnalyses = TRUE;
         cout<<"nowDoAnalyses = TRUE;\n";
     }
-
+    */
+    
     if (nowDoAnalyses == TRUE)
     {
         if(whichAnalysis=="H_SHADOWSCAPES"){ 
@@ -268,10 +333,12 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     scanLinePosition += scanLineSpeed;
                     
                     if(scanLinePosition > (ofGetWidth()+(scanLineSpeed+scanLineWidth)+noOfLatencyFrames)) {
+                        string fileName; 
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
                             //cout<<i<<"< i in H_SHADOWSCAPES ** frames being written to images \n";
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(i)+"_"+ofToString(100.0*i*scanLineSpeed/ofGetWidth(),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);
+                            fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(100.0*i*scanLineSpeed/ofGetWidth(),2)+"%"+".jpg";
+                            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
 
                             //ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+"_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
                         }
@@ -310,11 +377,15 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     
                     if(scanLinePosition > (ofGetHeight()+(scanLineSpeed+scanLineWidth)+noOfLatencyFrames))
                     {
+                        string fileName;
+                        
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
                             //cout<<i<<"< i in V_SHADOWSCAPES ** frames being written to images \n";
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(100.0*i*scanLineSpeed/ofGetHeight(),2)+"%_"+ofToString(i)+".jpg", OF_IMAGE_QUALITY_BEST);
+                            fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(100.0*i*scanLineSpeed/ofGetHeight(),2)+"%_"+ofToString(i)+".jpg";
+                            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                         }
+                        
                         vectorOfPixels.clear(); //empty out the vector
                         counter = 0;
                         latencyFrameCounter = 0;
@@ -359,10 +430,12 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         //cout<<scanLinePosition<<" <-- scanLinePosition \n";
                         //cout<<ofGetHeight()<<" <-- ofGetHeight() \n";
                         //cout<<" ** scanLinePosition > ofGetHeight() \n";
-                        
+                        string fileName;
+                    
                         for (i = 0; i < vectorOfPixels.size(); i++)
                         {
-                            ofSaveImage(vectorOfPixels[i], whichAnalysis+"_"+ofToString(i)+"_"+ofToString((100.0*i*scanLineSpeed)/(2*ofGetHeight()),2)+"%"+".jpg", OF_IMAGE_QUALITY_BEST);                
+                            fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString((100.0*i*scanLineSpeed)/(2*ofGetHeight()),2)+"%"+".jpg";
+                            ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);                
                         }
                         
                         vectorOfPixels.clear(); //empty out the vector
@@ -434,7 +507,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             for (i = 0; i < vectorOfPixels.size(); i++)
                             {
                                 //cout<<lightLevels[i]<<"< lightLevels[i] in RELAXRATE \n";
-                                fileName = whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+whichGraph+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);  
                             }
                         
@@ -538,10 +611,10 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             string fileName; 
                             for (i = 0; i < vectorOfPixels.size(); i++)
                             {
-                                fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
-                                cout<<ofToString(lightLevels[i],2)<<"<<-- ofToString(lightLevels[i],2) \n";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                                 //cout<<i<<"< i in I_RESPONSE ** frames being written to images \n";
+                                //cout<<ofToString(lightLevels[i],2)<<"<<-- ofToString(lightLevels[i],2) \n";
                             }
                             
                             vectorOfPixels.clear(); //empty out the vector
@@ -602,7 +675,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         } else {
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
-                                fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q1"+".jpg";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q1"+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
@@ -630,7 +703,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         } else {
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
-                                fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q2"+".jpg";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q2"+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
@@ -650,14 +723,16 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         ofSetColor(255);
                         ofCircle(xPos, yPos, circleDia);
                         
+                        
                         if ((localFrameCounter < (framesPerQuadrant+noOfLatencyFrames)) && !gotAllLocalFrames3)
                         {
                             localFrameCounter++;                        
                             vectorOfPixels.push_back(pixels);
                         } else {
+                            string fileName;
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
-                                fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q3"+".jpg";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q3"+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
@@ -684,7 +759,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                             
                             for (i = 0; i<vectorOfPixels.size(); i++)
                             {
-                                fileName = whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q4"+".jpg";
+                                fileName = imageSaveFolderPath+whichAnalysis+"_"+"_"+ofToString(i)+"_"+"Q4"+".jpg";
                                 ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                             }
                             vectorOfPixels.clear();
@@ -730,7 +805,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                 string fileName; 
                 for (i = 0; i < vectorOfPixels.size(); i++)
                 {
-                    fileName = whichAnalysis+"_"+ofToString(i)+".jpg";
+                    fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+".jpg";
                     ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                     //cout<<i<<"< i in M_CODE ** frames being written to images \n";
                 }
@@ -803,6 +878,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         }
         
         //Writes a given grey value to the screen, then grabs 'X' number of grames while that grey value is on the screen     
+        //TODO:  THIS DOESN'T end with black... should increase the 
+        
         if(whichAnalysis=="CAM_NOISE"){
             
             if(synthesisComplete==FALSE){    
@@ -849,14 +926,14 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //once we've finished synthesis and capturing all the frames into RAM, we can then write the
                     //image vectors "imgs" backinto a quicktime movie...
                     
-                    if(counter > 255) {
+                    if(counter >= 255) {
                         
                         string fileName; 
                         
                         for (i = 0; i < vectorOfPixels.size(); i++)
                         {
                           //  cout<<i<<" <<-- i inside CAM_NOISE \n";
-                            fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
+                            fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i],2)+".jpg";
                             ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                         }
                         vectorOfPixels.clear(); //empty out the vector
@@ -880,6 +957,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         
         //Writes a color to the screen and reads back X number of frames
         if(whichAnalysis=="COLOR_SINGLE"){
+            
+           
             
             // TODO - new strategy for latency - wait for X frames before grabbing, then stop grabbing Y frames before a color change  
             // The frame lag (empirically, using the isight camera) seems to be ofGetFrameRate()/6, so we'll wait that, plus 1
@@ -986,7 +1065,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     string fileName;
                     for (i = 0; i < vectorOfPixels.size(); i++)
                     {
-                        fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
+                        fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
                         ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                     }
                     vectorOfPixels.clear(); //empty out the vector
@@ -997,13 +1076,9 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     synthesisComplete=TRUE; 
                     cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
                 }
-                
-                
             } else {
                 cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
             }
-            
-            
         }
         
         
@@ -1012,36 +1087,79 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         //i.e.: Play black to screen, start recording frames, play white to screen, average pixels to detect the change - calculate how many frames after the actual output change
         // NOte - this is currently set as  ofGetFramerate()/6, empirically
         
-        if(whichAnalysis=="PHYS_TEST"){
+        if(whichAnalysis=="LATENCY_TEST"){
             
             if(synthesisComplete == FALSE ){    
-                counter++;
+                    
+                ofSetColor(aColour);
+                ofRect(0, 0, ofGetWidth(), ofGetHeight());
+                aColour.r = num;
+                aColour.g = num;
+                aColour.b = num;
                 
-                if (counter < 100)
+                counter++;
+                cout<<counter<<" <<-- counter\n";
+                
+                if((0 < counter) && (counter <= counterMax/3))
                 {
-                    ofSetCircleResolution(100);
-                    ofSetColor(255,255,0);
-                    ofCircle(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()/2);
-                } else {
-                    ofSetColor(0,0,0);
-                    ofCircle(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()/2);
-                    synthesisComplete =TRUE;
+                    cout<<" 0 <= counter < 30\n";
+                    num = 0;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if((counterMax/3 < counter) && (counter <= 2*counterMax/3))  
+                {
+                    cout<<" 30<=counter < 60\n";
+                    num = 255;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if((2*counterMax/3 < counter) && (counter < counterMax))
+                {
+                    cout<<" 60 <= counter < 90\n";
+                    num = 0;
+                    //  cout<<num<<" <<-- num\n";
+                } 
+                
+                if(counter >= counterMax)
+                {
+                    string fileName;
+                    for (i = 0; i < vectorOfPixels.size(); i++)
+                    {
+                        fileName = imageSaveFolderPath + whichAnalysis + "_" + ofToString(i) + "_" + ofToString(lightLevels[i]) + ".jpg";
+                        ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
+                    }
+                    vectorOfPixels.clear(); //empty out the vector
+                    lightLevels.clear();
+                    counter = 0;
+                    synthesisComplete=TRUE; 
+                    cout<<whichAnalysis<<"<<-- synthesis and recording complete: \n";
+
+                    ofImage reLoadedImage;
+                    for (i = 0; i < vectorOfPixels.size(); i++)
+                    {
+                        fileName = imageSaveFolderPath + whichAnalysis + "_" + ofToString(i) + "_" + ofToString(lightLevels[i]) + ".jpg";
+                       
+                        if (myFileHelper.doesFileExist(fileName)){
+                            reLoadedImage.loadImage(fileName);
+                        }
+                    }
                 }
+                
+                vectorOfPixels.push_back(pixels); 
+                lightLevels.push_back(num);
+                
             } else {
                 cout<<"couldn't synth / record - either not ready or something else it wrong...\n";
-
             }
         }
         
         
         //This will record as many frames as possible at specific output light hues
-
         if(whichAnalysis=="COLOR_MULTI"){
             
             if(synthesisComplete == FALSE ){    
-                   
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
-
                 counter++;
                 //cout<<counter<<" <<-- counter in COLOR_MULTI \n";
                 
@@ -1074,7 +1192,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                         string fileName;
                         for (i = 0; i < vectorOfPixels.size(); i++)  
                         {   
-                            fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
+                            fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
                             ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                         }
                         
@@ -1129,7 +1247,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     string fileName;
                     for (i = 0; i < vectorOfPixels.size(); i++)  
                     {   
-                        fileName = whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
+                        fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(i)+"_"+ofToString(lightLevels[i])+".jpg";
                         ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
                     }
                     vectorOfPixels.clear(); //empty out the vector
@@ -1204,7 +1322,7 @@ void analysis::analyseInput(unsigned char * pixels){
         
     } 
     
-    if (whichAnalysis=="PHYS_TEST") {
+    if (whichAnalysis=="LATENCY_TEST") {
         
     }
     

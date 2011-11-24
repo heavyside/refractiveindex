@@ -10,17 +10,21 @@ ANALYSIS CLASS FOR INPLEMENTING AND DISPLAYING DIFFERENT LIVE VIDEO ALGORITHMS
 #include "ofxQtVideoSaver.h"
 #include "ofxXmlSettings.h"
 #include "ThreePhaseDecoder.h"
-
+#include "ofxFileHelper.h"
 
 using namespace std;
 
 class analysis{
     
     public:
+        
+    ofxFileHelper myFileHelper;
+    string imageSaveFolderPath;
+    string whichLocation;
     
     int myVariable;
 
-    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, int whichCodec);//, ofVideoGrabber &grabber);
+    void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, string whichLocation, int whichCodec);//, ofVideoGrabber &grabber);
        
     ////Synth Methods//
     void synthDrawCamRecord(ofPixels pixels);
@@ -129,6 +133,7 @@ class analysis{
     string cameraMovieName;
     
     int check;
+    int num;
     int i,j,k;
     float currentGreyLevel;
     float testFloat;

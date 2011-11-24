@@ -32,7 +32,6 @@
  */
 
 
-
 //--------------------------------------------------------------
 void testApp::setup(){
     
@@ -60,9 +59,12 @@ void testApp::setup(){
     ofSetVerticalSync(TRUE);
     //set default codec
     codecChooser=0;
+
+    //default location
+    locationChooser="MIDDLESBROUGH";   //
     
     //default analysis
-    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have 
+    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have it set in the GUI?
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight, 2, 120,true);    
@@ -73,8 +75,37 @@ void testApp::setup(){
     keyControlMessage2="'c'-cursor        'v'-video input\n'f'-fullscreen   'g'-gui    'z'-to start";
     
     font.loadFont("MONACO.TTF", 10);
+    
+    //AT the moment - this WILL COMPILE for 10.5 if we remove the below image loaders - problem with POCO library - see here:
+    // http://forum.openframeworks.cc/index.php?topic=6351.0
+    
     startImage.loadImage("resourceimages/refractiveindexstart.jpg");
     endImage.loadImage("resourceimages/refractiveindexend.jpg");
+    
+    /*  compiling for 10.5 - we get a bunch of POCO errors
+     
+     SOLUTION:  http://forum.openframeworks.cc/index.php?topic=6351.0
+     
+     https://github.com/openframeworks/openFrameworks/issues/387
+     
+     http://forum.openframeworks.cc/index.php?topic=7549.0
+     
+     following error appears when i try to load an image; commenting out the call to loadImage("...") makes the error go away.
+     
+     Undefined symbols:
+     "std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int)", 
+     referenced from:
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPClientSession::proxyAuthenticateImpl(Poco::Net::HTTPRequest&)in PocoNet.a(HTTPClientSession.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::HTTPRequest::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPRequest.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::MessageHeader::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(MessageHeader.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
+     ld: symbol(s) not found
+     */
 
     showGui=FALSE;
     showCursor=TRUE;
@@ -84,14 +115,19 @@ void testApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);  
     
     ////////////GUI SETUP STUFF////////////////
-    ofxControlPanel::setBackgroundColor(simpleColor(30, 30, 60, 200));
-	ofxControlPanel::setTextColor(simpleColor(0, 250, 0, 255));
     
+    // RI PURPLE  #716e88 =     113, 110, 136
+    ofxControlPanel::setBackgroundColor(simpleColor(113, 110, 136, 200));
+    ofxControlPanel::setTextColor(simpleColor(255, 255, 255, 255));
+    ofxControlPanel::setOutlineColor(simpleColor(255, 255, 255, 255));   
+    ofxControlPanel::setForegroundColor(simpleColor(50, 50, 50, 255));
+    
+    //
 	gui.loadFont("MONACO.TTF", 8);		
 	gui.setup("Refractive Index", 0, 0, ofGetWidth(), ofGetHeight());
 	
     //FIRST PANEL HOLDS CAMERA CONTROLS
-    gui.addPanel("camera control", 4, false);
+    gui.addPanel("Camera Settings", 4, false);
     gui.setWhichPanel(0);
     gui.setWhichColumn(0);
     gui.addToggle("set up camera input", "CAM_IS_GO", 0);
@@ -99,19 +135,36 @@ void testApp::setup(){
 	gui.addButtonSlider("camera height", "CAM_HEIGHT", camHeight, 1.0, 1080, true);
     gui.addButtonSlider("desired frame rate", "FRAME_RATE", 1., 1.0, 30, true);
 	gui.setWhichColumn(1);
-    gui.addTextInput("display message", "input here for the text input field!", 250 );
-    
+    gui.addTextInput("text message", "input text here", 250 );
+
     //GET THE INPUT NAMES FROM THE QT VIDEO GRABBER
     vidGrabber.listDevices();
     gui.addToggle("more cam settings", "SETTINGS", 0);
     
     //A NEW PANEL
-    gui.addPanel("analysis management", 4, false);
+    gui.addPanel("Analyses", 4, false);
+    
     gui.setWhichPanel(1);
+    gui.setWhichColumn(1);
+    
+    vector<string>locationNames;
+    locationNames.push_back("MIDDLESBROUGH");
+    locationNames.push_back("BRADFORD");
+    locationNames.push_back("BIRMINGHAM");
+    locationNames.push_back("SWANSEA");
+    locationNames.push_back("BRISTOL");
+    locationNames.push_back("WOOLWICH");
+    locationNames.push_back("DOVER");
+    locationNames.push_back("BELFAST");
+    locationNames.push_back("EDINRBURGH");
+    locationNames.push_back("MANCHESTER");
+    locationNames.push_back("LIVERPOOL");
+    
+    gui.addTextDropDown("location", "LOCATION", 130, locationNames);
+    gui.setWhichColumn(2);
     
     //will handle which analysis we are doing this time
- 
-    vector<string>analysisNames;
+    //TomS 22.11.11 vector<string>analysisNames; moved to h file - this needs to be global as its now used to get the panel number when switching panel in the gui event
     
     analysisNames.push_back("H_SHADOWSCAPES");
     analysisNames.push_back("V_SHADOWSCAPES");
@@ -123,25 +176,128 @@ void testApp::setup(){
     analysisNames.push_back("CAM_FRAMERATE");
     analysisNames.push_back("CAM_NOISE");
     analysisNames.push_back("COLOR_SINGLE");
-    analysisNames.push_back("PHYS_TEST");
+    analysisNames.push_back("LATENCY_TEST");
     analysisNames.push_back("COLOR_MULTI");
     analysisNames.push_back("DIFF_NOISE");
     
-    gui.addTextDropDown("analysis type", "ANALYSIS_TYPE", 130, analysisNames);
-    gui.setWhichColumn(2);
+    gui.addTextDropDown("choose analysis", "ANALYSIS_TYPE", 130, analysisNames);
+    gui.setWhichColumn(3);
     /*  float maxResultA; 
      float maxTimeA; 
      float divisionsA; 
      bool showGraphA;*/
     
+    /////////////ADD ONE PANEL FOR EACH ANALYSIS///////////
+    for(int i = 0;i< analysisNames.size();i++){
+        gui.addPanel(analysisNames[i], 4, false);
+    }
+    
+    ///TOM 21/11/11 NOW SETTING THE CORRECT GUI ELEMENTS FOR EACH ANALYSIS, PAINFULLY, ONE BY ONE
+    ///Note counterMax in the analysis class seem to do exactly the same job as maxTimeA which is currently connected to gui, show we merge these variables? 
+    //H_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(2);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //V_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(3);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //D_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(4);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    
+    //RELAXRATE GUI OPTIONS
+    gui.setWhichPanel(5);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
     gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
     gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    vector<string>graphNames;
+    graphNames.push_back("LINEAR");
+    graphNames.push_back("EXPONENTIAL");
+    graphNames.push_back("SQUARE_WAVE");
+    graphNames.push_back("QUADRATIC");
+    
+    gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
+    
+    //I_RESPONSE GUI OPTIONS
+    gui.setWhichPanel(6);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
-    gui.addButtonSlider("morse speed", "MORSE_SPEED", 10, 1, 25, TRUE);
+
+    //SHAPE_SHADING GUI OPTIONS
+    gui.setWhichPanel(7);
+    gui.setWhichColumn(0);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    
+    //M_CODE GUI OPTIONS
+    gui.setWhichPanel(8);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
+    //gui.addTextInput("morse output", "input morse here", 250 );
+    //nasty hack for getting text back
+    tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
+    
+    
+    //CAM_FRAMERATE GUI OPTIONS
+    gui.setWhichPanel(9);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //CAM_NOISE GUI OPTIONS
+    gui.setWhichPanel(10);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //COLOR_SINGLE GUI OPTIONS
+    gui.setWhichPanel(11);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //LATENCY_TEST GUI OPTIONS
+    gui.setWhichPanel(12);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //COLOR_MULTI GUI OPTIONS
+    gui.setWhichPanel(13);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    
+    //Tom S 21.11.11 colour multi now fades through the whole spectrum so doesn't need these any more
+    //gui.addButtonSlider("red level", "RED_LEVEL", 10, 1, 255, TRUE);
+    //gui.addButtonSlider("green level", "GREEN_LEVEL", 10, 1, 255, TRUE);
+    //gui.addButtonSlider("blue level", "BLUE_LEVEL", 10, 1, 255, TRUE);
+    
+    //DIFF_NOISE GUI OPTIONS
+    gui.setWhichPanel(14);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+
+    //Tom S 21/11/11 all below commented out and shifted to individual tabs above - left in comments for now just in case I've missed something
+    /*gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+  
+    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
+    gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    
+    gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
+    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
     //nasty hack for getting text back
     tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
@@ -155,15 +311,14 @@ void testApp::setup(){
     graphNames.push_back("SQUARE_WAVE");
     graphNames.push_back("QUADRATIC");
     
-    gui.addTextDropDown("graph type", "GRAPH_TYPE", 130, graphNames);
-    
+    gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
+    */
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
         
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
-    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
-    
+//    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);    
     masterAnalysis.setGUIDefaults();
     
     //get list of codecs from movie object in analysis class
@@ -183,7 +338,7 @@ void testApp::setup(){
     
     ////////////END OF GUI SETUP STUFF////////////////
     masterAnalysis.setGUIDefaults();
-   
+
     
 }
 
@@ -225,7 +380,7 @@ void testApp::update(){
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
        
         masterAnalysis.morseMessage= tl->getValueText();
-        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, codecChooser);//, vidGrabber);
+        masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);
         
         //now we are setup lets analyse
         menuState=2;
@@ -318,9 +473,9 @@ void testApp::draw(){
     // always show gui on top of everything else (if shown) 
     if(showGui){
         gui.draw();
-        font.drawString(camStatus,50, ofGetHeight()-120);
-        font.drawString(keyControlMessage1, 50, ofGetHeight()-90);
-        font.drawString(keyControlMessage2, 50, ofGetHeight()-60);
+        font.drawString(camStatus,30, ofGetHeight()-80);
+        font.drawString(keyControlMessage1, 30, ofGetHeight()-60);
+        font.drawString(keyControlMessage2, 30, ofGetHeight()-40);
         
     }
     
@@ -332,6 +487,13 @@ void testApp::draw(){
     }
     
 }
+
+
+
+void testApp::exit(){
+     
+}
+
 
 
 //---------------  CALLED FROM INSIDE EVENT FUNCTION WHEN CAMERA SETTINGS HAVE BEEN SELECTED ---------------------------------------
@@ -440,7 +602,7 @@ void testApp::keyPressed(int key){
         menuState=1;
     }
     if(key=='w'){
-        analysisChooser="PHYS_TEST";
+        analysisChooser="LATENCY_TEST";
         showGui=false;
         showCursor=false;
         menuState=1;
@@ -507,6 +669,13 @@ void testApp::eventsIn(guiCallbackData & data){
     
     string thisName=data.getDisplayName();
     cout<<thisName<<" this Name\n";
+    
+    
+    //START ANALYSIS IS NOW FROM A BUTTON
+    if( thisName == "GO" ){
+        showGui=false;
+        menuState=1;
+    }
     
     //animation time limit
     if( thisName == "animation time limit" ){
@@ -611,10 +780,9 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }*/
     
-    if( thisName == "morse speed" ){
+    if( thisName == "morse pause time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -675,29 +843,54 @@ void testApp::eventsIn(guiCallbackData & data){
         
     }
     
+    
+    //LOCATION SELECTIO
+    if( data.getDisplayName()== "location" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_STRING ){
+                locationChooser=data.getString(k);
+                cout<<data.getString(k)<<" <<-- is our location \n";    
+            }
+        }
+    }
+
+    
     //START ANALYSIS
-   // string isThisAnAnlysisButton = data.getDisplayName().substr(0,12);
-    if( data.getDisplayName()== "analysis type" ){
+   //Tom 22/11/11 changed this from starting analysis to choosing panel of gui
+    if( data.getDisplayName()== "choose analysis" ){
        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 analysisChooser=data.getString(k);
-                cout<<data.getString(k)<<" lets run tHIS analysis\n";    
+                cout<<data.getString(k)<<" "<<k<<" <<-- lets jump to this tab\n";   
+                
+                 //Tom 22/11/11
+                for(int i=0;i<analysisNames.size();i++){
+                    //check if the clicked option in the dropdown matches this analysis name
+                    if(analysisNames[i]==data.getString(k)){
+                        //if it does, jump to the correct gui panel
+                        gui.setSelectedPanel(i+2);
+                        //exit for loop
+                        exit();
+                    }
+                }
+                
+                
             }
         }
-        showGui=false;
-        menuState=1;
     }
     
     //WHAT KIND OF GRAPH
-    if( data.getDisplayName()== "graph type" ){
+    if( data.getDisplayName()== "RELAXRATE response curve" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 
                 //copy string straight into class
                 masterAnalysis.whichGraph=data.getString(k);
-                cout<<data.getString(k)<<" lets run tHIS analysis\n";    
+                
+                cout<<data.getString(k)<<" <<-- lets run THIS graph\n";    
             }
         }
        
