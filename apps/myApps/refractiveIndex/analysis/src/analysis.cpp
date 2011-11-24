@@ -1090,7 +1090,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         if(whichAnalysis=="LATENCY_TEST"){
             
             if(synthesisComplete == FALSE ){    
-                
+                    
                 ofSetColor(aColour);
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
                 aColour.r = num;

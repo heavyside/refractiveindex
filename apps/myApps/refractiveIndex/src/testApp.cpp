@@ -330,8 +330,6 @@ void testApp::setup(){
     //  -- this gives you back an ofEvent for all events in this control panel object
 	ofAddListener(gui.guiEvent, this, &testApp::eventsIn);
     
-   
-    
     ////////////END OF GUI SETUP STUFF////////////////
     masterAnalysis.setGUIDefaults();
 
