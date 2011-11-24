@@ -116,6 +116,12 @@ void testApp::setup(){
     
     ////////////GUI SETUP STUFF////////////////
     
+    // RI PURPLE  #716e88 =     113, 110, 136
+    ofxControlPanel::setBackgroundColor(simpleColor(113, 110, 136, 200));
+    ofxControlPanel::setTextColor(simpleColor(255, 255, 255, 255));
+    ofxControlPanel::setOutlineColor(simpleColor(255, 255, 255, 255));   
+    ofxControlPanel::setForegroundColor(simpleColor(50, 50, 50, 255));
+    
     //
 	gui.loadFont("MONACO.TTF", 8);		
 	gui.setup("Refractive Index", 0, 0, ofGetWidth(), ofGetHeight());
