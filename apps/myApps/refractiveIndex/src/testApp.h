@@ -96,7 +96,7 @@ public:
     ofxControlPanel gui;
     simpleFileLister lister;
     simpleLogger logger;
-    
+    vector<string>analysisNames;
     ofPixels camPixels;
 
 
