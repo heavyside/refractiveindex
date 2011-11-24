@@ -1114,7 +1114,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     //  cout<<num<<" <<-- num\n";
                 } 
                 
-                if((2*counterMax/3 < counter) && (counter < counterMax))
+                if((2*counterMax/3 < counter) &&  (counter < counterMax))
                 {
                     cout<<" 60 <= counter < 90\n";
                     num = 0;
