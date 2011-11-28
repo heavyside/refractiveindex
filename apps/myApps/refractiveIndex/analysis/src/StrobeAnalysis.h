@@ -32,32 +32,29 @@
 
 #pragma once
 
-#include "ofxControlPanel.h"
-#include <string>
+#include "AbstractAnalysis.h"
 
-#define STATE_STOP  0xDEADBEEF
+#include "Poco/Timer.h"
 
-class AbstractAnalysis {
+class StrobeAnalysis : public AbstractAnalysis
+{
+public:
+    StrobeAnalysis(): AbstractAnalysis("STROBE"){;}
+    virtual ~StrobeAnalysis(){;}
     
 public:
-    AbstractAnalysis(string name) : _name(name) {;}
-    virtual ~AbstractAnalysis(){;}
     
-    virtual void setup(int camWidth, int camHeight){_cam_w = camWidth; _cam_h = camHeight;}    
-    virtual void synthetize() = 0;        
-    virtual void gui_attach(ofxControlPanel* gui){_gui = gui;}
-    virtual void gui_detach(){;}
+    void setup(int camWidth, int camHeight);
+    void synthetize();
+    void gui_attach(ofxControlPanel* gui);
+    void gui_detach();
     
-    // ofx
-    virtual void draw() = 0;
+    void draw();
     
-public:
-    string  _name;    
-protected:    
-    ofxControlPanel*    _gui;
-    int                 _cam_w, _cam_h;  
+    void strobe_cb(Poco::Timer& timer);
     
-    int             _state;
+protected:
     
-    friend class AnalysisAdaptor;
+    int     _strobe_cnt;  
+    bool    _darkness;
 };

@@ -32,32 +32,35 @@
 
 #pragma once
 
-#include "ofxControlPanel.h"
-#include <string>
+#include "AbstractAnalysis.h"
 
-#define STATE_STOP  0xDEADBEEF
+#include "Poco/Thread.h"
+#include "Poco/RunnableAdapter.h"
 
-class AbstractAnalysis {
-    
+using Poco::Thread;
+using Poco::RunnableAdapter;
+
+class AnalysisAdaptor
+{
 public:
-    AbstractAnalysis(string name) : _name(name) {;}
-    virtual ~AbstractAnalysis(){;}
+    AnalysisAdaptor(AbstractAnalysis* analysis) : _analysis(analysis) {;}
+    virtual ~AnalysisAdaptor(){ delete _runnable; }
     
-    virtual void setup(int camWidth, int camHeight){_cam_w = camWidth; _cam_h = camHeight;}    
-    virtual void synthetize() = 0;        
-    virtual void gui_attach(ofxControlPanel* gui){_gui = gui;}
-    virtual void gui_detach(){;}
+    void start()
+    {
+        _runnable = new RunnableAdapter<AbstractAnalysis>(*_analysis, &AbstractAnalysis::synthetize);
+        _worker.start(*_runnable);
+    }
     
-    // ofx
-    virtual void draw() = 0;
+    void stop() 
+    {
+        _analysis->_state = STATE_STOP;
+        _worker.join();
+    }
     
-public:
-    string  _name;    
-protected:    
-    ofxControlPanel*    _gui;
-    int                 _cam_w, _cam_h;  
-    
-    int             _state;
-    
-    friend class AnalysisAdaptor;
+protected:
+    AbstractAnalysis*                   _analysis;
+    Thread                              _worker;    
+    RunnableAdapter<AbstractAnalysis>*  _runnable;    
 };
+

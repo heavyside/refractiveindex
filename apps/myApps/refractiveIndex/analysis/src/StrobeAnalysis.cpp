@@ -30,7 +30,7 @@
  ~ contact: dviid@labs.ciid.dk 
  */
 
-#include "IResponseAnalysis.h"
+#include "StrobeAnalysis.h"
 #include "ofMain.h"
 
 #include "Poco/Timer.h"
@@ -40,55 +40,31 @@ using Poco::Timer;
 using Poco::TimerCallback;
 using Poco::Thread;
 
-#define STATE_FADE              0
-#define STATE_SAVE              1
-#define STATE_TRANSITION_SAVE   2
-#define STATE_TRANSITION_FADE   3
-#define STATE_ANALYSIS          4
+#define STATE_STROBE    0
+#define STATE_ANALYSIS  1
 
-
-void IResponseAnalysis::setup(int camWidth, int camHeight)
+void StrobeAnalysis::setup(int camWidth, int camHeight)
 {
     //AbstractAnalysis::setup(camWidth, camHeight);    
     //_lastTime = ofGetElapsedTimeMillis();        
 }
 
-
-void IResponseAnalysis::synthetize()
+void StrobeAnalysis::synthetize()
 {
-    Timer* save_timer;// = new Timer(0, 1000);
-    Timer* fade_timer;// = new Timer(0, 100);
+    Timer strobe_timer(0, 70);
     
-    TimerCallback<IResponseAnalysis> save_callback(*this, &IResponseAnalysis::save_cb);
-    TimerCallback<IResponseAnalysis> fade_callback(*this, &IResponseAnalysis::fade_cb);
+    TimerCallback<StrobeAnalysis> strobe_callback(*this, &StrobeAnalysis::strobe_cb);
     
-    for(int i = 0; i < 5; i++) {
-        
-        _save_cnt = 0;    
-        _state = STATE_SAVE;
-        save_timer = new Timer(0, 1000);
-        save_timer->start(save_callback);
-        
-        while(_state != STATE_TRANSITION_SAVE)
-            Thread::sleep(5);
-        
-        save_timer->stop();
-        delete save_timer;  // stupid poco
-        
-        _fade_cnt = 0;
-        _state = STATE_FADE;
-        fade_timer = new Timer(0,100);
-        fade_timer->start(fade_callback);
-        
-        while(_state != STATE_TRANSITION_FADE)
-            Thread::sleep(5);
-        
-        fade_timer->stop();
-        delete fade_timer; // stupid poco
-        
-    }
+    _state = STATE_STROBE;
+    _darkness = true;
+    _strobe_cnt = 0; 
     
-    _state = STATE_ANALYSIS;
+    strobe_timer.start(strobe_callback);
+        
+    while(_state != STATE_ANALYSIS)
+        Thread::sleep(5);
+    
+    strobe_timer.stop();
     
     // do analysis here
     
@@ -96,50 +72,44 @@ void IResponseAnalysis::synthetize()
         Thread::sleep(100);
 }
 
-void IResponseAnalysis::gui_attach(ofxControlPanel* gui)
+void StrobeAnalysis::gui_attach(ofxControlPanel* gui)
 {
     gui->addToggle("GO", "GO", 0);
     gui->addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);    
     
 }
 
-void IResponseAnalysis::gui_detach()
+void StrobeAnalysis::gui_detach()
 {
     
 }
 
-void IResponseAnalysis::draw()
+void StrobeAnalysis::draw()
 {
-    if(_state == STATE_SAVE || _state == STATE_TRANSITION_SAVE) {
+    if(_state == STATE_ANALYSIS) {
+        ofSetColor(0, 200, 0);               
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());         
+        return;
+    }
+    
+    if(_darkness) {
         ofSetColor(0, 0, 0);               
         ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
-    } else if(_state == STATE_FADE || _state == STATE_TRANSITION_FADE) {
-        int c = 255 / (22 - _fade_cnt);
-        ofSetColor(c, c, c);
+    } else {
+        ofSetColor(255, 255, 255);
         ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
-    } else if(_state == STATE_ANALYSIS) {
-        ofSetColor(0, 234, 0);               
-        ofRect(0, 0, ofGetWidth(), ofGetHeight());         
     }
 }
 
 
-void IResponseAnalysis::save_cb(Timer& timer)
+void StrobeAnalysis::strobe_cb(Timer& timer)
 {
     cout << "IResponseAnalysis::saving...\n";
-    _save_cnt++;
+    _strobe_cnt++;
     
-    if(_save_cnt >= 5) { 
-        _state = STATE_TRANSITION_SAVE;
+    _darkness = !_darkness;
+    
+    if(_strobe_cnt >= 20) { 
+        _state = STATE_ANALYSIS;
     }
 }
-
-void IResponseAnalysis::fade_cb(Timer& timer)
-{
-    if(_fade_cnt >= 20){ //2 secs
-        _state = STATE_TRANSITION_FADE;
-    }
-    cout << "IResponseAnalysis::fading...\n";
-    _fade_cnt++;
-}
-

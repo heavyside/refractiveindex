@@ -32,6 +32,10 @@
 
 #include "RefractiveIndex.h"
 
+#include "IResponseAnalysis.h"
+#include "StrobeAnalysis.h"
+#include "ShadowScapesAnalysis.h"
+
 #define CAMERA_ID           1
 #define CAMERA_ACQU_WIDTH   640
 #define CAMERA_ACQU_HEIGHT  480
@@ -47,25 +51,32 @@ void RefractiveIndex::setup()
     _vid_h  = CAMERA_ACQU_HEIGHT;
     _vid_id = CAMERA_ID;
     _vid_stream_open = false;
-    setup_camera();
+    //setup_camera();
     
     // gui
     _gui.loadFont("MONACO.TTF", 8);		
 	_gui.setup("REFRACTIVE INDEX", 0, 0, ofGetWidth(), ofGetHeight());
 
     // -> PANEL #0
-    _gui.addPanel("camera control", 4, false);
+    _gui.addPanel("configuration", 4, false);
     _gui.setWhichPanel(0);
     // --> COLUMN #0
     _gui.setWhichColumn(0);
-    _gui.addToggle("set up camera input", "CAM_IS_GO", 0);
+    _gui.addToggle("open camera", "CAM_IS_GO", 0);
     _gui.addButtonSlider("camera width", "CAM_WIDTH", _vid_w, CAMERA_ACQU_WIDTH, 1920, true);
 	_gui.addButtonSlider("camera height", "CAM_HEIGHT", _vid_h, CAMERA_ACQU_HEIGHT, 1080, true);
+
+    _gui.setWhichColumn(1);
+    _gui.addToggle("run", "RUN", 0);
+
     
     _gui.setupEvents();
 	_gui.enableEvents();
     //  -- this gives you back an ofEvent for all events in this control panel object
 	ofAddListener(_gui.guiEvent, this, &RefractiveIndex::eventsIn);
+    
+    _currentAnalysis = NULL;
+    _analysisAdapator = NULL;
     
     
 }
@@ -77,8 +88,12 @@ void RefractiveIndex::update()
 
 void RefractiveIndex::draw()
 {
-    ofBackground(0, 0, 0);
-    _gui.draw();
+    ofBackground(0, 0, 0);    
+    
+    if(_currentAnalysis)
+        _currentAnalysis->draw();
+    else 
+        _gui.draw();
 }
 
 void RefractiveIndex::setup_camera()
@@ -101,6 +116,18 @@ void RefractiveIndex::keyPressed  (int key)
 {
     if( key =='f')
         ofToggleFullscreen();     
+    
+    else if( key =='s') {
+        if(_currentAnalysis && _analysisAdapator) {
+            _analysisAdapator->stop();            
+            delete _currentAnalysis;
+            delete _analysisAdapator;
+            _currentAnalysis = NULL;
+            _analysisAdapator = NULL;
+            cout << "bingo!\n\n";
+        }
+    }
+    
 }
 
 void RefractiveIndex::mouseDragged(int x, int y, int button)
@@ -118,9 +145,15 @@ void RefractiveIndex::mouseReleased(int x, int y, int button)
     _gui.mouseReleased();        
 }
 
-void RefractiveIndex::eventsIn(guiCallbackData & data)
+void RefractiveIndex::eventsIn(guiCallbackData& data)
 {
-    
+    if(data.getDisplayName() == "run"){
+        ofLog(OF_LOG_VERBOSE) << "run...";    
+        _currentAnalysis = new ShadowScapesAnalysis(V);
+        _analysisAdapator = new AnalysisAdaptor(_currentAnalysis);
+        _currentAnalysis->setup(_vid_w, _vid_h);
+        _analysisAdapator->start();
+    }
 }
 
 void RefractiveIndex::grabBackgroundEvent(guiCallbackData & data)

@@ -35,6 +35,9 @@
 #include "ofMain.h"
 #include "ofxControlPanel.h"
 
+#include "AbstractAnalysis.h"
+#include "AnalysisAdaptor.h"
+
 
 class RefractiveIndex : public ofBaseApp
 {
@@ -69,5 +72,8 @@ protected:
     ofVideoGrabber      _vidGrabber;
     int                 _vid_w, _vid_h, _vid_id;
     bool                _vid_stream_open;
+    
+    AbstractAnalysis*   _currentAnalysis;  
+    AnalysisAdaptor*    _analysisAdapator;
 
 };

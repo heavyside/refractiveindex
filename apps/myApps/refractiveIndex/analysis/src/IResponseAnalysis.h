@@ -34,6 +34,8 @@
 
 #include "AbstractAnalysis.h"
 
+#include "Poco/Timer.h"
+
 class IResponseAnalysis : public AbstractAnalysis
 {
 public:
@@ -43,19 +45,16 @@ public:
 public:
     
     void setup(int camWidth, int camHeight);
-    void synthetise();
+    void synthetize();
     void gui_attach(ofxControlPanel* gui);
     void gui_detach();
     
+    void draw();
+    
+    void save_cb(Poco::Timer& timer);
+    void fade_cb(Poco::Timer& timer);
+    
 protected:
-    
-    float   _lastTime;
-    float   _timeDiff;
-    float   _counter;
-    float   _counter2;
-    float   _counterMax;
-    float   _frameCounter;
-    float   _fadeTime;
-    int     _numberOfCameraImages;
-    
+        
+    int             _save_cnt, _fade_cnt;    
 };
