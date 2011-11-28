@@ -44,7 +44,7 @@ public:
     virtual ~AbstractAnalysis(){;}
     
     virtual void setup(int camWidth, int camHeight){_cam_w = camWidth; _cam_h = camHeight;}    
-    virtual void synthetize() = 0;        
+    virtual void synthesize() = 0;        
     virtual void gui_attach(ofxControlPanel* gui){_gui = gui;}
     virtual void gui_detach(){;}
     

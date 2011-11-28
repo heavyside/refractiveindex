@@ -54,7 +54,7 @@ void IResponseAnalysis::setup(int camWidth, int camHeight)
 }
 
 
-void IResponseAnalysis::synthetize()
+void IResponseAnalysis::synthesize()
 {
     Timer* save_timer;// = new Timer(0, 1000);
     Timer* fade_timer;// = new Timer(0, 100);

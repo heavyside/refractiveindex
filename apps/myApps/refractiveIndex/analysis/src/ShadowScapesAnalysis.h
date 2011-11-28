@@ -49,7 +49,7 @@ public:
 public:
     
     void setup(int camWidth, int camHeight);
-    void synthetize();
+    void synthesize();
     void gui_attach(ofxControlPanel* gui);
     void gui_detach();
     

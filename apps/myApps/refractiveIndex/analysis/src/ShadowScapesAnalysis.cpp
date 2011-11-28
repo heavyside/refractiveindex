@@ -51,7 +51,7 @@ void ShadowScapesAnalysis::setup(int camWidth, int camHeight)
     _speed = 300;
 }
 
-void ShadowScapesAnalysis::synthetize()
+void ShadowScapesAnalysis::synthesize()
 {
     int w;
     if(_dir == H) w = ofGetWidth();

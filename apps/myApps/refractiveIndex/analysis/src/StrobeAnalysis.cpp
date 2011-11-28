@@ -49,7 +49,7 @@ void StrobeAnalysis::setup(int camWidth, int camHeight)
     //_lastTime = ofGetElapsedTimeMillis();        
 }
 
-void StrobeAnalysis::synthetize()
+void StrobeAnalysis::synthesize()
 {
     Timer strobe_timer(0, 70);
     
