@@ -152,6 +152,7 @@ class analysis{
     int counter;
     float strobeToggleCounter;
     int counterMax;
+    int counterMaxColorMulti;
     int frameCounter;
     int localFrameCounter;
     int scanLinePosition;

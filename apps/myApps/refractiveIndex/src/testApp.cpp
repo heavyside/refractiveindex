@@ -26,7 +26,6 @@
  
  These devices are cheap, but they work. Latency is I want to say around 3-4 frames (been a while since I tested). Better than DV (which usually 7, although some folks say 4 on new machines/OS'es, ive never seen 4 frames personally), and I think thats about on par with the DFG-1394.
  
- 
  SO IT'S NEVER GOING TO BE CONSISTENT... OR "REAL TIME" - jamie... \
  
  */
@@ -49,10 +48,8 @@ void testApp::setup(){
     
     ofSetFrameRate(30);   // this produces 5 or 6 frames of latency frames in the camera feed 
     //ofSetFrameRate(15);     // this produces 2 or 3 frames of latency frames in the camera feed 
-    
     //ofSetFrameRate(5);   // this produces  or 1 or 2 frames of latency
-    // ofSetFrameRate(1);   // this produces?  i'm not patient enough to figure this out... 
-    
+    //ofSetFrameRate(1);   // this produces?  i'm not patient enough to figure this out...
     // i.e.:  the frame lag seems to be ofGetFrameRate()/6 or thereabouts.
         
     ofEnableSmoothing();
@@ -70,7 +67,7 @@ void testApp::setup(){
     locationChooser="MIDDLESBROUGH";   //
     
     //default analysis
-    analysisChooser="H_SHADOWSCAPES";   // DO we still need this now that we have it set in the GUI?
+    analysisChooser="H_SHADOWSCAPES";   
     
     //its easier to initialise the camera with default settings than mess around with bad access errors when you try and draw it;(
     setupCamera(camWidth, camHeight, 2, 120,true);    
@@ -114,7 +111,7 @@ void testApp::setup(){
      */
 
     showGui=FALSE;
-    showCursor=TRUE;
+    showCursor=FALSE;
     showCameraInput=FALSE;
     
     //talk to me about your troubles openframeworks
@@ -193,25 +190,28 @@ void testApp::setup(){
      float divisionsA; 
      bool showGraphA;*/
     
-    /////////////ADD ONE PANEL FOR EACH ANALYSIS///////////
+    //////ADD ONE PANEL FOR EACH ANALYSIS///// --> why did you do this again?  i.e.: why not have one Panel with a row of parameters for each analysis? so much clicking :P  JA
     for(int i = 0;i< analysisNames.size();i++){
         gui.addPanel(analysisNames[i], 4, false);
     }
     
     ///TOM 21/11/11 NOW SETTING THE CORRECT GUI ELEMENTS FOR EACH ANALYSIS, PAINFULLY, ONE BY ONE
     ///Note counterMax in the analysis class seem to do exactly the same job as maxTimeA which is currently connected to gui, show we merge these variables? 
+    
+    //This is a good effeciency, but there's a need for the default values for each of these to be different, and if one gets changed, we don't want the rest of them to have the value of that one... so is there another way to deal with it that is both efficient and allows each analysis to 'keep its state'?  - JA 11 Dec 
+    
     //H_SHADOWSCAPES GUI OPTIONS
     gui.setWhichPanel(2);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, ofGetWidth(), TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
     
     //V_SHADOWSCAPES GUI OPTIONS
     gui.setWhichPanel(3);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, ofGetHeight(), TRUE);
     gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
     
     //D_SHADOWSCAPES GUI OPTIONS
@@ -226,9 +226,10 @@ void testApp::setup(){
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 1500, TRUE);
     gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
     gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    
     vector<string>graphNames;
     graphNames.push_back("LINEAR");
     graphNames.push_back("EXPONENTIAL");
@@ -246,17 +247,17 @@ void testApp::setup(){
     //SHAPE_SHADING GUI OPTIONS
     gui.setWhichPanel(7);
     gui.setWhichColumn(0);
-    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 1000, TRUE);
     
     //M_CODE GUI OPTIONS
     gui.setWhichPanel(8);
     gui.setWhichColumn(0);
-    gui.addToggle("GO", "GO", 0);
     gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
     //nasty hack for getting text back
     tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
-    
+    gui.addToggle("GO", "GO", 0);
     
     //CAM_FRAMERATE GUI OPTIONS
     gui.setWhichPanel(9);
@@ -281,6 +282,7 @@ void testApp::setup(){
     //COLOR_MULTI GUI OPTIONS
     gui.setWhichPanel(13);
     gui.setWhichColumn(0);
+    gui.addButtonSlider("color multi overall length", "COLORMULTI_SPEED", 10, 1, 2000, TRUE);
     gui.addToggle("GO", "GO", 0);
     
     //Tom S 21.11.11 colour multi now fades through the whole spectrum so doesn't need these any more
@@ -478,11 +480,11 @@ void testApp::draw(){
     
     // always show gui on top of everything else (if shown) 
     if(showGui){
+        showCursor=TRUE;
         gui.draw();
         font.drawString(camStatus,30, ofGetHeight()-80);
         font.drawString(keyControlMessage1, 30, ofGetHeight()-60);
         font.drawString(keyControlMessage2, 30, ofGetHeight()-40);
-        
     }
     
     if(showCursor)
@@ -494,13 +496,9 @@ void testApp::draw(){
     
 }
 
-
-
 void testApp::exit(){
      
 }
-
-
 
 //---------------  CALLED FROM INSIDE EVENT FUNCTION WHEN CAMERA SETTINGS HAVE BEEN SELECTED ---------------------------------------
 void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bool firstSetup){
@@ -519,13 +517,11 @@ void testApp::setupCamera(int w, int h, int whichSource,int desiredFrameRate, bo
 void testApp::keyPressed(int key){
     //Tom S added key press launcher for all analyses with default values
     //use g as gui toggle
-
     
     //use z as return to beginning of program toggle
     if(key=='z'){
         menuState=0;
     }
-
     
     //use c as cursor toggle
     if(key=='c'){
@@ -546,11 +542,13 @@ void testApp::keyPressed(int key){
     //use g as gui toggle
     if(key=='g'){
         showGui=!showGui;
+        showCursor=!showCursor;
     }
     
     if(key=='1'){
         analysisChooser="H_SHADOWSCAPES";
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     if(key=='2'){
@@ -649,6 +647,8 @@ void testApp::grabBackgroundEvent(guiCallbackData & data){
 //--------------------------------------------------------------
 void testApp::eventsIn(guiCallbackData & data){
     
+    //TODO: would like to 'checkHit' for each GUI element and use that to set the analysisChooser (this would be proper behavior for the GUI)
+    
 	//lets send all events to our logger
 	if( !data.isElement( "events logger" ) ){
 		string logStr = data.getXmlName();
@@ -676,10 +676,10 @@ void testApp::eventsIn(guiCallbackData & data){
     string thisName=data.getDisplayName();
     cout<<thisName<<" this Name\n";
     
-    
     //START ANALYSIS IS NOW FROM A BUTTON
     if( thisName == "GO" ){
         showGui=false;
+        showCursor=false;
         menuState=1;
     }
     
@@ -695,8 +695,8 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "scan line width" ){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -715,7 +715,6 @@ void testApp::eventsIn(guiCallbackData & data){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-
                 masterAnalysis.scanLineSpeed=data.getFloat(k);
                 cout<<masterAnalysis.scanLineSpeed<<"masterAnalysis.scanLineSpeed \n";
             }
@@ -723,14 +722,13 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "max white level to ramp to" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
-
                 masterAnalysis.maxResultA=data.getFloat(k);
                 cout<<masterAnalysis.maxResultA<<"masterAnalysis.maxResultA \n";
             }
@@ -738,8 +736,8 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "num of frames to last for" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
@@ -752,8 +750,8 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "num of impulses" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
@@ -766,13 +764,14 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "show graph outline" ){
         showGraphLine=!showGraphLine;
         masterAnalysis.showGraphA=showGraphLine;
         
     }
+    
     //Tom S 14 Nov 19:10somehow this function appears to have been repeated so have commented out
    /* if( thisName == "graph max time" ){
         
@@ -800,8 +799,8 @@ void testApp::eventsIn(guiCallbackData & data){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
-        
     }
+    
     if( thisName == "red level" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
@@ -815,6 +814,7 @@ void testApp::eventsIn(guiCallbackData & data){
             }
         }
     }
+    
     if( thisName == "green level" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
@@ -829,6 +829,7 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
+    
     if( thisName == "red level" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
@@ -843,12 +844,26 @@ void testApp::eventsIn(guiCallbackData & data){
         }
         
     }
+    
+    if( thisName == "color multi overall length" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.counterMaxColorMulti=data.getFloat(k);
+                cout<<masterAnalysis.counterMaxColorMulti<<"masterAnalysis.maxTimeA \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+    }
+        
+    
     //more cam settings", "SETTINGS"
     if( data.getDisplayName() == "more cam settings" ){
         vidGrabber.videoSettings();
-        
     }
-    
     
     //LOCATION SELECTIO
     if( data.getDisplayName()== "location" ){
@@ -881,8 +896,6 @@ void testApp::eventsIn(guiCallbackData & data){
                         exit();
                     }
                 }
-                
-                
             }
         }
     }
@@ -895,11 +908,9 @@ void testApp::eventsIn(guiCallbackData & data){
                 
                 //copy string straight into class
                 masterAnalysis.whichGraph=data.getString(k);
-                
                 cout<<data.getString(k)<<" <<-- lets run THIS graph\n";    
             }
         }
-       
     }
     
     //CAM HEIGHT
