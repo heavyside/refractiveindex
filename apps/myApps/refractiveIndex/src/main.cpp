@@ -6,6 +6,10 @@ int main() {
 	ofAppGlutWindow window;
     //window.setGlutDisplayString("rgba double samples >= 8");
 	ofSetupOpenGL(&window, 1024, 768, OF_WINDOW);
-	//ofRunApp(new RefractiveIndex());
+	
+    //David's new code structure
+    //ofRunApp(new RefractiveIndex());
+
+    //Old test app code
     ofRunApp(new testApp());
 }
