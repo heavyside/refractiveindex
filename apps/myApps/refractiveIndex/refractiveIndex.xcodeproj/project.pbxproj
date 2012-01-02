@@ -10,6 +10,16 @@
 		0b2e55fee13134ce9b57d3bffd6d5dab /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8a4dd23693dfab8ec05faa5d62c49d8c /* ofxCvShortImage.cpp */; };
 		134078e8f8f4f24368b31f26166fec03 /* ofxCvGrayscaleImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 057122a817d12571f8c0c7a4d522b879 /* ofxCvGrayscaleImage.cpp */; };
 		259da76c028adaa20996723e102a6ccd /* ofxCvColorImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ce9c7160245b19131dae61282ee6cb53 /* ofxCvColorImage.cpp */; };
+		42053B8814B23111000E885B /* StrobeAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8014B23111000E885B /* StrobeAnalysis.cpp */; };
+		42053B8914B23111000E885B /* StrobeAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8014B23111000E885B /* StrobeAnalysis.cpp */; };
+		42053B8A14B23111000E885B /* ShadowScapesAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8214B23111000E885B /* ShadowScapesAnalysis.cpp */; };
+		42053B8B14B23111000E885B /* ShadowScapesAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8214B23111000E885B /* ShadowScapesAnalysis.cpp */; };
+		42053B8C14B23111000E885B /* IResponseAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8414B23111000E885B /* IResponseAnalysis.cpp */; };
+		42053B8D14B23111000E885B /* IResponseAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8414B23111000E885B /* IResponseAnalysis.cpp */; };
+		42053B8E14B23111000E885B /* AbstractAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8714B23111000E885B /* AbstractAnalysis.cpp */; };
+		42053B8F14B23111000E885B /* AbstractAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B8714B23111000E885B /* AbstractAnalysis.cpp */; };
+		42053B9214B23136000E885B /* RefractiveIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B9014B23136000E885B /* RefractiveIndex.cpp */; };
+		42053B9314B23136000E885B /* RefractiveIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42053B9014B23136000E885B /* RefractiveIndex.cpp */; };
 		42109FB21474852D00FC5F54 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		42109FB31474852D00FC5F54 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */; };
 		42109FB41474852D00FC5F54 /* ofxCvColorImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ce9c7160245b19131dae61282ee6cb53 /* ofxCvColorImage.cpp */; };
@@ -207,6 +217,17 @@
 		3c232045833313b99efe0b14840b6108 /* ofxCvMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvMain.h; path = ../../../addons/ofxOpenCv/src/ofxCvMain.h; sourceTree = SOURCE_ROOT; };
 		4204F158147EF2B7001B1AEB /* refractiveAppDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = refractiveAppDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4204F15A147EF2B7001B1AEB /* refractiveApp_10.5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = refractiveApp_10.5.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		42053B7F14B23111000E885B /* StrobeAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrobeAnalysis.h; sourceTree = "<group>"; };
+		42053B8014B23111000E885B /* StrobeAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StrobeAnalysis.cpp; sourceTree = "<group>"; };
+		42053B8114B23111000E885B /* ShadowScapesAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowScapesAnalysis.h; sourceTree = "<group>"; };
+		42053B8214B23111000E885B /* ShadowScapesAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowScapesAnalysis.cpp; sourceTree = "<group>"; };
+		42053B8314B23111000E885B /* IResponseAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IResponseAnalysis.h; sourceTree = "<group>"; };
+		42053B8414B23111000E885B /* IResponseAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IResponseAnalysis.cpp; sourceTree = "<group>"; };
+		42053B8514B23111000E885B /* AnalysisAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisAdaptor.h; sourceTree = "<group>"; };
+		42053B8614B23111000E885B /* AbstractAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAnalysis.h; sourceTree = "<group>"; };
+		42053B8714B23111000E885B /* AbstractAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAnalysis.cpp; sourceTree = "<group>"; };
+		42053B9014B23136000E885B /* RefractiveIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefractiveIndex.cpp; sourceTree = "<group>"; };
+		42053B9114B23136000E885B /* RefractiveIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefractiveIndex.h; sourceTree = "<group>"; };
 		42BCE19E14780D3700590D6E /* ofxFileHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFileHelper.h; sourceTree = "<group>"; };
 		516717f84c0146512c47a3ec3f268851 /* ofxCvHaarFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarFinder.h; path = ../../../addons/ofxOpenCv/src/ofxCvHaarFinder.h; sourceTree = SOURCE_ROOT; };
 		603f2267d449084a4187a04928d2d713 /* ofxCvBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvBlob.h; path = ../../../addons/ofxOpenCv/src/ofxCvBlob.h; sourceTree = SOURCE_ROOT; };
@@ -475,6 +496,15 @@
 		E2A6CAFC13FDB9470013126C /* src */ = {
 			isa = PBXGroup;
 			children = (
+				42053B7F14B23111000E885B /* StrobeAnalysis.h */,
+				42053B8014B23111000E885B /* StrobeAnalysis.cpp */,
+				42053B8114B23111000E885B /* ShadowScapesAnalysis.h */,
+				42053B8214B23111000E885B /* ShadowScapesAnalysis.cpp */,
+				42053B8314B23111000E885B /* IResponseAnalysis.h */,
+				42053B8414B23111000E885B /* IResponseAnalysis.cpp */,
+				42053B8514B23111000E885B /* AnalysisAdaptor.h */,
+				42053B8614B23111000E885B /* AbstractAnalysis.h */,
+				42053B8714B23111000E885B /* AbstractAnalysis.cpp */,
 				E2A6CAFD13FDB9470013126C /* analysis.cpp */,
 				E2A6CAFE13FDB9470013126C /* analysis.h */,
 			);
@@ -759,6 +789,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				42053B9014B23136000E885B /* RefractiveIndex.cpp */,
+				42053B9114B23136000E885B /* RefractiveIndex.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -988,6 +1020,11 @@
 				42109FE91474852D00FC5F54 /* tinyxmlparser.cpp in Sources */,
 				42109FEA1474852D00FC5F54 /* ofxXmlSettings.cpp in Sources */,
 				42109FEB1474852D00FC5F54 /* ofxQtVideoSaver.cpp in Sources */,
+				42053B8914B23111000E885B /* StrobeAnalysis.cpp in Sources */,
+				42053B8B14B23111000E885B /* ShadowScapesAnalysis.cpp in Sources */,
+				42053B8D14B23111000E885B /* IResponseAnalysis.cpp in Sources */,
+				42053B8F14B23111000E885B /* AbstractAnalysis.cpp in Sources */,
+				42053B9314B23136000E885B /* RefractiveIndex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,6 +1090,11 @@
 				E2A6CBB013FDB9AD0013126C /* tinyxmlparser.cpp in Sources */,
 				E2A6CBB113FDB9AD0013126C /* ofxXmlSettings.cpp in Sources */,
 				E2A6CBB613FDB9ED0013126C /* ofxQtVideoSaver.cpp in Sources */,
+				42053B8814B23111000E885B /* StrobeAnalysis.cpp in Sources */,
+				42053B8A14B23111000E885B /* ShadowScapesAnalysis.cpp in Sources */,
+				42053B8C14B23111000E885B /* IResponseAnalysis.cpp in Sources */,
+				42053B8E14B23111000E885B /* AbstractAnalysis.cpp in Sources */,
+				42053B9214B23136000E885B /* RefractiveIndex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

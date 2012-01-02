@@ -28,7 +28,7 @@ public:
     void mouseReleased(int x, int y, int button);
     void windowResized(int w, int h);
     float returnGaussian(float x, float spread, float height, float max, float centre);
-
+    
     ///other functions
     void setupCamera(int w, int h, int whichSource, int desiredFrameRate, bool firstSetup);
     void drawInstructions();
@@ -52,7 +52,7 @@ public:
     //vars which hold camera and saver setup information
     int camWidth;
     int camHeight;
-   
+    
     string codecName;
     int whichImage;
     int numOfInputs;
@@ -64,7 +64,7 @@ public:
     string camStatus;
     string keyControlMessage1;
     string keyControlMessage2;
-
+    
     bool showCursor;
     bool showGui;
     bool showCameraInput;
@@ -78,7 +78,8 @@ public:
     int scanLineWidth;
     string whichGraph;
     bool showGraphLine;
-    
+    int currentPanel;
+    int frameRateWeSet;
     //menu state is the main control sequence variable should have the following modes
     /*
      1 setup analyis
@@ -100,8 +101,8 @@ public:
     simpleLogger logger;
     vector<string>analysisNames;
     ofPixels camPixels;
-
-
+    
+    
 };
 
 #endif

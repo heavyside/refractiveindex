@@ -44,20 +44,25 @@ void testApp::setup(){
     camHeight=480;
     desFrameRate=-111;// the camera framerate
     
+    //set gui defaults moved to start of setup because we need these values to set sliders in gui   
+    masterAnalysis.setGUIDefaults();
     //ofSetFrameRate(60);   // this produces 10 or 11 frames of latency frames in the camera feed 
     
-    ofSetFrameRate(30);   // this produces 5 or 6 frames of latency frames in the camera feed 
+    //30/12/11 added this as a variable becuase we will need it to calculate maxNumberOfFramesForSynthesis from guiSecs later
+    frameRateWeSet=30;
+    
+    ofSetFrameRate(frameRateWeSet);   // this produces 5 or 6 frames of latency frames in the camera feed 
     //ofSetFrameRate(15);     // this produces 2 or 3 frames of latency frames in the camera feed 
     //ofSetFrameRate(5);   // this produces  or 1 or 2 frames of latency
     //ofSetFrameRate(1);   // this produces?  i'm not patient enough to figure this out...
     // i.e.:  the frame lag seems to be ofGetFrameRate()/6 or thereabouts.
-        
+    
     ofEnableSmoothing();
     ofSetVerticalSync(TRUE);
     //set default codec
     codecChooser=0;
-
-
+    
+    
     if (!mainFileHelper.doesDirectoryExist("IMAGES/")){
         mainFileHelper.makeDirectory("IMAGES/");
     }
@@ -109,7 +114,7 @@ void testApp::setup(){
      Poco::Net::HTTPResponse::write(std::basic_ostream<char, std::char_traits<char> >&) constin PocoNet.a(HTTPResponse.o)
      ld: symbol(s) not found
      */
-
+    
     showGui=FALSE;
     showCursor=FALSE;
     showCameraInput=FALSE;
@@ -139,15 +144,17 @@ void testApp::setup(){
     gui.addButtonSlider("desired frame rate", "FRAME_RATE", 1., 1.0, 30, true);
 	gui.setWhichColumn(1);
     gui.addTextInput("text message", "input text here", 250 );
-
+    
     //GET THE INPUT NAMES FROM THE QT VIDEO GRABBER
     vidGrabber.listDevices();
     gui.addToggle("more cam settings", "SETTINGS", 0);
     
     //A NEW PANEL
-    gui.addPanel("Analyses", 4, false);
     
-    gui.setWhichPanel(1);
+    //removed by Tom 27/12/11
+    // gui.addPanel("Analyses", 4, false);
+    
+    gui.setWhichPanel(0);
     gui.setWhichColumn(1);
     
     vector<string>locationNames;
@@ -186,7 +193,7 @@ void testApp::setup(){
     gui.addTextDropDown("choose analysis", "ANALYSIS_TYPE", 130, analysisNames);
     gui.setWhichColumn(3);
     /*  float maxResultA; 
-     float maxTimeA; 
+     float maxNumberOfFramesForSynthesis; 
      float divisionsA; 
      bool showGraphA;*/
     
@@ -196,39 +203,45 @@ void testApp::setup(){
     }
     
     ///TOM 21/11/11 NOW SETTING THE CORRECT GUI ELEMENTS FOR EACH ANALYSIS, PAINFULLY, ONE BY ONE
-    ///Note counterMax in the analysis class seem to do exactly the same job as maxTimeA which is currently connected to gui, show we merge these variables? 
+    ///Note counterMax in the analysis class seem to do exactly the same job as maxNumberOfFramesForSynthesis which is currently connected to gui, show we merge these variables? 
     
     //This is a good effeciency, but there's a need for the default values for each of these to be different, and if one gets changed, we don't want the rest of them to have the value of that one... so is there another way to deal with it that is both efficient and allows each analysis to 'keep its state'?  - JA 11 Dec 
     
+    
+    //local variable for setting gui from numberofframestolastfor
+    float maxFramesDividedByFrameRate = masterAnalysis.maxNumberOfFramesForSynthesis/frameRateWeSet;
+    
+    
+    //addButtonSlider(string sliderName, string xmlName, float value , float min, float max, bool isInt);
     //H_SHADOWSCAPES GUI OPTIONS
+    gui.setWhichPanel(1);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", masterAnalysis.scanLineWidth, 1, ofGetWidth(), TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", masterAnalysis.scanLineSpeed, 1, 100, TRUE);
+    
+    //V_SHADOWSCAPES GUI OPTIONS
     gui.setWhichPanel(2);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, ofGetWidth(), TRUE);
-    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", masterAnalysis.scanLineWidth, 1, ofGetHeight(), TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", masterAnalysis.scanLineSpeed, 1, 100, TRUE);
     
-    //V_SHADOWSCAPES GUI OPTIONS
+    //D_SHADOWSCAPES GUI OPTIONS
     gui.setWhichPanel(3);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, ofGetHeight(), TRUE);
-    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
+    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", masterAnalysis.scanLineWidth, 1, 200, TRUE);
+    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", masterAnalysis.scanLineSpeed, 1, 100, TRUE);
     
-    //D_SHADOWSCAPES GUI OPTIONS
+    //RELAXRATE GUI OPTIONS
     gui.setWhichPanel(4);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
-    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
-    
-    //RELAXRATE GUI OPTIONS
-    gui.setWhichPanel(5);
-    gui.setWhichColumn(0);
-    gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 1500, TRUE);
-    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
-    gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
+    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", masterAnalysis.maxResultA, 1, 255, TRUE);
+    gui.addButtonSlider("num of seconds to last for", "GRAPH_MAX_TIME",  maxFramesDividedByFrameRate, 1, 50, TRUE);
+    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS",  masterAnalysis.divisionsA, 1, 10, TRUE);
+    gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", masterAnalysis.showGraphA);
     
     vector<string>graphNames;
     graphNames.push_back("LINEAR");
@@ -238,51 +251,67 @@ void testApp::setup(){
     
     gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
     
+    
+    /*
+     //for colour multi
+     fadeTime = 20;
+     everyNthFrameCaptureImage = 20; //the lower this number the more camera images we get per white level shown
+     numberOfGreyLevels = 10;   //the number of grey levels we want to look at
+     currentGreyLevel = numberOfGreyLevels;*/
+    
+    
+    
     //I_RESPONSE GUI OPTIONS
+    
+    gui.setWhichPanel(5);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    gui.addButtonSlider("num of seconds to last for", "GRAPH_MAX_TIME",  maxFramesDividedByFrameRate, 1, 50, TRUE);
+    gui.addButtonSlider("number of grey levels", "ANIMATION_TIME_LIMIT", masterAnalysis.numberOfGreyLevels, 1, 20, TRUE);
+    gui.addButtonSlider("fadeTime", "ANIMATION_TIME_LIMIT", masterAnalysis.fadeTime, 1, 30, TRUE);
+    gui.addButtonSlider("number of frames to grab", "ANIMATION_TIME_LIMIT", masterAnalysis.numOfFramesToGrab, 1, 500, TRUE);
+    
+    //SHAPE_SHADING GUI OPTIONS
     gui.setWhichPanel(6);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
-
-    //SHAPE_SHADING GUI OPTIONS
-    gui.setWhichPanel(7);
-    gui.setWhichColumn(0);
-    gui.addToggle("GO", "GO", 0);
-    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 1000, TRUE);
+    gui.addButtonSlider("num of seconds to last for", "GRAPH_MAX_TIME",  maxFramesDividedByFrameRate, 1, 50, TRUE);
+    gui.addButtonSlider("num of frames to grab per quadrant", "fpq",  masterAnalysis.framesPerQuadrant , 1, 150, TRUE);
     
     //M_CODE GUI OPTIONS
-    gui.setWhichPanel(8);
+    gui.setWhichPanel(7);
     gui.setWhichColumn(0);
-    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
+    gui.addButtonSlider("morse pause time", "MORSE_SPEED", masterAnalysis.speed, 1, 25, TRUE);
     //gui.addTextInput("morse output", "input morse here", 250 );
     //nasty hack for getting text back
     tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
     gui.addToggle("GO", "GO", 0);
     
     //CAM_FRAMERATE GUI OPTIONS
+    gui.setWhichPanel(8);
+    gui.setWhichColumn(0);
+    gui.addToggle("GO", "GO", 0);
+    
+    //CAM_NOISE GUI OPTIONS
     gui.setWhichPanel(9);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-
-    //CAM_NOISE GUI OPTIONS
+    
+    //COLOR_SINGLE GUI OPTIONS
     gui.setWhichPanel(10);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-
-    //COLOR_SINGLE GUI OPTIONS
+    
+    //LATENCY_TEST GUI OPTIONS
     gui.setWhichPanel(11);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-
-    //LATENCY_TEST GUI OPTIONS
-    gui.setWhichPanel(12);
-    gui.setWhichColumn(0);
-    gui.addToggle("GO", "GO", 0);
-
+    
     //COLOR_MULTI GUI OPTIONS
-    gui.setWhichPanel(13);
+    gui.setWhichPanel(12);
+    cout<<gui.getWhichPanel()<<" whichPanel \n";
     gui.setWhichColumn(0);
-    gui.addButtonSlider("color multi overall length", "COLORMULTI_SPEED", 10, 1, 2000, TRUE);
+    gui.addButtonSlider("color multi overall length", "COLORMULTI_SPEED", masterAnalysis.counterMaxColorMulti, 1, 2000, TRUE);
     gui.addToggle("GO", "GO", 0);
     
     //Tom S 21.11.11 colour multi now fades through the whole spectrum so doesn't need these any more
@@ -291,43 +320,17 @@ void testApp::setup(){
     //gui.addButtonSlider("blue level", "BLUE_LEVEL", 10, 1, 255, TRUE);
     
     //DIFF_NOISE GUI OPTIONS
-    gui.setWhichPanel(14);
+    gui.setWhichPanel(13);
     gui.setWhichColumn(0);
     gui.addToggle("GO", "GO", 0);
-
-    //Tom S 21/11/11 all below commented out and shifted to individual tabs above - left in comments for now just in case I've missed something
-    /*gui.addButtonSlider("scan line width", "SCAN_LINE_WIDTH", 10, 1, 100, TRUE);
-    gui.addButtonSlider("scan line speed", "SCAN_LINE_SPEED", 10, 1, 100, TRUE);
-  
-    gui.addButtonSlider("max white level to ramp to", "GRAPH_MAX_RESULT", 10, 1, 255, TRUE);
-    gui.addButtonSlider("num of frames to last for", "GRAPH_MAX_TIME", 10, 1, 255, TRUE);
-    gui.addButtonSlider("num of impulses", "GRAPH_NUM_DIVISIONS", 10, 1, 10, TRUE);
-    gui.addToggle("show graph outlines", "SHOW_GRAPH_OUTLINE", 0);
     
-    gui.addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);
-    gui.addButtonSlider("morse pause time", "MORSE_SPEED", 10, 1, 25, TRUE);
-    //gui.addTextInput("morse output", "input morse here", 250 );
-    //nasty hack for getting text back
-    tl=gui.addTextInput("morse output", "USE_UNDERSCORES_AND_CAPS", 250 );
-    gui.addButtonSlider("red level", "RED_LEVEL", 10, 1, 255, TRUE);
-    gui.addButtonSlider("green level", "GREEN_LEVEL", 10, 1, 255, TRUE);
-    gui.addButtonSlider("blue level", "BLUE_LEVEL", 10, 1, 255, TRUE);
-    //only 4 options for relax rate so far.
-    vector<string>graphNames;
-    graphNames.push_back("LINEAR");
-    graphNames.push_back("EXPONENTIAL");
-    graphNames.push_back("SQUARE_WAVE");
-    graphNames.push_back("QUADRATIC");
-    
-    gui.addTextDropDown("RELAXRATE response curve", "GRAPH_TYPE", 130, graphNames);
-    */
     gui.setWhichPanel(0);
     gui.setWhichColumn(1);
-        
+    
     vector<string> names=vidGrabber.returnDeviceNames();
     cout<<names.size()<<" number of inputs found\n";
-//    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);    
-    masterAnalysis.setGUIDefaults();
+    //    masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);    
+    
     
     //get list of codecs from movie object in analysis class
     returnedCodecNames=masterAnalysis.movieFromCamera.returnCodecNames();
@@ -345,34 +348,49 @@ void testApp::setup(){
 	ofAddListener(gui.guiEvent, this, &testApp::eventsIn);
     
     ////////////END OF GUI SETUP STUFF////////////////
-    masterAnalysis.setGUIDefaults();
-
+    
+    
+    currentPanel=gui.getSelectedPanel();
+    
+    /*
+     
+     
+     */
     
 }
 
 //--------------------------------------------------------------
 void testApp::update(){  
     ofBackground(0, 0, 0);
-   
+    
+    if(gui.getSelectedPanel()!=currentPanel&&gui.getSelectedPanel()>=1){
+        //set the current analysis (the subtraction by 2 is because the first panel are not types of analysis
+        analysisChooser=analysisNames[gui.getSelectedPanel()-1];
+        
+        currentPanel=gui.getSelectedPanel();
+        cout<<" PANEL CHANGED TO "<<gui.getSelectedPanel()<< " CURRENT ANALYSIS IS NOW "<<analysisChooser;
+        
+    }
+    
     string str = "framerate is "; 						
     str += ofToString(ofGetFrameRate(), 2)+"fps"; 
     ofSetWindowTitle(str);
     //set the window title to "framerate"
     
-
-// kylemcdonald's solution for getting the most recent frame from here: 
-// http://forum.openframeworks.cc/index.php?topic=7237.0
+    
+    // kylemcdonald's solution for getting the most recent frame from here: 
+    // http://forum.openframeworks.cc/index.php?topic=7237.0
     /*
-    int frames = 0;  
-    while(frames < 4) {  
-        vidGrabber.grabFrame();  
-        if(vidGrabber.isFrameNew()) {  
-            frames++;  
-        }  
-        ofSleepMillis(2);  
-    }  
-*/
-
+     int frames = 0;  
+     while(frames < 4) {  
+     vidGrabber.grabFrame();  
+     if(vidGrabber.isFrameNew()) {  
+     frames++;  
+     }  
+     ofSleepMillis(2);  
+     }  
+     */
+    
     vidGrabber.grabFrame();  // go get frame from OS
     //vidGrabber.update();  // go get frame from OS
     
@@ -386,7 +404,7 @@ void testApp::update(){
     if(menuState==1){
         
         cout<<analysisChooser<<" menu state is 1, setting up saver and analyis\n";
-       
+        
         masterAnalysis.morseMessage= tl->getValueText();
         masterAnalysis.setupAnalysis(camWidth, camHeight, 100, analysisChooser, locationChooser, codecChooser);//, vidGrabber);
         
@@ -396,7 +414,7 @@ void testApp::update(){
     
     //play the synthesized stuff to screen 
     if(menuState==2){
-       
+        
     }
     
     //run analysis on the movie we've recorded during 'synthDraw'
@@ -420,7 +438,7 @@ void testApp::draw(){
     
     //ofSetColor(0);
     //if no analysis, draw grabber
-
+    
     if(menuState==0){
         ofSetColor(255,255,255);
         startImage.draw(0,0,ofGetWidth(), ofGetHeight());
@@ -451,9 +469,9 @@ void testApp::draw(){
         } else {
             
             menuState = 3;
-        
+            
         }
-    
+        
     }
     
     //menustate  draw results of analysis
@@ -497,7 +515,7 @@ void testApp::draw(){
 }
 
 void testApp::exit(){
-     
+    
 }
 
 //---------------  CALLED FROM INSIDE EVENT FUNCTION WHEN CAMERA SETTINGS HAVE BEEN SELECTED ---------------------------------------
@@ -527,7 +545,7 @@ void testApp::keyPressed(int key){
     if(key=='c'){
         showCursor=!showCursor;
     }
-
+    
     //use v as video toggle
     if(key=='v'){
         showCameraInput=!showCameraInput;
@@ -625,7 +643,7 @@ void testApp::keyPressed(int key){
     }
     
     else {
-    
+        
         if(showGui){
             bool control_panel_ate_key = gui.keyPressed( key );
         }
@@ -649,6 +667,14 @@ void testApp::eventsIn(guiCallbackData & data){
     
     //TODO: would like to 'checkHit' for each GUI element and use that to set the analysisChooser (this would be proper behavior for the GUI)
     
+    //check whether we are still on the same panel
+    /*
+     analysisChooser
+     gui.getSelectedPanel();
+     */
+    
+    
+    
 	//lets send all events to our logger
 	if( !data.isElement( "events logger" ) ){
 		string logStr = data.getXmlName();
@@ -668,7 +694,7 @@ void testApp::eventsIn(guiCallbackData & data){
     if( data.getDisplayName() == "set up camera input" ){
         //vidGrabber.close();
         setupCamera(camWidth,camHeight,camInput,desFrameRate,false);
-
+        
         //menuState=1;
         cout<<"cam is setup\n"; 
     }
@@ -678,6 +704,7 @@ void testApp::eventsIn(guiCallbackData & data){
     
     //START ANALYSIS IS NOW FROM A BUTTON
     if( thisName == "GO" ){
+        
         showGui=false;
         showCursor=false;
         menuState=1;
@@ -688,8 +715,8 @@ void testApp::eventsIn(guiCallbackData & data){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-                masterAnalysis.animationTimeLimit=data.getFloat(k);
-                cout<<masterAnalysis.animationTimeLimit<<"masterAnalysis.animationTimeLimit \n";
+                masterAnalysis.maxNumberOfFramesForSynthesis=data.getFloat(k);
+                cout<<masterAnalysis.maxNumberOfFramesForSynthesis<<"masterAnalysis.maxNumberOfFramesForSynthesis \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
@@ -697,6 +724,50 @@ void testApp::eventsIn(guiCallbackData & data){
         }
     }
     
+    //number of frames to grab
+    if( thisName == "number of frames to grab" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                
+                masterAnalysis.numOfFramesToGrab =data.getFloat(k);
+                cout<<masterAnalysis.numOfFramesToGrab<<"masterAnalysis.numOfFramesToGrab \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+    }
+    
+    
+    //added Tom 31/12/11
+    // number of grey levels
+    if( thisName == "number of grey levels" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                masterAnalysis.numberOfGreyLevels =data.getFloat(k);
+                masterAnalysis.currentGreyLevel=data.getFloat(k);
+                cout<<masterAnalysis.numberOfGreyLevels<<"masterAnalysis.numberOfGreyLevels \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+    }
+    //fadeTime
+    if( thisName == "fadeTime" ){
+        
+        for(int k = 0; k < data.getNumValues(); k++){
+            if( data.getType(k) == CB_VALUE_FLOAT ){
+                masterAnalysis.fadeTime =data.getFloat(k);
+                cout<<masterAnalysis.fadeTime<<"masterAnalysis.fadeTime \n";
+            }
+            else if( data.getType(k) == CB_VALUE_STRING ){
+                printf("%i string value = %s \n", k, data.getString(k).c_str());
+            }
+        }
+    }
     if( thisName == "scan line width" ){
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
@@ -738,13 +809,22 @@ void testApp::eventsIn(guiCallbackData & data){
         }
     }
     
-    if( thisName == "num of frames to last for" ){
+    if( thisName == "num of seconds to last for" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-
-                masterAnalysis.maxTimeA=data.getFloat(k);
-                cout<<masterAnalysis.maxTimeA<<"masterAnalysis.maxTimeA \n";
+                //30/12/11 maxNumberOfFramesForSynthesis is now set by multiplying gui time in secs by frameRateWeSet
+                
+                //if the analysis is iResponse this number of frames is per level/cycle so must be divided by number of grey levels
+                
+                // if (currentPanel==6) {
+                // masterAnalysis.maxNumberOfFramesForSynthesis= frameRateWeSet * data.getFloat(k) / masterAnalysis.numberOfGreyLevels;
+                
+                //  }
+                //  else{
+                masterAnalysis.maxNumberOfFramesForSynthesis= frameRateWeSet * data.getFloat(k);
+                //  }
+                cout<<masterAnalysis.maxNumberOfFramesForSynthesis<<"masterAnalysis.maxNumberOfFramesForSynthesis \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
@@ -773,25 +853,25 @@ void testApp::eventsIn(guiCallbackData & data){
     }
     
     //Tom S 14 Nov 19:10somehow this function appears to have been repeated so have commented out
-   /* if( thisName == "graph max time" ){
-        
-        for(int k = 0; k < data.getNumValues(); k++){
-            if( data.getType(k) == CB_VALUE_FLOAT ){
-
-                masterAnalysis.maxTimeA=data.getFloat(k);
-                cout<<masterAnalysis.maxTimeA<<"masterAnalysis.maxTimeA \n";
-            }
-            else if( data.getType(k) == CB_VALUE_STRING ){
-                printf("%i string value = %s \n", k, data.getString(k).c_str());
-            }
-        }
-    }*/
+    /* if( thisName == "graph max time" ){
+     
+     for(int k = 0; k < data.getNumValues(); k++){
+     if( data.getType(k) == CB_VALUE_FLOAT ){
+     
+     masterAnalysis.maxNumberOfFramesForSynthesis=data.getFloat(k);
+     cout<<masterAnalysis.maxNumberOfFramesForSynthesis<<"masterAnalysis.maxNumberOfFramesForSynthesis \n";
+     }
+     else if( data.getType(k) == CB_VALUE_STRING ){
+     printf("%i string value = %s \n", k, data.getString(k).c_str());
+     }
+     }
+     }*/
     
     if( thisName == "morse pause time" ){
         
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_FLOAT ){
-               
+                
                 masterAnalysis.speed=data.getFloat(k);
                 cout<<masterAnalysis.speed<<"masterAnalysis.speed \n";
             }
@@ -851,14 +931,14 @@ void testApp::eventsIn(guiCallbackData & data){
             if( data.getType(k) == CB_VALUE_FLOAT ){
                 
                 masterAnalysis.counterMaxColorMulti=data.getFloat(k);
-                cout<<masterAnalysis.counterMaxColorMulti<<"masterAnalysis.maxTimeA \n";
+                cout<<masterAnalysis.counterMaxColorMulti<<"masterAnalysis.maxNumberOfFramesForSynthesis \n";
             }
             else if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
             }
         }
     }
-        
+    
     
     //more cam settings", "SETTINGS"
     if( data.getDisplayName() == "more cam settings" ){
@@ -875,23 +955,24 @@ void testApp::eventsIn(guiCallbackData & data){
             }
         }
     }
-
+    
     
     //START ANALYSIS
-   //Tom 22/11/11 changed this from starting analysis to choosing panel of gui
+    //Tom 22/11/11 changed this from starting analysis to choosing panel of gui
     if( data.getDisplayName()== "choose analysis" ){
-       
+        
         for(int k = 0; k < data.getNumValues(); k++){
             if( data.getType(k) == CB_VALUE_STRING ){
                 analysisChooser=data.getString(k);
                 cout<<data.getString(k)<<" "<<k<<" <<-- lets jump to this tab\n";   
                 
-                 //Tom 22/11/11
+                //Tom 22/11/11
                 for(int i=0;i<analysisNames.size();i++){
                     //check if the clicked option in the dropdown matches this analysis name
                     if(analysisNames[i]==data.getString(k)){
                         //if it does, jump to the correct gui panel
-                        gui.setSelectedPanel(i+2);
+                        //changed 2 to 1 to account for mixing first 2 panels together
+                        gui.setSelectedPanel(i+1);
                         //exit for loop
                         exit();
                     }
@@ -973,7 +1054,7 @@ void testApp::eventsIn(guiCallbackData & data){
     if( data.getDisplayName() == "codecs" ){
         cout<<"input selected\n";
         for(int k = 0; k < data.getNumValues(); k++){
-      
+            
             if( data.getType(k) == CB_VALUE_STRING ){
                 printf("%i string value = %s \n", k, data.getString(k).c_str());
                 codecName=data.getString(k).c_str();
@@ -993,18 +1074,18 @@ void testApp::eventsIn(guiCallbackData & data){
     //
     //UPDATE THE REPORT STRING FOR CURRENT SETTINGS
     camStatus="CAMERA STATUS:: width :"+ofToString(camWidth)+" height :"+ofToString(camHeight)+"  frame rate :"+ofToString(desFrameRate)+"  source :"+camInputName+"codec: "+codecName;
-  
+    
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-  
+    
 }
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-  //  mouseX=x;
-   // mouseY=y;
+    //  mouseX=x;
+    // mouseY=y;
 }
 
 //--------------------------------------------------------------

@@ -1,7 +1,7 @@
 /***************
-ANALYSIS CLASS FOR INPLEMENTING AND DISPLAYING DIFFERENT LIVE VIDEO ALGORITHMS
+ ANALYSIS CLASS FOR INPLEMENTING AND DISPLAYING DIFFERENT LIVE VIDEO ALGORITHMS
  //cc. non commercial share alike Tom Schofield & Jamie Allen Source Code licenced under GNU v3 2011
-*****************/
+ *****************/
 
 #ifndef __analysis__
 #define __analysis__
@@ -16,21 +16,21 @@ using namespace std;
 
 class analysis{
     
-    public:
-        
+public:
+    
     ofxFileHelper myFileHelper;
     string imageSaveFolderPath;
     string whichLocation;
     
     int myVariable;
-
+    
     void setupAnalysis(int camH, int camW, int analasisTimePass, string whichAnalysis, string whichLocation, int whichCodec);//, ofVideoGrabber &grabber);
-       
+    
     ////Synth Methods//
     void synthDrawCamRecord(ofPixels pixels);
-
+    
     //void synthDrawCamRecord(unsigned char * pixels);
-
+    
     void synthUpdate();
     
     ////Analyse Input Methods//
@@ -40,24 +40,25 @@ class analysis{
     void displayResult();
     void setupMovie();
     void updatePlayer();
-
+    
     void setupQuicktimeMovieRecord(int camH, int camW, int codec);
     vector<ofImage> returnFrames();
     
     void setGUIDefaults();
     
+    //TOM 30/12/11 removed float maxTime which previously passed maxTimeA into graphing functions
     //analysis specific functions (this makes me think that we should have seperate classes for at least some of these analyses
     float returnGaussian(float x, float spread, float height, float centre, float range);
-    float linear(float maxResult, float maxTime, float divisions, bool showGraph);
+    float linear(float maxResult,  float divisions, bool showGraph);
     float skewNormalDistribution(float x, float spread, float height, float max, float centre, float shiftCentre);
-    bool squareWave(float maxResult, float maxTime, float divisions, bool showGraph);
-    float exponential(float maxResult, float maxTime, float divisions, bool showGraph);
-    void quadratic(float maxResult, float maxTime, float divisions, bool showGraph);
+    bool squareWave(float maxResult,  float divisions, bool showGraph);
+    float exponential(float maxResult,  float divisions, bool showGraph);
+    void quadratic(float maxResult,  float divisions, bool showGraph);
     void setupGraphs(); // not a great/clear name feel free to find a better one ;) 
-
+    
     ///Other
     int analysisTime;
-
+    
     float animationTimeLimit;
     float animationTime;
     float lastTime;
@@ -71,10 +72,10 @@ class analysis{
     unsigned char * analysedFrame;
     string dataPathName;
     string whichAnalysis;
-
+    
     bool newFrame;
     bool gotAllLocalFrames1, gotAllLocalFrames2, gotAllLocalFrames3, gotAllLocalFrames4;
-
+    
     //FOR ANALYSIS
     bool synthesisComplete;
     bool morseComplete;
@@ -99,7 +100,7 @@ class analysis{
     int flip;
     bool finishedGraph;
     float maxResultA; 
-    float maxTimeA; 
+    float maxNumberOfFramesForSynthesis; 
     float divisionsA; 
     bool showGraphA;
     
@@ -148,17 +149,19 @@ class analysis{
     float greyValue;
     float oldGreyValue;
     float numberOfGreyLevels;
+    int numOfFramesToGrab;
     
     int counter;
     float strobeToggleCounter;
-    int counterMax;
+    //counterMax has been replaced by maxNumberOfFramesForSynthesis
+    //int counterMax;
     int counterMaxColorMulti;
     int frameCounter;
     int localFrameCounter;
     int scanLinePosition;
     int scanLineWidth;
     int scanLineSpeed;
-
+    
     int framesPerGreyValue;
     int framesPerColourValue;
     int framesPerQuadrant;
