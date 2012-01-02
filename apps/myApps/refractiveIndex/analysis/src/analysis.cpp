@@ -7,7 +7,7 @@
  SYSTEMTIME time;
  GetSystemTime(&time);
  WORD millis = (time.wSeconds * 1000) + time.wMilliseconds;
- */
+*/
 
 /*
  * daktronics  - WINDOWS 7 
