@@ -8,8 +8,8 @@ int main() {
 	ofSetupOpenGL(&window, 1024, 768, OF_WINDOW);
 	
     //David's new code structure
-    //ofRunApp(new RefractiveIndex());
+    ofRunApp(new RefractiveIndex());
 
     //Old test app code
-    ofRunApp(new testApp());
+    //ofRunApp(new testApp());
 }

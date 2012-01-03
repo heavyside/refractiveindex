@@ -75,27 +75,22 @@ void ShadowScapesAnalysis::synthesize()
 
     while(_state != STATE_STOP)
         Thread::sleep(100);
-    
 }
 
 void ShadowScapesAnalysis::gui_attach(ofxControlPanel* gui)
 {
     gui->addToggle("GO", "GO", 0);
     gui->addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);    
-    
 }
 
 void ShadowScapesAnalysis::gui_detach()
 {
     
-    
 }
-
 
 // the animation draw - and the output draw 
 void ShadowScapesAnalysis::draw()
-{
-    
+{    
     static int _pos;
     
     if(_state == STATE_ANALYSIS) {
@@ -107,16 +102,15 @@ void ShadowScapesAnalysis::draw()
     if(_state == STATE_SCAN) {
         if(_pos != _line) {
             //take snap??
+            
+            // send image back to 
             _pos = _line;
         }
         ofSetColor(255, 255,  255); 
         
         if(_dir == H) ofRect(_pos, 0, 50, ofGetHeight());
-        else if(_dir == V) ofRect(0, _pos, ofGetWidth(), 50);
-        
+        else if(_dir == V) ofRect(0, _pos, ofGetWidth(), 50);                    
     }
-    
-    
 }
 
 
@@ -130,6 +124,4 @@ void ShadowScapesAnalysis::scan_cb(Timer& timer)
        (_dir == V && _line >= ofGetHeight())) { 
         _state = STATE_ANALYSIS;
     }
-    
-    
 }

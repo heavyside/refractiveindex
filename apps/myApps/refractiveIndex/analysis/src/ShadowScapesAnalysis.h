@@ -33,7 +33,6 @@
 #pragma once
 
 #include "AbstractAnalysis.h"
-
 #include "Poco/Timer.h"
 
 enum shadow_type {
@@ -43,7 +42,8 @@ enum shadow_type {
 class ShadowScapesAnalysis : public AbstractAnalysis
 {
 public:
-    ShadowScapesAnalysis(shadow_type dir): AbstractAnalysis("SHADOWSCAPE"), _dir(dir){;}
+    ShadowScapesAnalysis(): AbstractAnalysis("SHADOWSCAPE"){;}
+    //ShadowScapesAnalysis(shadow_type dir): AbstractAnalysis("SHADOWSCAPE"), _dir(dir){;}  // jamie took this out jan 3rd - typo?
     virtual ~ShadowScapesAnalysis(){;}
     
 public:

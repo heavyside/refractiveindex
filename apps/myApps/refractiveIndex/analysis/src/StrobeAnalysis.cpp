@@ -114,5 +114,4 @@ void StrobeAnalysis::strobe_cb(Timer& timer)
         _state = STATE_ANALYSIS;
     }
 
-
 }

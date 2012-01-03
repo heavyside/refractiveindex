@@ -1,34 +1,8 @@
 /*
- - copyright (c) 2011 Copenhagen Institute of Interaction Design (CIID)
- - all rights reserved.
- 
- + redistribution and use in source and binary forms, with or without
- + modification, are permitted provided that the following conditions
- + are met:
- +  > redistributions of source code must retain the above copyright
- +    notice, this list of conditions and the following disclaimer.
- +  > redistributions in binary form must reproduce the above copyright
- +    notice, this list of conditions and the following disclaimer in
- +    the documentation and/or other materials provided with the
- +    distribution.
- 
- + THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- + "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- + LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- + FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- + COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- + INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- + BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- + OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- + AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- + OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- + OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- + SUCH DAMAGE.
- 
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  ~ author: dviid
  ~ contact: dviid@labs.ciid.dk 
- */
+*/
 
 #include "RefractiveIndex.h"
 
@@ -51,7 +25,7 @@ void RefractiveIndex::setup()
     _vid_h  = CAMERA_ACQU_HEIGHT;
     _vid_id = CAMERA_ID;
     _vid_stream_open = false;
-    //setup_camera();
+    _vid_toggle_on = false;
     
     // gui
     _gui.loadFont("MONACO.TTF", 8);		
@@ -62,14 +36,18 @@ void RefractiveIndex::setup()
     _gui.setWhichPanel(0);
     // --> COLUMN #0
     _gui.setWhichColumn(0);
-    _gui.addToggle("open camera", "CAM_IS_GO", 0);
+    
+    //GET THE INPUT NAMES FROM THE QT VIDEO GRABBER
+   
+    _gui.addToggle("more cam settings", "SETTINGS", 0);
+    
+    _gui.addToggle("turn on camera", "CAM_IS_GO", 0);
     _gui.addButtonSlider("camera width", "CAM_WIDTH", _vid_w, CAMERA_ACQU_WIDTH, 1920, true);
 	_gui.addButtonSlider("camera height", "CAM_HEIGHT", _vid_h, CAMERA_ACQU_HEIGHT, 1080, true);
 
     _gui.setWhichColumn(1);
     _gui.addToggle("run", "RUN", 0);
 
-    
     _gui.setupEvents();
 	_gui.enableEvents();
     //  -- this gives you back an ofEvent for all events in this control panel object
@@ -77,7 +55,6 @@ void RefractiveIndex::setup()
     
     _currentAnalysis = NULL;
     _analysisAdapator = NULL;
-    
     
 }
 
@@ -94,6 +71,7 @@ void RefractiveIndex::draw()
         _currentAnalysis->draw();
     else 
         _gui.draw();
+    
 }
 
 void RefractiveIndex::setup_camera()
@@ -102,14 +80,16 @@ void RefractiveIndex::setup_camera()
         _vidGrabber.close();
         _vid_stream_open = false;
     }
-    
+     
     if(!_vidGrabber.initGrabber(_vid_w, _vid_h)) {
         ofLog(OF_LOG_ERROR) << "RefractiveIndex::setup_camera - could not initialise grabber";
         return;
     }    
-    _vidGrabber.setDeviceID(_vid_id);
+    
 	_vidGrabber.setVerbose(true); 
     _vid_stream_open = true;
+    _vidGrabber.setDeviceID(_vid_id);
+
 }
 
 void RefractiveIndex::keyPressed  (int key)
@@ -128,8 +108,6 @@ void RefractiveIndex::keyPressed  (int key)
         }
     }
 }
-
-
 
 void RefractiveIndex::mouseDragged(int x, int y, int button)
 {
@@ -152,18 +130,35 @@ void RefractiveIndex::mouseReleased(int x, int y, int button)
 void RefractiveIndex::eventsIn(guiCallbackData& data)
 {
     if(data.getDisplayName() == "run"){
+        
         ofLog(OF_LOG_VERBOSE) << "run...";   
         
-        //_currentAnalysis = new IResponseAnalysis();  // create an analysis and give it an adaptor
-        
+        //_currentAnalysis = new ShadowScapesAnalysis();  // create an analysis and give it an adaptor
+        //_currentAnalysis = new StrobeAnalysis();  // create an analysis and give it an adaptor
         _currentAnalysis = new IResponseAnalysis();  // create an analysis and give it an adaptor
         _analysisAdapator = new AnalysisAdaptor(_currentAnalysis);  //Adaptors start and stop 
         _currentAnalysis->setup(_vid_w, _vid_h);
         _analysisAdapator->start();
     }
+    
+    if(data.getDisplayName() == "turn on camera" ){
+
+        _vid_toggle_on=!_vid_toggle_on;
+
+        if (_vid_toggle_on)
+        {
+            setup_camera();
+        } else if (!_vid_toggle_on) {
+            _vidGrabber.close();
+        }
+    }
+
+    //more cam settings", "SETTINGS"
+    if( data.getDisplayName() == "more cam settings" ){
+        _vidGrabber.videoSettings();
+    }
+
 }
-
-
 
 void RefractiveIndex::grabBackgroundEvent(guiCallbackData & data)
 {
