@@ -1,34 +1,7 @@
 /*
- - copyright (c) 2011 Copenhagen Institute of Interaction Design (CIID)
- - all rights reserved.
- 
- + redistribution and use in source and binary forms, with or without
- + modification, are permitted provided that the following conditions
- + are met:
- +  > redistributions of source code must retain the above copyright
- +    notice, this list of conditions and the following disclaimer.
- +  > redistributions in binary form must reproduce the above copyright
- +    notice, this list of conditions and the following disclaimer in
- +    the documentation and/or other materials provided with the
- +    distribution.
- 
- + THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- + "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- + LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- + FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- + COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- + INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- + BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- + OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- + AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- + OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- + OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- + SUCH DAMAGE.
- 
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ author: dviid
- ~ contact: dviid@labs.ciid.dk 
- */
+~ author: dviid
+~ contact: dviid@labs.ciid.dk 
+*/
 
 #include "IResponseAnalysis.h"
 #include "ofMain.h"
@@ -52,6 +25,8 @@ void IResponseAnalysis::setup(int camWidth, int camHeight)
     //AbstractAnalysis::setup(camWidth, camHeight);    
     //_lastTime = ofGetElapsedTimeMillis();   
         
+    _fade_cnt_max = 100;
+    
     if(!ofDirectory::doesDirectoryExist(string(ANALYSIS_PATH) + _name, false))
         ofDirectory::createDirectory(string(ANALYSIS_PATH) + _name, false);
         
@@ -73,7 +48,7 @@ void IResponseAnalysis::synthesize()
         /****** START callback for the fading between writing to screen and saving to disk *****/
         _save_cnt = 0;    
         _state = STATE_SAVE;
-        save_timer = new Timer(0, 1000); //how often the save callback is being called - void IResponseAnalysis::save_cb(Timer& timer)
+        save_timer = new Timer(0, 5); //how often the save callback is being called - void IResponseAnalysis::save_cb(Timer& timer)
         save_timer->start(save_callback);
         
             while(_state != STATE_TRANSITION_SAVE)
@@ -117,6 +92,8 @@ void IResponseAnalysis::gui_detach()
     
 }
 
+//void IResponseAnalysis::draw(ofPixels _pixels)   //trying to figure out how to get pixels from the RefractiveIndex.cpp 
+
 void IResponseAnalysis::draw()
 {
     if(_state == STATE_SAVE || _state == STATE_TRANSITION_SAVE) {
@@ -127,17 +104,15 @@ void IResponseAnalysis::draw()
         
     } else if(_state == STATE_FADE || _state == STATE_TRANSITION_FADE) {
         
-        int c = 255 / (22 - _fade_cnt);  
-        cout << "draw() _fade_cnt:" << _fade_cnt << "\n";
-        
+        float c = 255.0 * (_fade_cnt_max - _fade_cnt)/(_fade_cnt_max );  
+        cout << "draw() c:" << c << "\n";
         ofSetColor(c, c, c);
         ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
         
     } else if(_state == STATE_ANALYSIS) {
-        ofSetColor(0, 255, 0);  // green is 'done' - or analysizing 
-
-        //for the analysis - do we need a seperate call back? is that the idea?
         
+        ofSetColor(0, 255, 0);  // green on the screen is 'done' - or analysizing
+        //for the analysis - do we need a seperate call back? is that the idea?
         ofRect(0, 0, ofGetWidth(), ofGetHeight());         
     }    
 }
@@ -148,15 +123,17 @@ void IResponseAnalysis::save_cb(Timer& timer)
     _save_cnt++;
     
     if(_save_cnt >= 5) { 
+        
         //cout << "IResponseAnalysis::saving... _save_cnt\n";
     
         // trying to get an ofPixels frame here - how to get the RefractiveIndex.cpp ofPixels into this function? 
         // we used to to this by passing the ofPixels into this class - but now i think we need to have a separate camera grabber for each of these classes?  is that right? 
     
-        //pixels = _vidGrabber.grabFrame();
-        // ... becomes ...
-        //_vidGrabberIRseponseAnalysis.grabFrame();
-        // ??
+        // does
+        // pixels = _vidGrabber.grabFrame();
+        // become?
+        // _vidGrabberIRseponseAnalysis.grabFrame();
+        // ?
         
         _state = STATE_TRANSITION_SAVE;  //
     }
@@ -166,7 +143,7 @@ void IResponseAnalysis::fade_cb(Timer& timer)
 {
     cout << "fade_cb() _fade_cnt:" << _fade_cnt << "\n";
   
-    if(_fade_cnt >= 10){ //2 secs fade counter
+    if(_fade_cnt >= _fade_cnt_max){ //2 secs fade counter
         _state = STATE_TRANSITION_FADE;
         
     }

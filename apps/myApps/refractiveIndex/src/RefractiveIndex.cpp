@@ -61,14 +61,30 @@ void RefractiveIndex::setup()
 void RefractiveIndex::update()
 {
     _gui.update();
+    _vidGrabber.grabFrame();  // get a new frame from the camera 
 }
 
 void RefractiveIndex::draw()
 {
     ofBackground(0, 0, 0);    
+
+    
+    // if there is a new frame in the camera
+    if (_vidGrabber.isFrameNew())
+    {   
+        _pixels = _vidGrabber.getPixelsRef(); //get ofPixels from the camera 
+    } 
     
     if(_currentAnalysis)
+
         _currentAnalysis->draw();
+        
+        // i would like to pass the pixels we've just got from the camera into the draw function for the current analysis here
+        // but the way that 'draw' functino in _currentAnalysis, which is an AbstractAnalysis, is as a "Pure Virtual Function"
+        // which i think means it can't be passed any arguments or data???
+    
+        //_currentAnalysis->draw(_pixels);
+    
     else 
         _gui.draw();
     
@@ -104,7 +120,7 @@ void RefractiveIndex::keyPressed  (int key)
             delete _analysisAdapator;
             _currentAnalysis = NULL;
             _analysisAdapator = NULL;
-            cout << "bingo!\n\n";
+            cout << "bingo!\n\n";   //bingo means 'stop analysis'?  
         }
     }
 }
@@ -132,10 +148,11 @@ void RefractiveIndex::eventsIn(guiCallbackData& data)
     if(data.getDisplayName() == "run"){
         
         ofLog(OF_LOG_VERBOSE) << "run...";   
-        
+
         //_currentAnalysis = new ShadowScapesAnalysis();  // create an analysis and give it an adaptor
         //_currentAnalysis = new StrobeAnalysis();  // create an analysis and give it an adaptor
         _currentAnalysis = new IResponseAnalysis();  // create an analysis and give it an adaptor
+        
         _analysisAdapator = new AnalysisAdaptor(_currentAnalysis);  //Adaptors start and stop 
         _currentAnalysis->setup(_vid_w, _vid_h);
         _analysisAdapator->start();

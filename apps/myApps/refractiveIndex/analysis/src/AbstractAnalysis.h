@@ -1,31 +1,4 @@
 /*
- - copyright (c) 2011 Copenhagen Institute of Interaction Design (CIID)
- - all rights reserved.
- 
- + redistribution and use in source and binary forms, with or without
- + modification, are permitted provided that the following conditions
- + are met:
- +  > redistributions of source code must retain the above copyright
- +    notice, this list of conditions and the following disclaimer.
- +  > redistributions in binary form must reproduce the above copyright
- +    notice, this list of conditions and the following disclaimer in
- +    the documentation and/or other materials provided with the
- +    distribution.
- 
- + THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- + "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- + LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- + FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- + COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- + INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- + BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- + OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- + AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- + OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- + OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- + SUCH DAMAGE.
- 
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  ~ author: dviid
  ~ contact: dviid@labs.ciid.dk 
  */
@@ -55,9 +28,23 @@ public:
     virtual void gui_attach(ofxControlPanel* gui){_gui = gui;}
     virtual void gui_detach(){;}
     
-    // ofx
-    virtual void draw() = 0;
     
+    //    virtual void draw(ofPixels _pixels) = 0;
+    //    virtual void draw(ofPixels)=0;
+    // how to get the pixels into the analysis classes?!?  -j
+    
+    // ofx
+    virtual void draw() = 0;    
+
+            // this is what's called a Pure Virtual Function - not sure if you can pass ofPixels through this? 
+
+            /*
+            When a virtual function is called, the implementation is chosen based not on the static type of the pointer 
+            or reference, but on the type of the object being pointed to, which can vary at run time
+            So this Pure Virtual Function will be called based on the kind of object or class that instantiated it(?) 
+            */
+
+
 public:
     string  _name;    
 protected:    

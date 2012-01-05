@@ -259,8 +259,6 @@ void testApp::setup(){
      numberOfGreyLevels = 10;   //the number of grey levels we want to look at
      currentGreyLevel = numberOfGreyLevels;*/
     
-    
-    
     //I_RESPONSE GUI OPTIONS
     
     gui.setWhichPanel(5);

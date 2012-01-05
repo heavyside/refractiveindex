@@ -41,6 +41,7 @@ protected:
     
     // gui
     ofxControlPanel     _gui;   
+    ofPixels            _pixels;
     
     // acquisition
     ofVideoGrabber      _vidGrabber;
