@@ -14,6 +14,12 @@
 #define CAMERA_ACQU_WIDTH   640
 #define CAMERA_ACQU_HEIGHT  480
 
+ofPixels         RefractiveIndex::_pixels;    
+ofVideoGrabber   RefractiveIndex::_vidGrabber;
+int              RefractiveIndex::_vid_w, RefractiveIndex::_vid_h, RefractiveIndex::_vid_id;
+bool             RefractiveIndex::_vid_stream_open;
+bool             RefractiveIndex::_vid_toggle_on;
+
 void RefractiveIndex::setup()
 {
     // rate
@@ -56,24 +62,29 @@ void RefractiveIndex::setup()
     _currentAnalysis = NULL;
     _analysisAdapator = NULL;
     
+    //getting a warning from the OFlog that the pixels aren't allocated 
+    // void ofPixels::allocate(int w, int h, ofImageType type) 
+    
+    //_pixels.allocate(
+     
 }
 
 void RefractiveIndex::update()
 {
     _gui.update();
-    _vidGrabber.grabFrame();  // get a new frame from the camera 
+    RefractiveIndex::_vidGrabber.grabFrame();  // get a new frame from the camera 
+    
+    if (_vidGrabber.isFrameNew())
+    {   
+        _pixels = _vidGrabber.getPixelsRef(); //get ofPixels from the camera 
+    }     
 }
 
 void RefractiveIndex::draw()
 {
     ofBackground(0, 0, 0);    
 
-    
     // if there is a new frame in the camera
-    if (_vidGrabber.isFrameNew())
-    {   
-        _pixels = _vidGrabber.getPixelsRef(); //get ofPixels from the camera 
-    } 
     
     if(_currentAnalysis)
 

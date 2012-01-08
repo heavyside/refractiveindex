@@ -22,7 +22,7 @@ public:
     virtual void setup(int camWidth, int camHeight){_cam_w = camWidth; _cam_h = camHeight;}    
     
     // the runnable function in the thread 
-    virtual void synthesize() = 0;        
+    virtual void synthesize() = 0;   // this means that this function needs to be overwritten by children that inherit this class       
     
     // throwing the 
     virtual void gui_attach(ofxControlPanel* gui){_gui = gui;}

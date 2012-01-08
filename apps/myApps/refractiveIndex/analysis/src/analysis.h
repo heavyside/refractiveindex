@@ -173,7 +173,11 @@ public:
     ofImage cameraCapture;
     vector <ofImage> vectorOfImages;
     vector <float> lightLevels;
+    
+    
     vector <ofPixels> vectorOfPixels;
+    
+    
     vector <unsigned char *> imgPixels;
     unsigned char * imgPixel;
     

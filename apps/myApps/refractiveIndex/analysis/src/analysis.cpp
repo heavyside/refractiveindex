@@ -502,6 +502,8 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
                     if(whichGraph=="SQUARE_WAVE"){
                         lightLevel = 255*squareWave(maxResultA, divisionsA, showGraphA);
                     }
+                    
+                    
                     //TODO: NEED TO REMOVE THIS from functions and GUI
                     /*
                      if(whichGraph=="QUADRATIC"){
@@ -866,7 +868,7 @@ void analysis::synthDrawCamRecord(ofPixels pixels){
         //CAM_FRAMERATE 
         
         // TODO: This is still a bit fucked up - the timing goes 'over' 30 and under 'zero' 
-        // TODO: The frame rate should probably ramp as a gaussian (not linearly)
+        // TODO: The frame rate should probably ramp as a  (not linearly)
         
         
         // TODO:  How to save the output from this?  Perhaps as a video?... hmmm..

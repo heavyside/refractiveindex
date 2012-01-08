@@ -41,16 +41,19 @@ protected:
     
     // gui
     ofxControlPanel     _gui;   
-    ofPixels            _pixels;
     
-    // acquisition
-    ofVideoGrabber      _vidGrabber;
-    vector<string>      videoSourceList;
-    int                 _vid_w, _vid_h, _vid_id;
-    bool                _vid_stream_open;
-    bool                _vid_toggle_on;
     
     AbstractAnalysis*   _currentAnalysis;  
     AnalysisAdaptor*    _analysisAdapator;
+    
+public:    
+    // acquisition
+    static ofPixels         _pixels;    
+    static ofVideoGrabber   _vidGrabber;
+    vector<string>          videoSourceList;
+    static int              _vid_w, _vid_h, _vid_id;
+    static bool             _vid_stream_open;
+    static bool             _vid_toggle_on;
+    
 
 };
