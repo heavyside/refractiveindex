@@ -1,25 +1,18 @@
-/*
- ~ author: dviid
- ~ contact: dviid@labs.ciid.dk 
- */
-
+#define DELTA_T_SAVE        10  //the milisecond timing 
+#define NUM_PHASE           1
+#define NUM_RUN             1
+#define NUM_SAVE_PER_RUN    100
 #pragma once
 
 #include "AbstractAnalysis.h"
 
 #include "Poco/Timer.h"
 
-#define DELTA_T_SAVE        100  //the milisecond timing 
-#define NUM_PHASE           1
-#define NUM_RUN             1
-#define NUM_SAVE_PER_RUN    100
-
-
-class IResponseAnalysis : public AbstractAnalysis
+class ColorMultiAnalysis : public AbstractAnalysis
 {
 public:
-    IResponseAnalysis(): AbstractAnalysis("I_RESPONSE"){;}
-    virtual ~IResponseAnalysis(){;}
+    ColorMultiAnalysis(): AbstractAnalysis("COLOR_MULTI"){;}
+    virtual ~ColorMultiAnalysis(){;}
     
 public:
     
@@ -38,5 +31,4 @@ protected:
     int     _run_cnt, _save_cnt;
     float   c, _frame_cnt, _frame_cnt_max;
     string _whole_file_path;
-    
 };

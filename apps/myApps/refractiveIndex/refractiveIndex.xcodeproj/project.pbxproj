@@ -30,9 +30,6 @@
 		42109FB91474852D00FC5F54 /* ofxCvHaarFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9a16cbf2e8cfe43af54fe6f55efbf8a4 /* ofxCvHaarFinder.cpp */; };
 		42109FBA1474852D00FC5F54 /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8a4dd23693dfab8ec05faa5d62c49d8c /* ofxCvShortImage.cpp */; };
 		42109FBB1474852D00FC5F54 /* analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CAFD13FDB9470013126C /* analysis.cpp */; };
-		42109FBC1474852D00FC5F54 /* ofx3DGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0313FDB9AC0013126C /* ofx3DGraphics.cpp */; };
-		42109FBD1474852D00FC5F54 /* ofxCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0613FDB9AC0013126C /* ofxCamera.cpp */; };
-		42109FBE1474852D00FC5F54 /* ofxLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0913FDB9AC0013126C /* ofxLight.cpp */; };
 		42109FBF1474852D00FC5F54 /* guiBaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0D13FDB9AC0013126C /* guiBaseObject.cpp */; };
 		42109FC01474852D00FC5F54 /* guiCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0F13FDB9AC0013126C /* guiCallback.cpp */; };
 		42109FC11474852D00FC5F54 /* guiCallbackValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB1113FDB9AC0013126C /* guiCallbackValue.cpp */; };
@@ -60,19 +57,6 @@
 		42109FD71474852D00FC5F54 /* simpleColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4113FDB9AC0013126C /* simpleColor.cpp */; };
 		42109FD81474852D00FC5F54 /* simpleFileLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4313FDB9AC0013126C /* simpleFileLister.cpp */; };
 		42109FD91474852D00FC5F54 /* simpleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4513FDB9AC0013126C /* simpleLogger.cpp */; };
-		42109FDA1474852D00FC5F54 /* DepthDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4F13FDB9AC0013126C /* DepthDecoder.cpp */; };
-		42109FDB1474852D00FC5F54 /* DepthExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5113FDB9AC0013126C /* DepthExporter.cpp */; };
-		42109FDC1474852D00FC5F54 /* FastThreePhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5413FDB9AC0013126C /* FastThreePhase.cpp */; };
-		42109FDD1474852D00FC5F54 /* FloodFillDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5613FDB9AC0013126C /* FloodFillDecoder.cpp */; };
-		42109FDE1474852D00FC5F54 /* LutFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5813FDB9AC0013126C /* LutFilter.cpp */; };
-		42109FDF1474852D00FC5F54 /* PartialQualityMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5B13FDB9AC0013126C /* PartialQualityMap.cpp */; };
-		42109FE01474852D00FC5F54 /* PatternGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5D13FDB9AC0013126C /* PatternGenerator.cpp */; };
-		42109FE11474852D00FC5F54 /* PhaseDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6013FDB9AC0013126C /* PhaseDecoder.cpp */; };
-		42109FE21474852D00FC5F54 /* PriorityDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6213FDB9AC0013126C /* PriorityDecoder.cpp */; };
-		42109FE31474852D00FC5F54 /* ScanlineOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6413FDB9AC0013126C /* ScanlineOffset.cpp */; };
-		42109FE41474852D00FC5F54 /* ThreePhaseDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6713FDB9AC0013126C /* ThreePhaseDecoder.cpp */; };
-		42109FE51474852D00FC5F54 /* ThreePhaseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6913FDB9AC0013126C /* ThreePhaseGenerator.cpp */; };
-		42109FE61474852D00FC5F54 /* ThreePhaseWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6B13FDB9AC0013126C /* ThreePhaseWrap.cpp */; };
 		42109FE71474852D00FC5F54 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7C13FDB9AC0013126C /* tinyxml.cpp */; };
 		42109FE81474852D00FC5F54 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7E13FDB9AC0013126C /* tinyxmlerror.cpp */; };
 		42109FE91474852D00FC5F54 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7F13FDB9AC0013126C /* tinyxmlparser.cpp */; };
@@ -96,9 +80,6 @@
 		7829c785a0dd56718cb46bcc3b066ff1 /* ofxCvHaarFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9a16cbf2e8cfe43af54fe6f55efbf8a4 /* ofxCvHaarFinder.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E2A6CAFF13FDB9480013126C /* analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CAFD13FDB9470013126C /* analysis.cpp */; };
-		E2A6CB8313FDB9AC0013126C /* ofx3DGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0313FDB9AC0013126C /* ofx3DGraphics.cpp */; };
-		E2A6CB8413FDB9AC0013126C /* ofxCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0613FDB9AC0013126C /* ofxCamera.cpp */; };
-		E2A6CB8513FDB9AC0013126C /* ofxLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0913FDB9AC0013126C /* ofxLight.cpp */; };
 		E2A6CB8613FDB9AC0013126C /* guiBaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0D13FDB9AC0013126C /* guiBaseObject.cpp */; };
 		E2A6CB8713FDB9AC0013126C /* guiCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB0F13FDB9AC0013126C /* guiCallback.cpp */; };
 		E2A6CB8813FDB9AC0013126C /* guiCallbackValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB1113FDB9AC0013126C /* guiCallbackValue.cpp */; };
@@ -126,19 +107,6 @@
 		E2A6CB9E13FDB9AC0013126C /* simpleColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4113FDB9AC0013126C /* simpleColor.cpp */; };
 		E2A6CB9F13FDB9AC0013126C /* simpleFileLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4313FDB9AC0013126C /* simpleFileLister.cpp */; };
 		E2A6CBA013FDB9AC0013126C /* simpleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4513FDB9AC0013126C /* simpleLogger.cpp */; };
-		E2A6CBA113FDB9AC0013126C /* DepthDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB4F13FDB9AC0013126C /* DepthDecoder.cpp */; };
-		E2A6CBA213FDB9AC0013126C /* DepthExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5113FDB9AC0013126C /* DepthExporter.cpp */; };
-		E2A6CBA313FDB9AD0013126C /* FastThreePhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5413FDB9AC0013126C /* FastThreePhase.cpp */; };
-		E2A6CBA413FDB9AD0013126C /* FloodFillDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5613FDB9AC0013126C /* FloodFillDecoder.cpp */; };
-		E2A6CBA513FDB9AD0013126C /* LutFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5813FDB9AC0013126C /* LutFilter.cpp */; };
-		E2A6CBA613FDB9AD0013126C /* PartialQualityMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5B13FDB9AC0013126C /* PartialQualityMap.cpp */; };
-		E2A6CBA713FDB9AD0013126C /* PatternGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB5D13FDB9AC0013126C /* PatternGenerator.cpp */; };
-		E2A6CBA813FDB9AD0013126C /* PhaseDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6013FDB9AC0013126C /* PhaseDecoder.cpp */; };
-		E2A6CBA913FDB9AD0013126C /* PriorityDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6213FDB9AC0013126C /* PriorityDecoder.cpp */; };
-		E2A6CBAA13FDB9AD0013126C /* ScanlineOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6413FDB9AC0013126C /* ScanlineOffset.cpp */; };
-		E2A6CBAB13FDB9AD0013126C /* ThreePhaseDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6713FDB9AC0013126C /* ThreePhaseDecoder.cpp */; };
-		E2A6CBAC13FDB9AD0013126C /* ThreePhaseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6913FDB9AC0013126C /* ThreePhaseGenerator.cpp */; };
-		E2A6CBAD13FDB9AD0013126C /* ThreePhaseWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB6B13FDB9AC0013126C /* ThreePhaseWrap.cpp */; };
 		E2A6CBAE13FDB9AD0013126C /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7C13FDB9AC0013126C /* tinyxml.cpp */; };
 		E2A6CBAF13FDB9AD0013126C /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7E13FDB9AC0013126C /* tinyxmlerror.cpp */; };
 		E2A6CBB013FDB9AD0013126C /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2A6CB7F13FDB9AC0013126C /* tinyxmlparser.cpp */; };
@@ -239,14 +207,6 @@
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E2A6CAFD13FDB9470013126C /* analysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = analysis.cpp; sourceTree = "<group>"; };
 		E2A6CAFE13FDB9470013126C /* analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysis.h; sourceTree = "<group>"; };
-		E2A6CB0313FDB9AC0013126C /* ofx3DGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofx3DGraphics.cpp; sourceTree = "<group>"; };
-		E2A6CB0413FDB9AC0013126C /* ofx3DGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofx3DGraphics.h; sourceTree = "<group>"; };
-		E2A6CB0513FDB9AC0013126C /* ofx3DUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofx3DUtils.h; sourceTree = "<group>"; };
-		E2A6CB0613FDB9AC0013126C /* ofxCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCamera.cpp; sourceTree = "<group>"; };
-		E2A6CB0713FDB9AC0013126C /* ofxCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCamera.h; sourceTree = "<group>"; };
-		E2A6CB0813FDB9AC0013126C /* ofxEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxEasyCam.h; sourceTree = "<group>"; };
-		E2A6CB0913FDB9AC0013126C /* ofxLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLight.cpp; sourceTree = "<group>"; };
-		E2A6CB0A13FDB9AC0013126C /* ofxLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLight.h; sourceTree = "<group>"; };
 		E2A6CB0D13FDB9AC0013126C /* guiBaseObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guiBaseObject.cpp; sourceTree = "<group>"; };
 		E2A6CB0E13FDB9AC0013126C /* guiBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guiBaseObject.h; sourceTree = "<group>"; };
 		E2A6CB0F13FDB9AC0013126C /* guiCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guiCallback.cpp; sourceTree = "<group>"; };
@@ -308,36 +268,6 @@
 		E2A6CB4913FDB9AC0013126C /* Instructions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Instructions.txt; sourceTree = "<group>"; };
 		E2A6CB4A13FDB9AC0013126C /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		E2A6CB4C13FDB9AC0013126C /* ofxDirList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDirList.h; sourceTree = "<group>"; };
-		E2A6CB4F13FDB9AC0013126C /* DepthDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DepthDecoder.cpp; sourceTree = "<group>"; };
-		E2A6CB5013FDB9AC0013126C /* DepthDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DepthDecoder.h; sourceTree = "<group>"; };
-		E2A6CB5113FDB9AC0013126C /* DepthExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DepthExporter.cpp; sourceTree = "<group>"; };
-		E2A6CB5213FDB9AC0013126C /* DepthExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DepthExporter.h; sourceTree = "<group>"; };
-		E2A6CB5313FDB9AC0013126C /* FastBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastBlur.h; sourceTree = "<group>"; };
-		E2A6CB5413FDB9AC0013126C /* FastThreePhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastThreePhase.cpp; sourceTree = "<group>"; };
-		E2A6CB5513FDB9AC0013126C /* FastThreePhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastThreePhase.h; sourceTree = "<group>"; };
-		E2A6CB5613FDB9AC0013126C /* FloodFillDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloodFillDecoder.cpp; sourceTree = "<group>"; };
-		E2A6CB5713FDB9AC0013126C /* FloodFillDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloodFillDecoder.h; sourceTree = "<group>"; };
-		E2A6CB5813FDB9AC0013126C /* LutFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LutFilter.cpp; sourceTree = "<group>"; };
-		E2A6CB5913FDB9AC0013126C /* LutFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LutFilter.h; sourceTree = "<group>"; };
-		E2A6CB5A13FDB9AC0013126C /* ofxStructuredLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxStructuredLight.h; sourceTree = "<group>"; };
-		E2A6CB5B13FDB9AC0013126C /* PartialQualityMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PartialQualityMap.cpp; sourceTree = "<group>"; };
-		E2A6CB5C13FDB9AC0013126C /* PartialQualityMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PartialQualityMap.h; sourceTree = "<group>"; };
-		E2A6CB5D13FDB9AC0013126C /* PatternGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternGenerator.cpp; sourceTree = "<group>"; };
-		E2A6CB5E13FDB9AC0013126C /* PatternGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatternGenerator.h; sourceTree = "<group>"; };
-		E2A6CB5F13FDB9AC0013126C /* PhaseConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhaseConstants.h; sourceTree = "<group>"; };
-		E2A6CB6013FDB9AC0013126C /* PhaseDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhaseDecoder.cpp; sourceTree = "<group>"; };
-		E2A6CB6113FDB9AC0013126C /* PhaseDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhaseDecoder.h; sourceTree = "<group>"; };
-		E2A6CB6213FDB9AC0013126C /* PriorityDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PriorityDecoder.cpp; sourceTree = "<group>"; };
-		E2A6CB6313FDB9AC0013126C /* PriorityDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityDecoder.h; sourceTree = "<group>"; };
-		E2A6CB6413FDB9AC0013126C /* ScanlineOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScanlineOffset.cpp; sourceTree = "<group>"; };
-		E2A6CB6513FDB9AC0013126C /* ScanlineOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanlineOffset.h; sourceTree = "<group>"; };
-		E2A6CB6613FDB9AC0013126C /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
-		E2A6CB6713FDB9AC0013126C /* ThreePhaseDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreePhaseDecoder.cpp; sourceTree = "<group>"; };
-		E2A6CB6813FDB9AC0013126C /* ThreePhaseDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreePhaseDecoder.h; sourceTree = "<group>"; };
-		E2A6CB6913FDB9AC0013126C /* ThreePhaseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreePhaseGenerator.cpp; sourceTree = "<group>"; };
-		E2A6CB6A13FDB9AC0013126C /* ThreePhaseGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreePhaseGenerator.h; sourceTree = "<group>"; };
-		E2A6CB6B13FDB9AC0013126C /* ThreePhaseWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreePhaseWrap.cpp; sourceTree = "<group>"; };
-		E2A6CB6C13FDB9AC0013126C /* ThreePhaseWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreePhaseWrap.h; sourceTree = "<group>"; };
 		E2A6CB6F13FDB9AC0013126C /* ofxMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMatrix3x3.h; sourceTree = "<group>"; };
 		E2A6CB7013FDB9AC0013126C /* ofxMatrix4x4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMatrix4x4.h; sourceTree = "<group>"; };
 		E2A6CB7113FDB9AC0013126C /* ofxPoint2f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxPoint2f.h; sourceTree = "<group>"; };
@@ -445,10 +375,8 @@
 			isa = PBXGroup;
 			children = (
 				E2A6CBB213FDB9ED0013126C /* ofxQtVideoSaver */,
-				E2A6CB0113FDB9AC0013126C /* ofx3DUtils */,
 				E2A6CB0B13FDB9AC0013126C /* ofxControlPanel */,
 				E2A6CB4713FDB9AC0013126C /* ofxDirList */,
-				E2A6CB4D13FDB9AC0013126C /* ofxStructuredLight */,
 				E2A6CB6D13FDB9AC0013126C /* ofxVectorMath */,
 				E2A6CB7913FDB9AC0013126C /* ofxXmlSettings */,
 				E2A6CAFB13FDB9470013126C /* analysis */,
@@ -507,30 +435,6 @@
 				42053B8714B23111000E885B /* AbstractAnalysis.cpp */,
 				E2A6CAFD13FDB9470013126C /* analysis.cpp */,
 				E2A6CAFE13FDB9470013126C /* analysis.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		E2A6CB0113FDB9AC0013126C /* ofx3DUtils */ = {
-			isa = PBXGroup;
-			children = (
-				E2A6CB0213FDB9AC0013126C /* src */,
-			);
-			name = ofx3DUtils;
-			path = ../../../addons/ofx3DUtils;
-			sourceTree = "<group>";
-		};
-		E2A6CB0213FDB9AC0013126C /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E2A6CB0313FDB9AC0013126C /* ofx3DGraphics.cpp */,
-				E2A6CB0413FDB9AC0013126C /* ofx3DGraphics.h */,
-				E2A6CB0513FDB9AC0013126C /* ofx3DUtils.h */,
-				E2A6CB0613FDB9AC0013126C /* ofxCamera.cpp */,
-				E2A6CB0713FDB9AC0013126C /* ofxCamera.h */,
-				E2A6CB0813FDB9AC0013126C /* ofxEasyCam.h */,
-				E2A6CB0913FDB9AC0013126C /* ofxLight.cpp */,
-				E2A6CB0A13FDB9AC0013126C /* ofxLight.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -632,52 +536,6 @@
 			isa = PBXGroup;
 			children = (
 				E2A6CB4C13FDB9AC0013126C /* ofxDirList.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		E2A6CB4D13FDB9AC0013126C /* ofxStructuredLight */ = {
-			isa = PBXGroup;
-			children = (
-				E2A6CB4E13FDB9AC0013126C /* src */,
-			);
-			name = ofxStructuredLight;
-			path = ../../../addons/ofxStructuredLight;
-			sourceTree = "<group>";
-		};
-		E2A6CB4E13FDB9AC0013126C /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E2A6CB4F13FDB9AC0013126C /* DepthDecoder.cpp */,
-				E2A6CB5013FDB9AC0013126C /* DepthDecoder.h */,
-				E2A6CB5113FDB9AC0013126C /* DepthExporter.cpp */,
-				E2A6CB5213FDB9AC0013126C /* DepthExporter.h */,
-				E2A6CB5313FDB9AC0013126C /* FastBlur.h */,
-				E2A6CB5413FDB9AC0013126C /* FastThreePhase.cpp */,
-				E2A6CB5513FDB9AC0013126C /* FastThreePhase.h */,
-				E2A6CB5613FDB9AC0013126C /* FloodFillDecoder.cpp */,
-				E2A6CB5713FDB9AC0013126C /* FloodFillDecoder.h */,
-				E2A6CB5813FDB9AC0013126C /* LutFilter.cpp */,
-				E2A6CB5913FDB9AC0013126C /* LutFilter.h */,
-				E2A6CB5A13FDB9AC0013126C /* ofxStructuredLight.h */,
-				E2A6CB5B13FDB9AC0013126C /* PartialQualityMap.cpp */,
-				E2A6CB5C13FDB9AC0013126C /* PartialQualityMap.h */,
-				E2A6CB5D13FDB9AC0013126C /* PatternGenerator.cpp */,
-				E2A6CB5E13FDB9AC0013126C /* PatternGenerator.h */,
-				E2A6CB5F13FDB9AC0013126C /* PhaseConstants.h */,
-				E2A6CB6013FDB9AC0013126C /* PhaseDecoder.cpp */,
-				E2A6CB6113FDB9AC0013126C /* PhaseDecoder.h */,
-				E2A6CB6213FDB9AC0013126C /* PriorityDecoder.cpp */,
-				E2A6CB6313FDB9AC0013126C /* PriorityDecoder.h */,
-				E2A6CB6413FDB9AC0013126C /* ScanlineOffset.cpp */,
-				E2A6CB6513FDB9AC0013126C /* ScanlineOffset.h */,
-				E2A6CB6613FDB9AC0013126C /* Shared.h */,
-				E2A6CB6713FDB9AC0013126C /* ThreePhaseDecoder.cpp */,
-				E2A6CB6813FDB9AC0013126C /* ThreePhaseDecoder.h */,
-				E2A6CB6913FDB9AC0013126C /* ThreePhaseGenerator.cpp */,
-				E2A6CB6A13FDB9AC0013126C /* ThreePhaseGenerator.h */,
-				E2A6CB6B13FDB9AC0013126C /* ThreePhaseWrap.cpp */,
-				E2A6CB6C13FDB9AC0013126C /* ThreePhaseWrap.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -972,9 +830,6 @@
 				42109FB91474852D00FC5F54 /* ofxCvHaarFinder.cpp in Sources */,
 				42109FBA1474852D00FC5F54 /* ofxCvShortImage.cpp in Sources */,
 				42109FBB1474852D00FC5F54 /* analysis.cpp in Sources */,
-				42109FBC1474852D00FC5F54 /* ofx3DGraphics.cpp in Sources */,
-				42109FBD1474852D00FC5F54 /* ofxCamera.cpp in Sources */,
-				42109FBE1474852D00FC5F54 /* ofxLight.cpp in Sources */,
 				42109FBF1474852D00FC5F54 /* guiBaseObject.cpp in Sources */,
 				42109FC01474852D00FC5F54 /* guiCallback.cpp in Sources */,
 				42109FC11474852D00FC5F54 /* guiCallbackValue.cpp in Sources */,
@@ -1002,19 +857,6 @@
 				42109FD71474852D00FC5F54 /* simpleColor.cpp in Sources */,
 				42109FD81474852D00FC5F54 /* simpleFileLister.cpp in Sources */,
 				42109FD91474852D00FC5F54 /* simpleLogger.cpp in Sources */,
-				42109FDA1474852D00FC5F54 /* DepthDecoder.cpp in Sources */,
-				42109FDB1474852D00FC5F54 /* DepthExporter.cpp in Sources */,
-				42109FDC1474852D00FC5F54 /* FastThreePhase.cpp in Sources */,
-				42109FDD1474852D00FC5F54 /* FloodFillDecoder.cpp in Sources */,
-				42109FDE1474852D00FC5F54 /* LutFilter.cpp in Sources */,
-				42109FDF1474852D00FC5F54 /* PartialQualityMap.cpp in Sources */,
-				42109FE01474852D00FC5F54 /* PatternGenerator.cpp in Sources */,
-				42109FE11474852D00FC5F54 /* PhaseDecoder.cpp in Sources */,
-				42109FE21474852D00FC5F54 /* PriorityDecoder.cpp in Sources */,
-				42109FE31474852D00FC5F54 /* ScanlineOffset.cpp in Sources */,
-				42109FE41474852D00FC5F54 /* ThreePhaseDecoder.cpp in Sources */,
-				42109FE51474852D00FC5F54 /* ThreePhaseGenerator.cpp in Sources */,
-				42109FE61474852D00FC5F54 /* ThreePhaseWrap.cpp in Sources */,
 				42109FE71474852D00FC5F54 /* tinyxml.cpp in Sources */,
 				42109FE81474852D00FC5F54 /* tinyxmlerror.cpp in Sources */,
 				42109FE91474852D00FC5F54 /* tinyxmlparser.cpp in Sources */,
@@ -1042,9 +884,6 @@
 				7829c785a0dd56718cb46bcc3b066ff1 /* ofxCvHaarFinder.cpp in Sources */,
 				0b2e55fee13134ce9b57d3bffd6d5dab /* ofxCvShortImage.cpp in Sources */,
 				E2A6CAFF13FDB9480013126C /* analysis.cpp in Sources */,
-				E2A6CB8313FDB9AC0013126C /* ofx3DGraphics.cpp in Sources */,
-				E2A6CB8413FDB9AC0013126C /* ofxCamera.cpp in Sources */,
-				E2A6CB8513FDB9AC0013126C /* ofxLight.cpp in Sources */,
 				E2A6CB8613FDB9AC0013126C /* guiBaseObject.cpp in Sources */,
 				E2A6CB8713FDB9AC0013126C /* guiCallback.cpp in Sources */,
 				E2A6CB8813FDB9AC0013126C /* guiCallbackValue.cpp in Sources */,
@@ -1072,19 +911,6 @@
 				E2A6CB9E13FDB9AC0013126C /* simpleColor.cpp in Sources */,
 				E2A6CB9F13FDB9AC0013126C /* simpleFileLister.cpp in Sources */,
 				E2A6CBA013FDB9AC0013126C /* simpleLogger.cpp in Sources */,
-				E2A6CBA113FDB9AC0013126C /* DepthDecoder.cpp in Sources */,
-				E2A6CBA213FDB9AC0013126C /* DepthExporter.cpp in Sources */,
-				E2A6CBA313FDB9AD0013126C /* FastThreePhase.cpp in Sources */,
-				E2A6CBA413FDB9AD0013126C /* FloodFillDecoder.cpp in Sources */,
-				E2A6CBA513FDB9AD0013126C /* LutFilter.cpp in Sources */,
-				E2A6CBA613FDB9AD0013126C /* PartialQualityMap.cpp in Sources */,
-				E2A6CBA713FDB9AD0013126C /* PatternGenerator.cpp in Sources */,
-				E2A6CBA813FDB9AD0013126C /* PhaseDecoder.cpp in Sources */,
-				E2A6CBA913FDB9AD0013126C /* PriorityDecoder.cpp in Sources */,
-				E2A6CBAA13FDB9AD0013126C /* ScanlineOffset.cpp in Sources */,
-				E2A6CBAB13FDB9AD0013126C /* ThreePhaseDecoder.cpp in Sources */,
-				E2A6CBAC13FDB9AD0013126C /* ThreePhaseGenerator.cpp in Sources */,
-				E2A6CBAD13FDB9AD0013126C /* ThreePhaseWrap.cpp in Sources */,
 				E2A6CBAE13FDB9AD0013126C /* tinyxml.cpp in Sources */,
 				E2A6CBAF13FDB9AD0013126C /* tinyxmlerror.cpp in Sources */,
 				E2A6CBB013FDB9AD0013126C /* tinyxmlparser.cpp in Sources */,
@@ -1213,7 +1039,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = refractiveApp_10.5;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.5;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1316,7 +1142,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = refractiveApp_10.5;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.5;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

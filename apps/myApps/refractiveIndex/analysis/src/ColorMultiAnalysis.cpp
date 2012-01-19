@@ -30,7 +30,7 @@
  ~ contact: dviid@labs.ciid.dk 
  */
 
-#include "ShadowScapesAnalysis.h"
+#include "ColorMultiAnalysis.h"
 #include "ofMain.h"
 
 #include "Poco/Timer.h"
@@ -41,103 +41,99 @@ using Poco::Timer;
 using Poco::TimerCallback;
 using Poco::Thread;
 
-#define STATE_SCAN      0
-#define STATE_ANALYSIS  1
 
-void ShadowScapesAnalysis::setup(int camWidth, int camHeight)
+
+void ColorMultiAnalysis::setup(int camWidth, int camHeight)
 {
-    //AbstractAnalysis::setup(camWidth, camHeight);    
-    //_lastTime = ofGetElapsedTimeMillis();  
     // HERE IS WHERE WE SETUP THE DIRECTORY FOR ALL THE SAVED IMAGES
-    
+
     ofDirectory dir;
-    _whole_file_path= string(ANALYSIS_PATH)+RefractiveIndex::_location+"/"+ _name;
+     _whole_file_path= string(ANALYSIS_PATH)+RefractiveIndex::_location+"/"+ _name;
     
     if(!dir.doesDirectoryExist(_whole_file_path))
         dir.createDirectory(string(ANALYSIS_PATH)+RefractiveIndex::_location+"/", true,false); 
-    dir.createDirectory(_whole_file_path, true,false);
-    _speed = 300;
+        dir.createDirectory(_whole_file_path, true,false);  
+    _frame_cnt = 0;
+    _frame_cnt_max = ofGetFrameRate() * ((DELTA_T_SAVE * NUM_SAVE_PER_RUN) / 1000);
+    
+    c = 0;
 }
 
-void ShadowScapesAnalysis::synthesize()
+void ColorMultiAnalysis::synthesize()
 {
-    int w;
-    if(_dir == H) w = ofGetWidth();
-    else if(_dir == V) w = ofGetHeight();
-    _step = ((w / _speed) * 1000) / 50;
-    _line = 0;
-    Timer scan_timer(0, 50);
     
-    TimerCallback<ShadowScapesAnalysis> strobe_callback(*this, &ShadowScapesAnalysis::scan_cb);
+    Timer* save_timer;
     
-    _state = STATE_SCAN;
+    TimerCallback<ColorMultiAnalysis> save_callback(*this, &ColorMultiAnalysis::save_cb);
     
-    scan_timer.start(strobe_callback);
-    
-    while(_state != STATE_ANALYSIS)
-        Thread::sleep(5);
-    
-    scan_timer.stop();
-    // do analysis here
-    // go back to the files i've saved and do the math here -     
-
-    while(_state != STATE_STOP)
-        Thread::sleep(100);
-    
+    // RUN ROUTINE 
+    for(int i = 0; i < NUM_RUN; i++) {
+        
+        _run_cnt = i;
+        
+        cout << "RUN NUM = " << i;
+        
+        save_timer = new Timer(0, DELTA_T_SAVE); // timing interval for saving files
+        save_timer->start(save_callback);        
+        _RUN_DONE = false;
+        _frame_cnt = 0; _save_cnt = 0;
+        
+        while(!_RUN_DONE)
+            Thread::sleep(3);
+        
+        save_timer->stop();        
+    }
 }
 
-void ShadowScapesAnalysis::gui_attach(ofxControlPanel* gui)
+void ColorMultiAnalysis::gui_attach(ofxControlPanel* gui)
 {
     gui->addToggle("GO", "GO", 0);
     gui->addButtonSlider("animation time limit", "ANIMATION_TIME_LIMIT", 10, 1, 3000, TRUE);    
     
 }
 
-void ShadowScapesAnalysis::gui_detach()
+void ColorMultiAnalysis::gui_detach()
 {
-    
     
 }
 
-
-// the animation draw - and the output draw 
-void ShadowScapesAnalysis::draw()
+void ColorMultiAnalysis::draw()
 {
-    
-    static int _pos;
-    
-    if(_state == STATE_ANALYSIS) {
-        ofSetColor(0, 200, 0);               
-        ofRect(0, 0, ofGetWidth(), ofGetHeight());         
-        return;
-    }
-    
-    if(_state == STATE_SCAN) {
-        if(_pos != _line) {
-            //take snap??
-            _pos = _line;
+
+        
+        if (_frame_cnt < _frame_cnt_max)
+        {
+            ofColor aColor;
+            //cout<<_current_hue<<" ";
+            aColor.setHsb(c, 255, 255);
+            ofSetColor(aColor);
+            ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
+            //percentage of the way through the number of frames - _frame_cnt is the most important here!
+            c  = 255.0 * (_frame_cnt_max - _frame_cnt)/(_frame_cnt_max);
         }
-        ofSetColor(255, 255,  255); 
+        _frame_cnt++;
         
-        if(_dir == H) ofRect(_pos, 0, 50, ofGetHeight());
-        else if(_dir == V) ofRect(0, _pos, ofGetWidth(), 50);
-        
-    }
-    
-    
+
 }
 
 
-void ShadowScapesAnalysis::scan_cb(Timer& timer)
+// this runs at save_cb timer rate = DELTA_T_SAVE
+void ColorMultiAnalysis::save_cb(Timer& timer)
 {
-    cout << "ShadowScapesAnalysis::scan_cb\n";
+    _save_cnt++;
     
-    _line += _step;
+    // UPDATE THE COLOR ON THE SCREEN
+    //float c_last = c;    
     
-    if((_dir == H && _line >= ofGetWidth()) || 
-       (_dir == V && _line >= ofGetHeight())) { 
-        _state = STATE_ANALYSIS;
-    }
+    cout << "COLORMULTIANALYSIS::saving...\n";
+    cout << "c_last... " << c << endl;    
+    string file_name = ofToString(_save_cnt,2)+"_"+ofToString(c,2)+"_"+ofToString(_run_cnt,2)+".jpg";
+
+    cout<<_whole_file_path<<endl;
+    ofSaveImage(RefractiveIndex::_pixels, _whole_file_path+"/"+file_name, OF_IMAGE_QUALITY_BEST);
+    
+    if(_save_cnt >= NUM_SAVE_PER_RUN)
+        _RUN_DONE = true;
     
     
 }

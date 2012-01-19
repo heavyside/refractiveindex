@@ -15,11 +15,11 @@
 #define NUM_SAVE_PER_RUN    100
 
 
-class IResponseAnalysis : public AbstractAnalysis
+class ColorSingleAnalysis : public AbstractAnalysis
 {
 public:
-    IResponseAnalysis(): AbstractAnalysis("I_RESPONSE"){;}
-    virtual ~IResponseAnalysis(){;}
+    ColorSingleAnalysis(): AbstractAnalysis("COLOR_SINGLE"){;}
+    virtual ~ColorSingleAnalysis(){;}
     
 public:
     
@@ -36,7 +36,7 @@ protected:
     
     bool    _RUN_DONE;
     int     _run_cnt, _save_cnt;
-    float   c, _frame_cnt, _frame_cnt_max;
+    float   r,g,b, _frame_cnt, _frame_cnt_max;
     string _whole_file_path;
     
 };

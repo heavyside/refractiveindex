@@ -9,7 +9,7 @@
 #include "ofMain.h"
 #include "ofxQtVideoSaver.h"
 #include "ofxXmlSettings.h"
-#include "ThreePhaseDecoder.h"
+//#include "ThreePhaseDecoder.h"
 #include "ofxFileHelper.h"
 
 using namespace std;
@@ -173,11 +173,7 @@ public:
     ofImage cameraCapture;
     vector <ofImage> vectorOfImages;
     vector <float> lightLevels;
-    
-    
     vector <ofPixels> vectorOfPixels;
-    
-    
     vector <unsigned char *> imgPixels;
     unsigned char * imgPixel;
     

@@ -3,7 +3,7 @@
  ~ contact: dviid@labs.ciid.dk 
  */
 
-#include "IResponseAnalysis.h"
+#include "ColorSingleAnalysis.h"
 #include "ofMain.h"
 
 #include "Poco/Timer.h"
@@ -16,9 +16,8 @@ using Poco::TimerCallback;
 using Poco::Thread;
 
 
-void IResponseAnalysis::setup(int camWidth, int camHeight)
+void ColorSingleAnalysis::setup(int camWidth, int camHeight)
 {    
-    // HERE IS WHERE WE SETUP THE DIRECTORY FOR ALL THE SAVED IMAGES
     // HERE IS WHERE WE SETUP THE DIRECTORY FOR ALL THE SAVED IMAGES
     
     ofDirectory dir;
@@ -33,16 +32,18 @@ void IResponseAnalysis::setup(int camWidth, int camHeight)
     
     _frame_cnt = 0;
     _frame_cnt_max = ofGetFrameRate() * ((DELTA_T_SAVE * NUM_SAVE_PER_RUN) / 1000);
-    c = 0;
+    r = 0;
+    g = 0;
+    b = 0;
 }
 
 
-void IResponseAnalysis::synthesize()
+void ColorSingleAnalysis::synthesize()
 {
     
     Timer* save_timer;
     
-    TimerCallback<IResponseAnalysis> save_callback(*this, &IResponseAnalysis::save_cb);
+    TimerCallback<ColorSingleAnalysis> save_callback(*this, &ColorSingleAnalysis::save_cb);
     
     // RUN ROUTINE 
     for(int i = 0; i < NUM_RUN; i++) {
@@ -63,57 +64,62 @@ void IResponseAnalysis::synthesize()
     }
 }
 
-void IResponseAnalysis::gui_attach(ofxControlPanel* gui)
+void ColorSingleAnalysis::gui_attach(ofxControlPanel* gui)
 {
     
 }
 
-void IResponseAnalysis::gui_detach()
+void ColorSingleAnalysis::gui_detach()
 {
     
 }
 
-//void IResponseAnalysis::draw(ofPixels _pixels)   //trying to figure out how to get pixels from the RefractiveIndex.cpp 
 
-
-// this runs at frame rate = 33 ms for 30 FPS
-void IResponseAnalysis::draw()
+void ColorSingleAnalysis::draw()
 {
-    /// *** TODO  *** ///
-    // still need to deal with latency frames here - i.e.: there are frames 
-    /// *** TODO  *** ///
-    
-    if (_frame_cnt < _frame_cnt_max)
-    {
-        ofSetColor(c, c, c);
+
+    float one_third_of_frame_count_max=_frame_cnt_max/3;
+    if (_frame_cnt < one_third_of_frame_count_max){
+        r=255.0;
+        g=0.0;
+        b=0.0;
+        ofSetColor(r,g,b);
         ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
-        c  = 255.0 * (_frame_cnt_max - _frame_cnt)/(_frame_cnt_max);
     }
+    if (_frame_cnt >= one_third_of_frame_count_max && _frame_cnt < 2*one_third_of_frame_count_max){
+        r=0.0;
+        g=255.0;
+        b=0.0;
+        ofSetColor(r,g,b);
+        ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
+    }
+    if (_frame_cnt >= 2*one_third_of_frame_count_max && _frame_cnt < _frame_cnt_max){
+        r=0.0;
+        g=0.0;
+        b=255.0;
+        ofSetColor(r,g,b);
+        ofRect(0, 0, ofGetWidth(), ofGetHeight()); 
+    }
+    
     _frame_cnt++;
     
     
 }
 
 // this runs at save_cb timer rate = DELTA_T_SAVE
-void IResponseAnalysis::save_cb(Timer& timer)
+void ColorSingleAnalysis::save_cb(Timer& timer)
 {
     _save_cnt++;
+
     
-    // UPDATE THE COLOR ON THE SCREEN
-    //float c_last = c;    
+    cout << "ColorSingleAnalysis::saving...\n";
+    string file_name =ofToString(_frame_cnt,2)+"_"+ofToString((int)r,2)+"_"+ofToString((int)g,2)+"_"+ofToString((int)b,2)+"_"+ofToString(_run_cnt,2)+".jpg";
     
-    cout << "IResponseAnalysis::saving...\n";
-    cout << "c_last... " << c << endl;    
-    string file_name = ofToString(_save_cnt,2)+"_"+ ofToString(c,2)+"_"+ofToString(_run_cnt,2)+".jpg";
-    string thisLocation = RefractiveIndex::_location;
-    
-    //RefractiveIndex::_pixels = RefractiveIndex::_vidGrabber.getPixelsRef(); //get ofPixels from the camera 
-    //    fileName = imageSaveFolderPath+whichAnalysis+"_"+ofToString(100.0*i*scanLineSpeed/ofGetHeight(),2)+"%_"+ofToString(i)+".jpg";
-    //ofSaveImage(vectorOfPixels[i], fileName, OF_IMAGE_QUALITY_BEST);
     
     ofSaveImage(RefractiveIndex::_pixels, _whole_file_path+"/"+file_name, OF_IMAGE_QUALITY_BEST);    
-    
+    cout<<_whole_file_path+"/"+file_name<<endl;
+
     if(_save_cnt >= NUM_SAVE_PER_RUN)
         _RUN_DONE = true;
-    
+        
 }

@@ -8,7 +8,8 @@
 #include "ofxControlPanel.h"
 #include <string>
 
-#define ANALYSIS_PATH "data/analysis/"
+//#define ANALYSIS_PATH "data/analysis/"
+#define ANALYSIS_PATH "analysis/"
 
 #define STATE_STOP  0xDEADBEEF
 
@@ -35,16 +36,16 @@ public:
     
     // ofx
     virtual void draw() = 0;    
-
-            // this is what's called a Pure Virtual Function - not sure if you can pass ofPixels through this? 
-
-            /*
-            When a virtual function is called, the implementation is chosen based not on the static type of the pointer 
-            or reference, but on the type of the object being pointed to, which can vary at run time
-            So this Pure Virtual Function will be called based on the kind of object or class that instantiated it(?) 
-            */
-
-
+    
+    // this is what's called a Pure Virtual Function - not sure if you can pass ofPixels through this? 
+    
+    /*
+     When a virtual function is called, the implementation is chosen based not on the static type of the pointer 
+     or reference, but on the type of the object being pointed to, which can vary at run time
+     So this Pure Virtual Function will be called based on the kind of object or class that instantiated it(?) 
+     */
+    
+    
 public:
     string  _name;    
 protected:    
