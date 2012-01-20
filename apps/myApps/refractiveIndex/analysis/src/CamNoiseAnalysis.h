@@ -1,18 +1,25 @@
-#define DELTA_T_SAVE        100  //the milisecond timing 
-#define NUM_PHASE           1
-#define NUM_RUN             1
-#define NUM_SAVE_PER_RUN    100
+/*
+ ~ author: dviid
+ ~ contact: dviid@labs.ciid.dk 
+ */
+
 #pragma once
 
 #include "AbstractAnalysis.h"
 
 #include "Poco/Timer.h"
 
-class ColorMultiAnalysis : public AbstractAnalysis
+#define DELTA_T_SAVE        100  //the milisecond timing 
+#define NUM_PHASE           1
+#define NUM_RUN             1
+#define NUM_SAVE_PER_RUN    100
+
+
+class CamNoiseAnalysis : public AbstractAnalysis
 {
 public:
-    ColorMultiAnalysis(): AbstractAnalysis("COLOR_MULTI"){;}
-    virtual ~ColorMultiAnalysis(){;}
+    CamNoiseAnalysis(): AbstractAnalysis("CAM_NOISE"){;}
+    virtual ~CamNoiseAnalysis(){;}
     
 public:
     
@@ -31,4 +38,5 @@ protected:
     int     _run_cnt, _save_cnt;
     float   c, _frame_cnt, _frame_cnt_max;
     string _whole_file_path;
+    
 };
